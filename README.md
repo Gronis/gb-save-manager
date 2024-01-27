@@ -18,14 +18,14 @@ Link Cable (2x GBAs):
 - (GBA) SAVE Backup/Restore *3
 
 ROMs included in others ROMs:
-- gb-link-cable-read-write.gb
-- gb-link-cable-read-write_mb.gba
-- gba-link-cable-read-write_mb.gba
+- gb-companion.gb
+- gb-companion_mb.gba
+- gba-companion_mb.gba
 
 ROM inclusion structure:
 - save-manager.gb
-  - gb-link-cable-read-write.gb
+  - gb-companion.gb
 - save-manager.gba
-  - gb-link-cable-read-write_mb.gba
-    - gb-link-cable-read-write.gb
-  - gba-link-cable-read-write_mb.gba
+  - gb-companion_mb.gba
+    - gb-companion.gb
+  - gba-companion_mb.gba

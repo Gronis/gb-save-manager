@@ -25,13 +25,12 @@
 
 #define SWI_CPUSET_FILL                 0x1000000
 
+#include PAYLOAD_HEADER
+
 // #include "payload_gbc.h"
 // #define PAYLOAD payload
 // #define PAYLOAD_LENGTH payload_length
 
-#include "gbc-save-manager_gbc.h"
-#define PAYLOAD gbc_save_manager
-#define PAYLOAD_LENGTH gbc_save_manager_length
 
 typedef struct PACKED {
     int32_t bg_x;       // 24-bits integer + 8-bits decimal

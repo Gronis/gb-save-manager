@@ -71,6 +71,7 @@ COPY --from=build-bin2c /opt  /opt
 ENV PATH /opt/sdcc/bin:$PATH
 ENV PATH /opt/rgbds/bin:$PATH
 ENV PATH /opt/bin2c/bin:$PATH
+ENV PATH /opt/devkitpro/devkitARM/bin:$PATH
 
 WORKDIR /workdir
 
