@@ -14,8 +14,9 @@ OUTPUT			:= $(shell pwd)/build
 
 # Build Targets
 all: gb-companion_mb gb-companion
+
 clean:
-	rm -r build
+	rm -r $(OUTPUT)
 
 .PHONY: all clean gb-companion gb-companion_mb
 
@@ -36,17 +37,17 @@ else
 ifeq ($(strip $(DEVKITARM)),)
 ###############################################################################
 
-build/.:
-	@mkdir -p build
+$(OUTPUT)/.:
+	@mkdir -p $(OUTPUT)
 
-build/docker: build/. docker/* docker/*/* docker/*/*/*
+$(OUTPUT)/.docker: $(OUTPUT)/. docker/* docker/*/* docker/*/*/*
 	@(cd docker && docker build . -t gbdev)
-	@touch build/docker
+	@touch $(OUTPUT)/.docker
 
-gb-companion: build/docker
+gb-companion: $(OUTPUT)/.docker
 	@(docker run --rm -it -v `pwd`:/workdir gbdev bash -c "cd /workdir && make gb-companion")
 
-gb-companion_mb: build/docker
+gb-companion_mb: $(OUTPUT)/.docker
 	@(docker run --rm -it -v `pwd`:/workdir gbdev bash -c "cd /workdir && make gb-companion_mb")
 
 endif
