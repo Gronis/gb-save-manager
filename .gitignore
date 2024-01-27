@@ -1,0 +1,8 @@
+/build/
+*.elf
+*.sav
+*.gba
+*.gbc
+*.gb
+.DS_Store
+.vscode
