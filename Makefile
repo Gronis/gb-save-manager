@@ -11,19 +11,19 @@ endif
 # Project Constants
 OUTPUT			:= $(shell pwd)/build
 
-
 # Build Targets
-all: gb-companion_mb gb-companion
+all: gb-companion_mb
 
 clean:
 	rm -r $(OUTPUT)
 
-.PHONY: all clean gb-companion gb-companion_mb
 
 ###############################################################################
 # Build locally (inside docker container)
 ifeq ($(shell which docker),)
 ###############################################################################
+
+.PHONY: all clean gb-companion gb-companion_mb
 
 gb-companion:
 	@(cd gb-companion && make OUTPUT=${OUTPUT})
@@ -44,11 +44,11 @@ $(OUTPUT)/.docker: $(OUTPUT)/. docker/* docker/*/* docker/*/*/*
 	@(cd docker && docker build . -t gbdev)
 	@touch $(OUTPUT)/.docker
 
-gb-companion: $(OUTPUT)/.docker
-	@(docker run --rm -it -v `pwd`:/workdir gbdev bash -c "cd /workdir && make gb-companion")
+%: $(OUTPUT)/.docker %/Makefile
+	@(docker run --rm -it -v `pwd`:/workdir gbdev bash -c "cd /workdir && make $@")
 
-gb-companion_mb: $(OUTPUT)/.docker
-	@(docker run --rm -it -v `pwd`:/workdir gbdev bash -c "cd /workdir && make gb-companion_mb")
+%_mb: $(OUTPUT)/.docker
+	@(docker run --rm -it -v `pwd`:/workdir gbdev bash -c "cd /workdir && make $@")
 
 endif
 endif
