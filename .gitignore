@@ -6,3 +6,6 @@
 *.gb
 .DS_Store
 .vscode
+
+gbc/
+old/
