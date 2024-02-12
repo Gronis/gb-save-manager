@@ -6,7 +6,6 @@
 The user have to choose between GB and GBA mode:
 ```
 ┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃                                ┃
 ┃   Role: Leader                 ┃
 ┃   Link Cable Status:     ✖️     ┃
 ┃   Cartridge  Status:     ✔     ┃
@@ -21,7 +20,6 @@ The user have to choose between GB and GBA mode:
 Help text will be specific on GBA since GBA will send Worker app with Multiboot:
 ```
 ┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃                                ┃
 ┃   Role: Leader                 ┃
 ┃   Link Cable Status:     ✖️     ┃
 ┃   Cartridge  Status:     ✔     ┃
@@ -57,8 +55,8 @@ Flash Cartridge still inserted. Help text will be specific for GB/GBC:
 #### Worker Role:
 Flash Cartridage removed or multiboot startup: (role switched: Leader -> Worker):
 ```
-┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃                                        ┃┃                                ┃
+┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓
+┃                                        ┃┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
 ┃                                        ┃┃   Role: Worker                 ┃
 ┃       Role: Worker                     ┃┃   Link Cable Status:     ✖️     ┃
 ┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✖️     ┃
@@ -77,15 +75,15 @@ Flash Cartridage removed or multiboot startup: (role switched: Leader -> Worker)
 
 Cartridge inserted and Link Cable connection established:
 ```
-┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃                                        ┃┃                                ┃
+┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓
+┃                                        ┃┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
 ┃                                        ┃┃   Role: Worker                 ┃
 ┃       Role: Worker                     ┃┃   Link Cable Status:     ✔     ┃
 ┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✔     ┃
 ┃       Cartridge  Status:     ✔         ┃┃                                ┃
-┃                                        ┃┃       Screen will flash        ┃
-┃           Screen will flash            ┃┃       while working!           ┃
-┃           while working!               ┃┃                                ┃
+┃                                        ┃┃      Screen will turn          ┃
+┃          Screen will turn              ┃┃      off while working!        ┃
+┃          off while working!            ┃┃                                ┃
 ┃                                        ┃┃                                ┃
 ┃                                        ┃┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ┃                                        ┃
@@ -97,8 +95,8 @@ Cartridge inserted and Link Cable connection established:
 #### Leader Role:
 Flash Cartridge is never removed, Link Cable established connection to device with Worker role established:
 ```
-┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃                                        ┃┃                                ┃
+┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓
+┃                                        ┃┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
 ┃                                        ┃┃   Role: Leader                 ┃
 ┃       Role: Leader                     ┃┃   Link Cable Status:     ✔     ┃
 ┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✔     ┃
@@ -117,8 +115,8 @@ Flash Cartridge is never removed, Link Cable established connection to device wi
 
 After choosing mode, show progress:
 ```
-┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃                                        ┃┃                                ┃
+┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓
+┃                                        ┃┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
 ┃                                        ┃┃   Role: Leader                 ┃
 ┃       Role: Leader                     ┃┃   Link Cable Status:     ✔     ┃
 ┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✔     ┃
@@ -155,15 +153,34 @@ Link Cable (2x GBAs):
 - (GB)  SAVE Backup/Restore *
 - (GBA) SAVE Backup/Restore
 
-ROMs included in others ROMs:
+#### ROMs included in others ROMs:
 - gb-companion.gb
 - gb-companion_mb.gba
 - gba-companion_mb.gba
 
-ROM inclusion structure:
+#### ROM inclusion structure:
 - save-manager.gb
   - gb-companion.gb
 - save-manager.gba
   - gb-companion_mb.gba
     - gb-companion.gb
   - gba-companion_mb.gba
+
+Findings and solutions:
+========
+
+- GBA (while in gbc mode), cannot hold data in RAM if cartridge is disconnected (saftey feature?)
+  - Solved by putting code in VRAM instead of RAM
+- VRAM can only be accessed at certain times in GBC mode
+  - Solved by turing the screen off and on rapidly and put main logic in VRAM while HRAM code can be used to render the screen.
+- GB screen is too slow to toggle on and off fast
+  - Solved by putting code in RAM instead of VRAM
+
+#### save-manager.gb codeflow:
+- Init steps:
+  - Put gb-companion in VRAM and gb-companion_ram in RAM
+  - If started from GBA, switch execution to gb-companion (VRAM)
+  - If started from GB/GBC switch execution to  gb-companion_ram (RAM)
+- Code runs as normal from RAM/VRAM until data transfer should start:
+  - If leader, switch back execution to (gb-save-manager) ROM
+  - If worker, continue to send data while executing gb-companion in RAM/VRAM
