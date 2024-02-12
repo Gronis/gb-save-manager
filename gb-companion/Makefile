@@ -14,14 +14,14 @@ VRAM0			:=	0x8000
 VRAM1			:=	0x8800
 RAM0			:=	0xC000
 RAM1			:=	0xD000
-CODE_OFFSET		:=	0x0510	# 9*9*16 bytes = 1296 = 0x0510 for qr code tiles
 
 ###############################################################################
 #	Project Constants
 ###############################################################################
 PROJECTNAME		:=	gb-companion
 CODE_LOC		:=	$(VRAM0)
-DATA_LOC		:=	$(RAM1)
+CODE_OFFSET		:=	0x0400        # Leave some space for graphics
+DATA_OFFSET		:=  0x1000
 OUTPUT			:=	.
 
 ###############################################################################
@@ -39,7 +39,7 @@ LDFLAGS			:=	-mjwx -m \
 					-b _CODE_LOC=$(CODE_LOC) \
 					-b _ENTRYPOINT=$(CODE_LOC)+0x100 \
 					-b _CODE=$(CODE_LOC)+$(CODE_OFFSET) \
-					-b _DATA=$(DATA_LOC) \
+					-b _DATA=$(CODE_LOC)+$(DATA_OFFSET) \
 					-g STACK_PTR=$(CODE_LOC)+$(CODE_OFFSET)
 
 BNFLAGS			:=	-Z -s 0xFFFF -o $(CODE_LOC)

@@ -49,8 +49,8 @@ start:
     ld  a,#0x80
     ld  (#0xFF4C),a                 ; set as GBC+DMG
 
-init_palette:                       ; load gbc palette colors (0: black, 1: black, 2: black, 3: white)
-    ld a, #0x3F                     ; DMG palette (%00111111 => 3: transparent, 2: opaque, 1: opaque, 0: opaque)
+init_palette:                       ; load gbc palette colors (0: black, 1: white, 2: black, 3: white)
+    ld a, #0x33                     ; DMG palette (%00110011 => 3: transparent, 2: opaque, 1: transparent, 0: opaque)
     ld (rBGP), a
     
     ld  a, #0x80                    ; enable auto increment when loading gbc palette
@@ -60,9 +60,12 @@ init_palette:                       ; load gbc palette colors (0: black, 1: blac
     ld  (rBGPD),a                   ; color 0 p1: black 
     ld  (rBGPD),a                   ; color 0 p2: black
 
-    ld  (rBGPD),a                   ; color 1 p1: black 
-    ld  (rBGPD),a                   ; color 1 p2: black 
+    ld  a, #0xFF
+    ld  (rBGPD),a                   ; color 1 p1: white 
+    ld  a, #0x7F
+    ld  (rBGPD),a                   ; color 1 p2: white 
 
+    xor a
     ld  (rBGPD),a                   ; color 2 p1: black 
     ld  (rBGPD),a                   ; color 2 p2: black 
    
@@ -138,7 +141,6 @@ hram_flush_screen:
     ld (rAppSP), sp                                     ; Save the stack pointer, since we have
     ld sp, #_HRAM_STACK_PTR                             ; to use HRAM for stack while LCD is on
 hram_enable_screen:                                     ; VRAM becomes inaccessible after this point
-    call hram_wait_for_VRAM_accessible-hram_code+_HRAM  ; enable screen and show image
     ld a, #LCDCF_ON | #LCDCF_BG8000 | #LCDCF_BG9C00 | #LCDCF_OBJ8 | #LCDCF_OBJOFF | #LCDCF_WINOFF | #LCDCF_BGON
     ld (rLCDC), a                                       ; setup screen to show img
 hram_flush_screen_wait:
@@ -148,7 +150,7 @@ hram_flush_screen_wait_loop:
     ld  a, d
     cp  a, #0
     jr  nz, hram_flush_screen_wait_loop
-hram_flush_screen_wait_for_screen_to_finish:
+hram_flush_screen_wait_for_screen_to_finish:            ; Could inline these functions, saving space and avoid chaning SP
     call hram_wait_for_VBLANK-hram_code+_HRAM           ; Wait for current frame to render (avoid tearing)
     call hram_wait_for_VRAM_accessible-hram_code+_HRAM
 hram_disable_screen:
