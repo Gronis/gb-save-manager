@@ -49,26 +49,27 @@ start:
     ld  a,#0x80
     ld  (#0xFF4C),a                 ; set as GBC+DMG
 
-init_palette:                       ; load gbc palette colors (white, black, black, black)
-    ld a, #0x1B                     ; DMG palette
+init_palette:                       ; load gbc palette colors (0: black, 1: black, 2: black, 3: white)
+    ld a, #0x3F                     ; DMG palette (%00111111 => 3: transparent, 2: opaque, 1: opaque, 0: opaque)
     ld (rBGP), a
     
     ld  a, #0x80                    ; enable auto increment when loading gbc palette
     ld  (rBCPS),a
 
-    ld  a, #0xFF
-    ld  (rBGPD),a                   ; color 0 p1: white 
-    ld  a, #0x7F
-    ld  (rBGPD),a                   ; color 0 p2: white 
     xor a
+    ld  (rBGPD),a                   ; color 0 p1: black 
+    ld  (rBGPD),a                   ; color 0 p2: black
+
     ld  (rBGPD),a                   ; color 1 p1: black 
-    ld  (rBGPD),a                   ; color 1 p2: black
+    ld  (rBGPD),a                   ; color 1 p2: black 
 
     ld  (rBGPD),a                   ; color 2 p1: black 
     ld  (rBGPD),a                   ; color 2 p2: black 
-
-    ld  (rBGPD),a                   ; color 3 p1: black 
-    ld  (rBGPD),a                   ; color 3 p2: black 
+   
+    ld  a, #0xFF
+    ld  (rBGPD),a                   ; color 3 p1: white 
+    ld  a, #0x7F
+    ld  (rBGPD),a                   ; color 3 p2: white 
 
 init_arrangements:
     ld  a, #0 -160 + 4              ; Move window x-axis to the far right     
@@ -98,7 +99,7 @@ init_arrangements_loop:
 
 clear_tile_zero:
     ld  hl, #_VRAM
-    xor a
+    ld  a, #0xFF
     ld  b, #16
 clear_tile_zero_loop:
     ld  (hl+), a
@@ -137,8 +138,8 @@ hram_flush_screen:
     ld (rAppSP), sp                                     ; Save the stack pointer, since we have
     ld sp, #_HRAM_STACK_PTR                             ; to use HRAM for stack while LCD is on
 hram_enable_screen:                                     ; VRAM becomes inaccessible after this point
-    call hram_wait_for_VRAM_accessible-hram_code+_HRAM
-    ld a, #LCDCF_ON | #LCDCF_BG8000 | #LCDCF_BG9C00 | #LCDCF_OBJ8 | #LCDCF_OBJOFF | #LCDCF_WINOFF | #LCDCF_BGON                                        ; enable screen and show image
+    call hram_wait_for_VRAM_accessible-hram_code+_HRAM  ; enable screen and show image
+    ld a, #LCDCF_ON | #LCDCF_BG8000 | #LCDCF_BG9C00 | #LCDCF_OBJ8 | #LCDCF_OBJOFF | #LCDCF_WINOFF | #LCDCF_BGON
     ld (rLCDC), a                                       ; setup screen to show img
 hram_flush_screen_wait:
     ld  de, #0x0A00                                     ; Timing is setup so LCD is on roughly 2 frames (15fps)
@@ -151,8 +152,8 @@ hram_flush_screen_wait_for_screen_to_finish:
     call hram_wait_for_VBLANK-hram_code+_HRAM           ; Wait for current frame to render (avoid tearing)
     call hram_wait_for_VRAM_accessible-hram_code+_HRAM
 hram_disable_screen:
-    xor a
-    ld (rLCDC), a
+    xor a                                               ; Disable screen only if CODE_LOC is at VRAM
+    ld (CODE_LOC-_VRAM+rLCDC), a                        ; else, if CODE_LOC is in RAM, will write to ROM addr (< 0x4000)
 hram_reset_sp:
     ld sp, #rAppSP
     pop hl

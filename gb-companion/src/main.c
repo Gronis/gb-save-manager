@@ -37,14 +37,14 @@ void main() {
     uint8_t qrcodeBytes[QRCODE_BUFFER_SIZE(13)];
     tile_t smiley = {
         {// line:
-            0x3C,
-            0x42,
-            0xA5,
-            0x81,
-            0xA5,
-            0x99,
-            0x42,
-            0x3C,
+            ~0x3C,
+            ~0x42,
+            ~0xA5,
+            ~0x81,
+            ~0xA5,
+            ~0x99,
+            ~0x42,
+            ~0x3C,
         }
     };
     // qrcode_initText(&qrcode, qrcodeBytes, 3, ECC_LOW, "HELLO WORLD");
