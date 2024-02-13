@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 		fclose(f);
 
 
-		for (; size > 0 && bytes[size] == 0 || bytes[size] == 0xFF; --size);
+		for (; size != -1 && (bytes[size] == 0 || bytes[size] == 0xFF); --size);
 		size++;
 
 		char* var_name = argv[2];
@@ -57,7 +57,6 @@ int main(int argc, char **argv) {
 
 		// fprintf(stderr, "Using name: %s.\n", var_name);
 
-		printf("#include <gba.h>\n");
 		printf("#define %s_length %u\n",var_name,size);
 		printf("const uint8_t %s[%s_length] = {\n    ",var_name, var_name);
 

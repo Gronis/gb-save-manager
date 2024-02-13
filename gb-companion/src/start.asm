@@ -40,7 +40,7 @@ copy_program_and_run_loop:
     jp  CODE_LOC
 
 start:
-    ld  sp, #STACK_PTR-1            ; Off by one, we don't want to overwrite first code instruction 
+    ld  sp, #_STACK_PTR-1           ; Off by one, we don't want to overwrite first code instruction 
     xor a
     ld  (rSCX),a
     ld  (rSCY),a
@@ -199,4 +199,4 @@ _flush_screen:
     jp hram_flush_screen-hram_code+_HRAM
 
 end:; Important to have a non 0x00 or 0xFF in the end because bin2c strips away trailing data
-    .db 0x13, 0x37
+    .db 0x99

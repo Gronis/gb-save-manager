@@ -175,6 +175,9 @@ Findings and solutions:
   - Solved by turing the screen off and on rapidly and put main logic in VRAM while HRAM code can be used to render the screen.
 - GB screen is too slow to toggle on and off fast
   - Solved by putting code in RAM instead of VRAM
+- GBA data written to RAM while cartridge is inserted is retained if a cartridge is ejected and then injected again.
+  Seems to be controlled by the hardware switch used for detecting GBC games in cartridge slot. This means that we can
+  execute code from RAM if cartridge is inserted and we know cartridge will not be ejected.
 
 #### save-manager.gb codeflow:
 - Init steps:
@@ -182,5 +185,7 @@ Findings and solutions:
   - If started from GBA, switch execution to gb-companion (VRAM)
   - If started from GB/GBC switch execution to  gb-companion_ram (RAM)
 - Code runs as normal from RAM/VRAM until data transfer should start:
-  - If leader, switch back execution to (gb-save-manager) ROM
-  - If worker, continue to send data while executing gb-companion in RAM/VRAM
+  - Switch execution to RAM which handles data transfer for both 
+    leader and worker
+  <!-- - If leader, switch back execution to (gb-save-manager) ROM
+  - If worker, continue to send data while executing gb-companion in RAM/VRAM -->

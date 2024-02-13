@@ -1,7 +1,8 @@
 #include "types.h"
 #include "hardware.h"
 
-#include "qr.h"
+#include "definitions.h"
+#include "transfer.h"
 
 // Tiles only use 1-bit per pixel (no shades of gray)
 typedef struct {
@@ -64,6 +65,8 @@ void main() {
     rasterize_tile(1, &smiley);
     {
         uint8_t tile_id = 1;
+        bool did_write_to_ram = false;
+
         set_bkg_tiles(corners_x[3], corners_y[3], 1, 1, &tile_id);
         // Infinite loop to keep the program running
         while (1) {
@@ -73,10 +76,42 @@ void main() {
                 set_bkg_tiles(corners_x[i], corners_y[i], 1, 1, &tile_id);
                 flush_screen();
             }
-            // wait for 24 frames
-            for (uint8_t i = 0; i < 12; ++i){
-                flush_screen();
+            if(!did_write_to_ram){
+                *((uint8_t*)_RAM+100) = 0x44;
+                if (*((uint8_t*)_RAM+100) == 0x44) {
+                    did_write_to_ram = true;
+                    copy_ram_functions_to_ram();
+                    ram_function();
+                }
+            }
+            // If RAM is unreadable, filcker slow, otherwise filcker fast.
+            // RAM is unreadable when GBA is in GBC mode while no GBC cartridge is inserted. 
+            if (*((uint8_t*)_RAM+100) != 0x44) {
+                // wait for 24 frames
+                for (uint8_t i = 0; i < 12; ++i){
+                    flush_screen();
+                }
             }
         }
     }
 }
+
+#ifdef VRAM_VERSION
+#include "ram_code_gbc.h"
+void copy_ram_functions_to_ram() { 
+    uint8_t* src = ram_code;
+    volatile uint8_t* dst = (uint8_t*)RAM_LOC;
+    uint8_t* end = src + ram_code_length;
+    bool success = true;
+    // If RAM becomes inaccessable during copy process, stall
+    for (; src != end; dst+=success, src+=success){
+        uint8_t val = *src;
+        *dst = val;
+        success = *dst == val;
+    }
+}
+#else
+void copy_ram_functions_to_ram() { 
+    // This is the RAM version, so no copy is necessary
+}
+#endif 

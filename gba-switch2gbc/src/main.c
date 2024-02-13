@@ -98,7 +98,6 @@ ALWAYS_INLINE void prepare_hardware_registers(void)
         affine_src.scr_y = 8 + 144 / 2;
 
         // This will make everything twice as big (pixel ratio 1:2)
-        // This will save 9*9*8 = 648 bytes for displaying qr code
         affine_src.scale_x = 1 << 7;
         affine_src.scale_y = 1 << 7;
 
