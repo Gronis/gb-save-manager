@@ -130,5 +130,5 @@ $(BUILD_DIR)/$(IHX): \
 $(BUILD_DIR)/ram_code.ihx: \
 	$(BUILD_DIR)/transfer.rel $(BUILD_DIR)/definitions.rel
 
-src/main.c: \
+$(BUILD_DIR)/main.rel: \
 	$(BUILD_DIR)/ram_code_gbc.h

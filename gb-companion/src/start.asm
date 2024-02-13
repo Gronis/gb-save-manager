@@ -137,19 +137,27 @@ hram_wait_for_VRAM_accessible:
     jr  nz,hram_wait_for_VRAM_accessible
     ret
 
+hram_wait:
+    ld  de, #0x0A00                                     ; Timing is setup so LCD is on roughly 2 frames (15fps)
+hram_wait_loop:
+    dec de
+    ld  a, d
+    cp  a, #0
+    jr  nz, hram_wait_loop
+    ret
+
 hram_flush_screen:
+    ld hl, #hram_wait-#hram_code+#_HRAM
+hram_run_in_parallel_to_screen:
     ld (rAppSP), sp                                     ; Save the stack pointer, since we have
     ld sp, #_HRAM_STACK_PTR                             ; to use HRAM for stack while LCD is on
 hram_enable_screen:                                     ; VRAM becomes inaccessible after this point
     ld a, #LCDCF_ON | #LCDCF_BG8000 | #LCDCF_BG9C00 | #LCDCF_OBJ8 | #LCDCF_OBJOFF | #LCDCF_WINOFF | #LCDCF_BGON
     ld (rLCDC), a                                       ; setup screen to show img
-hram_flush_screen_wait:
-    ld  de, #0x0A00                                     ; Timing is setup so LCD is on roughly 2 frames (15fps)
-hram_flush_screen_wait_loop:
-    dec de
-    ld  a, d
-    cp  a, #0
-    jr  nz, hram_flush_screen_wait_loop
+hram_do_task:
+    ld de, #hram_flush_screen_wait_for_screen_to_finish-hram_code+_HRAM
+    push de                                             ; This is return addr since call r16 does not exist
+    jp (hl)
 hram_flush_screen_wait_for_screen_to_finish:            ; Could inline these functions, saving space and avoid chaning SP
     call hram_wait_for_VBLANK-hram_code+_HRAM           ; Wait for current frame to render (avoid tearing)
     call hram_wait_for_VRAM_accessible-hram_code+_HRAM
@@ -197,6 +205,12 @@ entrypoint:
 .globl _flush_screen
 _flush_screen:
     jp hram_flush_screen-hram_code+_HRAM
+
+.globl _run_in_parallel_to_screen
+_run_in_parallel_to_screen:    ; function to call in reg de
+	ld	l, e
+    ld	h, d    ; move de to hl
+    jp hram_run_in_parallel_to_screen-hram_code+_HRAM
 
 end:; Important to have a non 0x00 or 0xFF in the end because bin2c strips away trailing data
     .db 0x99

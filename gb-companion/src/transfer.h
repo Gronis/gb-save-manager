@@ -3,7 +3,8 @@
 
 #include "definitions.h"
 
-void ram_function();
+void ram_tile_to_checker(void);
+void ram_tile_to_empty(void);
 
 #endif // TRANSFER_H
 

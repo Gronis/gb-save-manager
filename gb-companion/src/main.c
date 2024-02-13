@@ -3,6 +3,7 @@
 
 #include "definitions.h"
 #include "transfer.h"
+#include "start.h"
 
 // Tiles only use 1-bit per pixel (no shades of gray)
 typedef struct {
@@ -41,7 +42,8 @@ void rasterize_tile(uint8_t id, tile_t* tile) {
     for (uint8_t i = 0; i < 8; i++){
         uint8_t line = tile->line[i];
         _VRAM[_id] = line;
-        _id+= 2; // Second byte (colors 0/2) can be any value because of palette
+        // Skip second byte (colors 0/2). Can be any value because of palette
+        _id+= 2;
     }
 }
 
@@ -61,7 +63,26 @@ void set_bkg_tiles(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const ui
     }
 }
 
-void main() {
+#ifdef VRAM_VERSION
+#include "ram_code_gbc.h"
+void copy_ram_functions_to_ram(void) { 
+    uint8_t* src = ram_code;
+    volatile uint8_t* dst = (uint8_t*)RAM_LOC;
+    uint8_t* end = src + ram_code_length;
+    bool success = true;
+    // If RAM becomes inaccessable during copy process, stall
+    for (; src != end; dst+=success, src+=success){
+        uint8_t val = *src;
+        *dst = val;
+        success = *dst == val;
+    }
+}
+#else
+// This is the RAM version, so no copy is necessary
+void copy_ram_functions_to_ram(void) {}
+#endif 
+
+void main(void) {
     rasterize_tile(1, &smiley);
     {
         uint8_t tile_id = 1;
@@ -81,7 +102,7 @@ void main() {
                 if (*((uint8_t*)_RAM+100) == 0x44) {
                     did_write_to_ram = true;
                     copy_ram_functions_to_ram();
-                    ram_function();
+                    run_in_parallel_to_screen(ram_tile_to_checker);
                 }
             }
             // If RAM is unreadable, filcker slow, otherwise filcker fast.
@@ -95,23 +116,3 @@ void main() {
         }
     }
 }
-
-#ifdef VRAM_VERSION
-#include "ram_code_gbc.h"
-void copy_ram_functions_to_ram() { 
-    uint8_t* src = ram_code;
-    volatile uint8_t* dst = (uint8_t*)RAM_LOC;
-    uint8_t* end = src + ram_code_length;
-    bool success = true;
-    // If RAM becomes inaccessable during copy process, stall
-    for (; src != end; dst+=success, src+=success){
-        uint8_t val = *src;
-        *dst = val;
-        success = *dst == val;
-    }
-}
-#else
-void copy_ram_functions_to_ram() { 
-    // This is the RAM version, so no copy is necessary
-}
-#endif 
