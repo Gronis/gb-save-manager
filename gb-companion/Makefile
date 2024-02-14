@@ -78,6 +78,7 @@ BIN				:=	$(PROJECTNAME).gbc
 SOURCES			:=	$(wildcard src/*.c)
 HEADERS			:=	$(wildcard src/*.h)
 ASSEMBLY		:=	$(wildcard src/*.asm)
+BITMAPS			:=	$(wildcard assets/*.png)
 
 ###############################################################################
 #	Derived variables
@@ -86,6 +87,8 @@ BUILD_DIR		:=	$(OUTPUT)/$(PROJECTNAME)
 OBJS			:=	$(SOURCES:.c=.rel) $(ASSEMBLY:.asm=.rel)
 OBJS			:=	$(foreach file,$(OBJS), $(BUILD_DIR)/$(notdir $(file)))
 IHX				:=	$(BIN:.gbc=.ihx)
+ASSETS			:=	$(BITMAPS:.png=_bin.h)
+ASSETS			:=	$(foreach file,$(ASSETS), $(BUILD_DIR)/$(notdir $(file)))
 
 ###############################################################################
 #	Build rules
@@ -104,17 +107,26 @@ $(BUILD_DIR)/$(BIN): $(BUILD_DIR)/$(IHX)
 $(BUILD_DIR)/ram_code.gbc: $(BUILD_DIR)/ram_code.ihx
 	$(BN) -Z -s $(RAM1) -o $(RAM0) $< $@
 
-$(BUILD_DIR)/%.rel: src/%.c $(HEADERS) Makefile
+$(BUILD_DIR)/%.rel: src/%.c $(HEADERS) $(ASSETS) Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/%.rel: src/%.asm Makefile
+$(BUILD_DIR)/%.rel: src/%.asm $(ASSETS) Makefile
 	$(AS) $(ASFLAGS) $@ $<
+
+$(BUILD_DIR)/%.png: assets/%.png
+	@cp $< $@
 
 %.ihx:
 	$(LD) $(LDFLAGS) -i $@ $^ -e
 
 %_gbc.h: %.gbc
 	bin2c $< $(notdir $(basename $<)) > $(basename $@).h
+
+%_bin.h: %.bin
+	bin2c $< $(notdir $(basename $<)) > $(basename $@).h
+
+%.bin: %.png
+	mkfont $<
 
 %.fixed.gbc: %.gbc
 	@cp $< $@

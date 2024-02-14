@@ -50,29 +50,29 @@ start:
     ld  (#0xFF4C),a                 ; set as GBC+DMG
 
 init_palette:                       ; load gbc palette colors (0: black, 1: white, 2: black, 3: white)
-    ld a, #0x33                     ; DMG palette (%00110011 => 3: transparent, 2: opaque, 1: transparent, 0: opaque)
+    ld a, #0xAA                     ; DMG palette (%11001100 => 3: opaque 2: transparent, 1: opaque, 0: transparent)
     ld (rBGP), a
     
     ld  a, #0x80                    ; enable auto increment when loading gbc palette
     ld  (rBCPS),a
 
-    xor a
-    ld  (rBGPD),a                   ; color 0 p1: black 
-    ld  (rBGPD),a                   ; color 0 p2: black
-
     ld  a, #0xFF
-    ld  (rBGPD),a                   ; color 1 p1: white 
+    ld  (rBGPD),a                   ; color 0 p1: white 
     ld  a, #0x7F
-    ld  (rBGPD),a                   ; color 1 p2: white 
+    ld  (rBGPD),a                   ; color 0 p2: white 
 
     xor a
-    ld  (rBGPD),a                   ; color 2 p1: black 
-    ld  (rBGPD),a                   ; color 2 p2: black 
+    ld  (rBGPD),a                   ; color 1 p1: black 
+    ld  (rBGPD),a                   ; color 1 p2: black
    
     ld  a, #0xFF
-    ld  (rBGPD),a                   ; color 3 p1: white 
+    ld  (rBGPD),a                   ; color 2 p1: white 
     ld  a, #0x7F
-    ld  (rBGPD),a                   ; color 3 p2: white 
+    ld  (rBGPD),a                   ; color 2 p2: white 
+
+    xor a
+    ld  (rBGPD),a                   ; color 3 p1: black 
+    ld  (rBGPD),a                   ; color 3 p2: black 
 
 init_arrangements:
     ld  a, #0 -160 + 4              ; Move window x-axis to the far right     
@@ -102,7 +102,7 @@ init_arrangements_loop:
 
 clear_tile_zero:
     ld  hl, #_VRAM
-    ld  a, #0xFF
+    ld  a, #0x00
     ld  b, #16
 clear_tile_zero_loop:
     ld  (hl+), a
