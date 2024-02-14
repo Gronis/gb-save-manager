@@ -43,7 +43,7 @@ RAM1			:=	0xD000
 ###############################################################################
 PROJECTNAME		:=	gb-companion
 CODE_LOC		:=	$(VRAM0)
-CODE_OFFSET		:=	0x0150        # Just after GBC Header
+CODE_OFFSET		:=	0x0500        # Leave some space for graphics
 DATA_OFFSET		:=  0x1000
 OUTPUT			:=	.
 
