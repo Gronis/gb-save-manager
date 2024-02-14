@@ -24,9 +24,9 @@ Help text will be specific on GBA since GBA will send Worker app with Multiboot:
 ┃   Link Cable Status:     ✖️     ┃
 ┃   Cartridge  Status:     ✔     ┃
 ┃                                ┃
-┃   Connect another GBA using    ┃
-┃   a GBC Link Cable which will  ┃
-┃   be used as Worker            ┃
+┃   Connect GBC Link Cable       ┃
+┃                                ┃
+┃                                ┃
 ┃                                ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
@@ -41,9 +41,9 @@ Flash Cartridge still inserted. Help text will be specific for GB/GBC:
 ┃       Link Cable Status:     ✖️         ┃
 ┃       Cartridge  Status:     ✔         ┃
 ┃                                        ┃
-┃     Connect this device using a        ┃
-┃     GBC Link Cable or remove the       ┃
-┃     Flash Cartridge to change role     ┃
+┃       Connect GBC Link Cable           ┃
+┃       or remove the Cartridge          ┃
+┃       to change role                   ┃
 ┃                                        ┃
 ┃                                        ┃
 ┃                                        ┃
@@ -61,9 +61,9 @@ Flash Cartridage removed or multiboot startup: (role switched: Leader -> Worker)
 ┃       Role: Worker                     ┃┃   Link Cable Status:     ✖️     ┃
 ┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✖️     ┃
 ┃       Cartridge  Status:     ✔         ┃┃                                ┃
-┃                                        ┃┃       Insert GB/GBC            ┃
-┃           Insert GB/GBC                ┃┃       Cartridge                ┃
-┃           Cartridge                    ┃┃                                ┃
+┃                                        ┃┃   Insert GB/GBC Cartridge      ┃
+┃       Insert GB/GBC Cartridge          ┃┃                                ┃
+┃                                        ┃┃                                ┃
 ┃                                        ┃┃                                ┃
 ┃                                        ┃┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ┃                                        ┃
@@ -81,9 +81,9 @@ Cartridge inserted and Link Cable connection established:
 ┃       Role: Worker                     ┃┃   Link Cable Status:     ✔     ┃
 ┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✔     ┃
 ┃       Cartridge  Status:     ✔         ┃┃                                ┃
-┃                                        ┃┃      Screen will turn          ┃
-┃          Screen will turn              ┃┃      off while working!        ┃
-┃          off while working!            ┃┃                                ┃
+┃                                        ┃┃      Waiting for Leader        ┃
+┃          Waiting for Leader            ┃┃                                ┃
+┃                                        ┃┃                                ┃
 ┃                                        ┃┃                                ┃
 ┃                                        ┃┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ┃                                        ┃
@@ -103,12 +103,12 @@ Flash Cartridge is never removed, Link Cable established connection to device wi
 ┃       Cartridge  Status:     ✔         ┃┃                                ┃
 ┃                                        ┃┃     Press Button to:           ┃
 ┃          Press Button to:              ┃┃        A: Backup SAVE          ┃
-┃                                        ┃┃        B: Restore SAVE         ┃
-┃          A: Backup SAVE from           ┃┃    Start: Backup ROM           ┃
-┃             Worker Cartridge           ┃┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┃             A: Backup SAVE             ┃┃        B: Restore SAVE         ┃
+┃             B: Restore SAVE            ┃┃    Start: Backup ROM           ┃
+┃                                        ┃┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ┃                                        ┃
-┃          B: Restore SAVE to            ┃
-┃             Worker Cartridge           ┃
+┃                                        ┃
+┃                                        ┃
 ┃                                        ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
