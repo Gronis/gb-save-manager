@@ -43,9 +43,9 @@ int main(int argc, char **argv) {
 			}
 		}
 		fclose(f);
+		size--;
 
-
-		for (; size != -1 && (bytes[size] == 0 || bytes[size] == 0xFF); --size);
+		for (; size != -1 && (bytes[size] == 0xFF); --size);
 		size++;
 
 		char* var_name = argv[2];
