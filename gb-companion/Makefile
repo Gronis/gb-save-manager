@@ -43,7 +43,8 @@ RAM1			:=	0xD000
 ###############################################################################
 PROJECTNAME		:=	gb-companion
 CODE_LOC		:=	$(VRAM0)
-CODE_OFFSET		:=	0x0500        # Leave some space for graphics
+CODE_OFFSET		:=	0x0340  # Leave space for gfx, expand if more gxf is needed
+STACK_PTR		:=  0x9800
 DATA_OFFSET		:=  0x1000
 OUTPUT			:=	.
 
@@ -67,7 +68,7 @@ LDFLAGS			:=	-mjwx -m \
 					-b _CODE=$(CODE_LOC)+$(CODE_OFFSET) \
 					-b _DATA=$(CODE_LOC)+$(DATA_OFFSET) \
 					-b _ENTRYPOINT=$(CODE_LOC)+0x100 \
-					-g _STACK_PTR=$(CODE_LOC)+$(CODE_OFFSET)
+					-g _STACK_PTR=$(STACK_PTR)
 
 FXFLAGS			:=	-C -p 0 -r 0 -t GBCSAVEMANAGER -v
 
@@ -87,14 +88,14 @@ BUILD_DIR		:=	$(OUTPUT)/$(PROJECTNAME)
 OBJS			:=	$(SOURCES:.c=.rel) $(ASSEMBLY:.asm=.rel)
 OBJS			:=	$(foreach file,$(OBJS), $(BUILD_DIR)/$(notdir $(file)))
 IHX				:=	$(BIN:.gbc=.ihx)
+BITMAPS			:=  $(foreach file,$(BITMAPS), $(BUILD_DIR)/$(notdir $(file)))
 ASSETS			:=	$(BITMAPS:.png=_bin.h)
-ASSETS			:=	$(foreach file,$(ASSETS), $(BUILD_DIR)/$(notdir $(file)))
 
 ###############################################################################
 #	Build rules
 ###############################################################################
 
-all: $(BUILD_DIR) $(BUILD_DIR)/$(BIN:.gbc=.fixed.gbc)
+all: $(BUILD_DIR) $(BUILD_DIR)/$(BIN:.gbc=.fixed.gbc) $(ASSETS) $(BITMAPS)
 
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)

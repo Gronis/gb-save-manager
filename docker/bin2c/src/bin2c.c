@@ -58,6 +58,7 @@ int main(int argc, char **argv) {
 		// fprintf(stderr, "Using name: %s.\n", var_name);
 
 		printf("#define %s_length %u\n",var_name,size);
+		printf("#ifdef INCLUDE_BIN_DATA\n");
 		printf("const uint8_t %s[%s_length] = {\n    ",var_name, var_name);
 
 		for (size_t i = 0; i < size; ++i){
@@ -70,6 +71,7 @@ int main(int argc, char **argv) {
 
 		free(bytes);
 		printf("\n};\n");
+		printf("#endif //INCLUDE_BIN_DATA\n");
 	}
 
 }
