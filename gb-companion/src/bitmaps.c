@@ -3,7 +3,19 @@
 
 #include "text_role_bin.h"
 
-const tile_bitmap_t smiley_bitmap = {
+#define SINGLE_TILE_LEN             (1)
+
+#define EMPTY_TILE_B                (0)
+#define EMPTY_TILE_E                ((EMPTY_TILE_B) + (SINGLE_TILE_LEN))
+
+#define SMILEY_TILE_B               (EMPTY_TILE_E)
+#define SMILEY_TILE_E               ((SMILEY_TILE_B) + (SINGLE_TILE_LEN))
+
+#define TEXT_ROLE_B                 (SMILEY_TILE_E)
+#define TEXT_ROLE_E                 ((TEXT_ROLE_B) + (text_role_length / 8))
+
+
+const tile_bitmap_t smiley = {
     {// line:
         0x3C,  //   ####
         0x42,  //  #    #
@@ -17,8 +29,8 @@ const tile_bitmap_t smiley_bitmap = {
 };
 
 const range_t tiles[] = {
-    { 0, 0 + 1 },
-    { 1, 1 + 1 },
-    { 0, 0 + 1 },
-    { 3, 3 + text_role_length / 8 },
+    { EMPTY_TILE_B,         EMPTY_TILE_E},
+    { SMILEY_TILE_B,        SMILEY_TILE_E},
+    { EMPTY_TILE_B,         EMPTY_TILE_E},
+    { TEXT_ROLE_B,          TEXT_ROLE_E},
 };

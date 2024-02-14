@@ -7,14 +7,6 @@
 #include "graphics.h"
 #include "bitmaps.h"
 
-const uint8_t corners_x[] = {
-    0, SCREEN_COORDINATE_TILE_WIDTH, SCREEN_COORDINATE_TILE_WIDTH, 0
-};
-
-const uint8_t corners_y[] = {
-    0, 0, SCREEN_COORDINATE_TILE_HEIGHT, SCREEN_COORDINATE_TILE_HEIGHT
-};
-
 #ifdef VRAM_VERSION
 #include "ram_code_gbc.h"
 void copy_ram_functions_to_ram(void) { 
@@ -34,9 +26,17 @@ void copy_ram_functions_to_ram(void) {
 void copy_ram_functions_to_ram(void) {}
 #endif 
 
+const uint8_t corners_x[] = {
+    0, SCREEN_COORDINATE_TILE_WIDTH, SCREEN_COORDINATE_TILE_WIDTH, 0
+};
+
+const uint8_t corners_y[] = {
+    0, 0, SCREEN_COORDINATE_TILE_HEIGHT, SCREEN_COORDINATE_TILE_HEIGHT
+};
+
 void main(void) {
-    rasterize_tiles(&smiley, &smiley_bitmap);
-    rasterize_tiles(&TEXT_ROLE, (tile_bitmap_t*)&text_role);
+    rasterize_tiles(&smiley_tile, smiley_bitmap);
+    rasterize_tiles(&text_role_tile, text_role_bitmap);
     {
         uint8_t tile_id = 1;
         bool did_write_to_ram = false;
