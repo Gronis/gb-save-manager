@@ -50,7 +50,7 @@ start:
     ld  (#0xFF4C),a                 ; set as GBC+DMG
 
 init_palette:                       ; load gbc palette colors (0: black, 1: white, 2: black, 3: white)
-    ld a, #0xAA                     ; DMG palette (%11001100 => 3: opaque 2: transparent, 1: opaque, 0: transparent)
+    ld a, #0xCC                     ; DMG palette (%11001100 => 3: opaque 2: transparent, 1: opaque, 0: transparent)
     ld (rBGP), a
     
     ld  a, #0x80                    ; enable auto increment when loading gbc palette
