@@ -48,7 +48,7 @@ const range_t tiles[] = {
     { 0, 0 + 1 },
     { 1, 1 + 1 },
     { 0, 0 + 1 },
-    { 3, 3 + 1 + text_role_length / 8 },
+    { 3, 3 + text_role_length / 8 },
 };
 
 #define empty (tiles[0])
