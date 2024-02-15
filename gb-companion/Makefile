@@ -77,7 +77,10 @@ FXFLAGS			:=	-C -p 0 -r 0 -t GBSAVEMANAGER -v
 #	 Files used to build
 ###############################################################################
 BIN				:=	$(PROJECTNAME).gbc
-SOURCES			:=	$(wildcard src/*.c)
+
+# c-files must be sorted in alphabetic order for correct memory locations 
+# during link step
+SOURCES			:=	$(sort $(wildcard src/*.c))
 HEADERS			:=	$(wildcard src/*.h)
 ASSEMBLY		:=	$(wildcard src/*.asm)
 BITMAPS			:=	$(wildcard assets/*.png)
