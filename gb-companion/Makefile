@@ -43,7 +43,7 @@ RAM1			:=	0xD000
 ###############################################################################
 PROJECTNAME		:=	gb-companion
 CODE_LOC		:=	$(VRAM0)
-CODE_OFFSET		:=	0x02D0  # Leave space for gfx, expand if more gxf is needed
+CODE_OFFSET		:=	0x02C4  # Leave space for gfx, expand if more gxf is needed
 STACK_PTR		:=  0x9800
 DATA_OFFSET		:=  0x1000
 OUTPUT			:=	.
@@ -65,12 +65,13 @@ ASFLAGS			:=	-l -plosgffw -Isrc -I$(OUTPUT)/$(PROJECTNAME)
 LDFLAGS			:=	-mjwx -m \
 					-b _RAM_LOC=$(RAM0) \
 					-b _CODE_LOC=$(CODE_LOC) \
+					-b _INIT_LOC=$(CODE_LOC)+0x150 \
 					-b _CODE=$(CODE_LOC)+$(CODE_OFFSET) \
 					-b _DATA=$(CODE_LOC)+$(DATA_OFFSET) \
 					-b _ENTRYPOINT=$(CODE_LOC)+0x100 \
 					-g _STACK_PTR=$(STACK_PTR)
 
-FXFLAGS			:=	-C -p 0 -r 0 -t GBCSAVEMANAGER -v
+FXFLAGS			:=	-C -p 0 -r 0 -t GBSAVEMANAGER -v
 
 ###############################################################################
 #	 Files used to build
@@ -95,7 +96,7 @@ ASSETS			:=	$(BITMAPS:.png=_bin.h)
 #	Build rules
 ###############################################################################
 
-all: $(BUILD_DIR) $(BUILD_DIR)/$(BIN:.gbc=.fixed.gbc) $(ASSETS) $(BITMAPS)
+all: $(BUILD_DIR) $(BUILD_DIR)/$(BIN:.gbc=.fixed.gbc) $(ASSETS)
 
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)

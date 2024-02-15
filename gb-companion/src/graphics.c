@@ -3,43 +3,44 @@
 #include "hardware.h"
 
 void rasterize_all_bitmap_tiles_to_VRAM(void) {
-
-    rasterize_tiles(text_a_tile,               (tile_bitmap_t*)&text_a);
-    rasterize_tiles(text_b_tile,               (tile_bitmap_t*)&text_b);
-    rasterize_tiles(text_backing_up_tile,      (tile_bitmap_t*)&text_backing_up);
-    rasterize_tiles(text_backup_tile,          (tile_bitmap_t*)&text_backup);
-    rasterize_tiles(text_cartridge_tile,       (tile_bitmap_t*)&text_cartridge);
-    rasterize_tiles(text_connect_gbc_tile,     (tile_bitmap_t*)&text_connect_gbc);
-    rasterize_tiles(text_false_tile,           (tile_bitmap_t*)&text_false);
-    rasterize_tiles(text_fast_tile,            (tile_bitmap_t*)&text_fast);
-    rasterize_tiles(text_leader_tile,          (tile_bitmap_t*)&text_leader);
-    rasterize_tiles(text_link_cable_tile,      (tile_bitmap_t*)&text_link_cable);
-    rasterize_tiles(text_mode_tile,            (tile_bitmap_t*)&text_mode);
-    rasterize_tiles(text_or_remove_the_tile,   (tile_bitmap_t*)&text_or_remove_the);
-    rasterize_tiles(text_press_button_to_tile, (tile_bitmap_t*)&text_press_button_to);
-    rasterize_tiles(text_restore_tile,         (tile_bitmap_t*)&text_restore);
-    rasterize_tiles(text_role_tile,            (tile_bitmap_t*)&text_role);
-    rasterize_tiles(text_rom_tile,             (tile_bitmap_t*)&text_rom);
-    rasterize_tiles(text_save_tile,            (tile_bitmap_t*)&text_save);
-    rasterize_tiles(text_slow_tile,            (tile_bitmap_t*)&text_slow);
-    rasterize_tiles(text_start_tile,           (tile_bitmap_t*)&text_start);
-    rasterize_tiles(text_state_tile,           (tile_bitmap_t*)&text_state);
-    rasterize_tiles(text_to_change_role_tile,  (tile_bitmap_t*)&text_to_change_role);
-    rasterize_tiles(text_true_tile,            (tile_bitmap_t*)&text_true);
-    rasterize_tiles(text_waiting_for_tile,     (tile_bitmap_t*)&text_waiting_for);
-    rasterize_tiles(text_worker_tile,          (tile_bitmap_t*)&text_worker);
+    rasterize_tiles(((range_t*)(&tiles + text_a_tile_index)),               (tile_bitmap_t*)&text_a);
+    rasterize_tiles(((range_t*)(&tiles + text_b_tile_index)),               (tile_bitmap_t*)&text_b);
+    rasterize_tiles(((range_t*)(&tiles + text_backing_up_tile_index)),      (tile_bitmap_t*)&text_backing_up);
+    rasterize_tiles(((range_t*)(&tiles + text_backup_tile_index)),          (tile_bitmap_t*)&text_backup);
+    rasterize_tiles(((range_t*)(&tiles + text_cartridge_tile_index)),       (tile_bitmap_t*)&text_cartridge);
+    rasterize_tiles(((range_t*)(&tiles + text_connect_gbc_tile_index)),     (tile_bitmap_t*)&text_connect_gbc);
+    rasterize_tiles(((range_t*)(&tiles + text_false_tile_index)),           (tile_bitmap_t*)&text_false);
+    rasterize_tiles(((range_t*)(&tiles + text_fast_tile_index)),            (tile_bitmap_t*)&text_fast);
+    rasterize_tiles(((range_t*)(&tiles + text_insert_gbc_tile_index)),      (tile_bitmap_t*)&text_insert_gbc);
+    rasterize_tiles(((range_t*)(&tiles + text_leader_tile_index)),          (tile_bitmap_t*)&text_leader);
+    rasterize_tiles(((range_t*)(&tiles + text_link_cable_tile_index)),      (tile_bitmap_t*)&text_link_cable);
+    rasterize_tiles(((range_t*)(&tiles + text_mode_tile_index)),            (tile_bitmap_t*)&text_mode);
+    rasterize_tiles(((range_t*)(&tiles + text_or_remove_the_tile_index)),   (tile_bitmap_t*)&text_or_remove_the);
+    rasterize_tiles(((range_t*)(&tiles + text_press_button_to_tile_index)), (tile_bitmap_t*)&text_press_button_to);
+    rasterize_tiles(((range_t*)(&tiles + text_restore_tile_index)),         (tile_bitmap_t*)&text_restore);
+    rasterize_tiles(((range_t*)(&tiles + text_role_tile_index)),            (tile_bitmap_t*)&text_role);
+    rasterize_tiles(((range_t*)(&tiles + text_rom_tile_index)),             (tile_bitmap_t*)&text_rom);
+    rasterize_tiles(((range_t*)(&tiles + text_save_tile_index)),            (tile_bitmap_t*)&text_save);
+    rasterize_tiles(((range_t*)(&tiles + text_slow_tile_index)),            (tile_bitmap_t*)&text_slow);
+    rasterize_tiles(((range_t*)(&tiles + text_start_tile_index)),           (tile_bitmap_t*)&text_start);
+    rasterize_tiles(((range_t*)(&tiles + text_state_tile_index)),           (tile_bitmap_t*)&text_state);
+    rasterize_tiles(((range_t*)(&tiles + text_to_change_role_tile_index)),  (tile_bitmap_t*)&text_to_change_role);
+    rasterize_tiles(((range_t*)(&tiles + text_true_tile_index)),            (tile_bitmap_t*)&text_true);
+    rasterize_tiles(((range_t*)(&tiles + text_waiting_for_tile_index)),     (tile_bitmap_t*)&text_waiting_for);
+    rasterize_tiles(((range_t*)(&tiles + text_worker_tile_index)),          (tile_bitmap_t*)&text_worker);
     rasterize_progress_bar_tiles();
 }
 
 void rasterize_progress_bar_tiles(void) {
+    uint8_t row = 0xFF;
     uint8_t pattern = 0;
-    for (uint8_t i = 0; i < 8; ++i){
-        pattern = (pattern >> 1) | 0x80;
+    for (uint8_t i = 0; i <= 8; ++i){
         tile_bitmap_t bitmap = { {
-            pattern, pattern, pattern, pattern,
-            pattern, pattern, pattern, pattern,
+            row, pattern, pattern, pattern,
+            pattern, pattern, pattern, row,
         }};
-        rasterize_tiles(((range_t*)(&tiles + pb_1_tile_index + i)), &bitmap);
+        rasterize_tiles(((range_t*)(&tiles + pb_0_tile_index + i)), &bitmap);
+        pattern = (pattern >> 1) | 0x80;
     }
 }
 
@@ -67,7 +68,8 @@ void rasterize_tiles(range_t* tile_index, tile_bitmap_t* tile_bitmap) {
 #define       text_connect_gbc_offset       ((text_cartridge_offset)            + (text_cartridge_length)       / 8)
 #define       text_false_offset             ((text_connect_gbc_offset)          + (text_connect_gbc_length)     / 8)
 #define       text_fast_offset              ((text_false_offset)                + (text_false_length)           / 8)
-#define       text_leader_offset            ((text_fast_offset)                 + (text_fast_length)            / 8)
+#define       text_insert_gbc_offset        ((text_fast_offset)                 + (text_fast_length)            / 8)
+#define       text_leader_offset            ((text_insert_gbc_offset)           + (text_insert_gbc_length)      / 8)
 #define       text_link_cable_offset        ((text_leader_offset)               + (text_leader_length)          / 8)
 #define       text_mode_offset              ((text_link_cable_offset)           + (text_link_cable_length)      / 8)
 #define       text_or_remove_the_offset     ((text_mode_offset)                 + (text_mode_length)            / 8)
@@ -84,16 +86,17 @@ void rasterize_tiles(range_t* tile_index, tile_bitmap_t* tile_bitmap) {
 #define       text_waiting_for_offset       ((text_true_offset)                 + (text_true_length)            / 8)
 #define       text_worker_offset            ((text_waiting_for_offset)          + (text_waiting_for_length)     / 8)
 
-#define       pb1_offset                    ((text_worker_offset)               + (text_worker_length)          / 8)
-#define       pb2_offset                    ((pb1_offset)                       + (1))
-#define       pb3_offset                    ((pb2_offset)                       + (1))
-#define       pb4_offset                    ((pb3_offset)                       + (1))
-#define       pb5_offset                    ((pb4_offset)                       + (1))
-#define       pb6_offset                    ((pb5_offset)                       + (1))
-#define       pb7_offset                    ((pb6_offset)                       + (1))
-#define       pb8_offset                    ((pb7_offset)                       + (1))
+#define       pb_0_offset                    ((text_worker_offset)               + (text_worker_length)          / 8)
+#define       pb_1_offset                    ((pb_0_offset)                       + (1))
+#define       pb_2_offset                    ((pb_1_offset)                       + (1))
+#define       pb_3_offset                    ((pb_2_offset)                       + (1))
+#define       pb_4_offset                    ((pb_3_offset)                       + (1))
+#define       pb_5_offset                    ((pb_4_offset)                       + (1))
+#define       pb_6_offset                    ((pb_5_offset)                       + (1))
+#define       pb_7_offset                    ((pb_6_offset)                       + (1))
+#define       pb_8_offset                    ((pb_7_offset)                       + (1))
 
-#define       tiles_end                     ((pb8_offset)                       + (1))
+#define       tiles_end                     ((pb_8_offset)                       + (1))
 
 const uint8_t tiles[] = {
     empty_offset,
@@ -105,6 +108,7 @@ const uint8_t tiles[] = {
     text_connect_gbc_offset,
     text_false_offset,
     text_fast_offset,
+    text_insert_gbc_offset,
     text_leader_offset,
     text_link_cable_offset,
     text_mode_offset,
@@ -122,17 +126,23 @@ const uint8_t tiles[] = {
     text_waiting_for_offset,
     text_worker_offset,
 
-    pb1_offset,
-    pb2_offset,
-    pb3_offset,
-    pb4_offset,
-    pb5_offset,
-    pb6_offset,
-    pb7_offset,
-    pb8_offset,
+    pb_0_offset,
+    pb_1_offset,
+    pb_2_offset,
+    pb_3_offset,
+    pb_4_offset,
+    pb_5_offset,
+    pb_6_offset,
+    pb_7_offset,
+    pb_8_offset,
 
     tiles_end
 };
+
+void set_tiles_row(uint8_t x, uint8_t y, const range_t tiles) {
+    uint8_t width = tiles.end - tiles.start;
+    set_tiles_row_repeat((x), (y), tiles, width);
+}
 
 void set_tiles_row_repeat(uint8_t x, uint8_t y, range_t tiles, uint8_t width) {
     x += SCREEN_COORDINATE_TILE_X;
@@ -144,5 +154,19 @@ void set_tiles_row_repeat(uint8_t x, uint8_t y, range_t tiles, uint8_t width) {
         if (tile_index >= tiles.end) {
             tile_index = tiles.start;
         }
+    }
+}
+
+void render_message(message_list_t* messages) {
+    uint8_t len = messages->len;
+    messages++;
+    for(uint8_t i = 0; i < len; ++i){
+        message_t* m = (message_t*)(messages) + i;
+        range_t* range = ((range_t*)(&tiles + m->message_tile_index));
+        if(len > 6){
+            flush_screen();
+        }
+        set_tiles_row(m->x, m->y, *range);
+        flush_screen();
     }
 }

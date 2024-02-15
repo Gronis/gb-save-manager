@@ -5,6 +5,8 @@
 #include "transfer.h"
 #include "start.h"
 #include "graphics.h"
+#include "graphics_init.h"
+#include "bitmaps.h"
 
 // TODO: Move this to its own source file
 ////////////////////////////////////////////////////////////////////
@@ -38,8 +40,13 @@ const uint8_t corners_y[] = {
 };
 
 void main(void) {
-    render_header();
+    render_message_no_screen_flush_call_only_before_rasterize(message_header);
     rasterize_all_bitmap_tiles_to_VRAM();
+    render_message(message_choose_action);
+    render_message(message_role_leader);
+    render_message(message_cartridge_state_ok);
+    render_message(message_link_cable_state_ok);
+
     {
         uint8_t tile_id = 1;
         bool did_write_to_ram = false;
@@ -63,16 +70,17 @@ void main(void) {
                 flush_screen();
             }
             if(!did_write_to_ram){
-                *((uint8_t*)_RAM+100) = 0x44;
-                if (*((uint8_t*)_RAM+100) == 0x44) {
+                *((uint8_t*)_RAM+400) = 0x44;
+                if (*((uint8_t*)_RAM+400) == 0x44) {
                     did_write_to_ram = true;
                     copy_ram_functions_to_ram();
                     run_in_parallel_to_screen(ram_tile_to_checker);
+                    // ram_tile_to_checker();
                 }
             }
             // If RAM is unreadable, filcker slow, otherwise filcker fast.
             // RAM is unreadable when GBA is in GBC mode while no GBC cartridge is inserted. 
-            if (*((uint8_t*)_RAM+100) != 0x44) {
+            if (*((uint8_t*)_RAM+400) != 0x44) {
                 // wait for 24 frames
                 for (uint8_t i = 0; i < 12; ++i){
                     flush_screen();
