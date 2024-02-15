@@ -53,4 +53,6 @@ extern const uint8_t text_true[];
 extern const uint8_t text_waiting_for[];
 extern const uint8_t text_worker[];
 
+void render_header(void);
+
 #endif // BITMAPS_H

@@ -34,10 +34,11 @@ const uint8_t corners_x[] = {
 };
 
 const uint8_t corners_y[] = {
-    0, 0, SCREEN_COORDINATE_TILE_HEIGHT, SCREEN_COORDINATE_TILE_HEIGHT
+    SCREEN_COORDINATE_TILE_HEIGHT - 1, 0, SCREEN_COORDINATE_TILE_HEIGHT, SCREEN_COORDINATE_TILE_HEIGHT
 };
 
 void main(void) {
+    render_header();
     rasterize_all_bitmap_tiles_to_VRAM();
     {
         uint8_t tile_id = 1;

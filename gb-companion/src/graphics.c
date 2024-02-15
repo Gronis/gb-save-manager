@@ -2,7 +2,8 @@
 #include "bitmaps.h"
 #include "hardware.h"
 
-void rasterize_all_bitmap_tiles_to_VRAM(void){
+void rasterize_all_bitmap_tiles_to_VRAM(void) {
+
     rasterize_tiles(text_a_tile,               (tile_bitmap_t*)&text_a);
     rasterize_tiles(text_b_tile,               (tile_bitmap_t*)&text_b);
     rasterize_tiles(text_backing_up_tile,      (tile_bitmap_t*)&text_backing_up);
@@ -27,6 +28,19 @@ void rasterize_all_bitmap_tiles_to_VRAM(void){
     rasterize_tiles(text_true_tile,            (tile_bitmap_t*)&text_true);
     rasterize_tiles(text_waiting_for_tile,     (tile_bitmap_t*)&text_waiting_for);
     rasterize_tiles(text_worker_tile,          (tile_bitmap_t*)&text_worker);
+    rasterize_progress_bar_tiles();
+}
+
+void rasterize_progress_bar_tiles(void) {
+    uint8_t pattern = 0;
+    for (uint8_t i = 0; i < 8; ++i){
+        pattern = (pattern >> 1) | 0x80;
+        tile_bitmap_t bitmap = { {
+            pattern, pattern, pattern, pattern,
+            pattern, pattern, pattern, pattern,
+        }};
+        rasterize_tiles(((range_t*)(&tiles + pb_1_tile_index + i)), &bitmap);
+    }
 }
 
 void rasterize_tiles(range_t* tile_index, tile_bitmap_t* tile_bitmap) {
@@ -69,7 +83,17 @@ void rasterize_tiles(range_t* tile_index, tile_bitmap_t* tile_bitmap) {
 #define       text_true_offset              ((text_to_change_role_offset)       + (text_to_change_role_length)  / 8)
 #define       text_waiting_for_offset       ((text_true_offset)                 + (text_true_length)            / 8)
 #define       text_worker_offset            ((text_waiting_for_offset)          + (text_waiting_for_length)     / 8)
-#define       tiles_end                     ((text_worker_offset)               + (text_worker_length)          / 8)
+
+#define       pb1_offset                    ((text_worker_offset)               + (text_worker_length)          / 8)
+#define       pb2_offset                    ((pb1_offset)                       + (1))
+#define       pb3_offset                    ((pb2_offset)                       + (1))
+#define       pb4_offset                    ((pb3_offset)                       + (1))
+#define       pb5_offset                    ((pb4_offset)                       + (1))
+#define       pb6_offset                    ((pb5_offset)                       + (1))
+#define       pb7_offset                    ((pb6_offset)                       + (1))
+#define       pb8_offset                    ((pb7_offset)                       + (1))
+
+#define       tiles_end                     ((pb8_offset)                       + (1))
 
 const uint8_t tiles[] = {
     empty_offset,
@@ -97,10 +121,20 @@ const uint8_t tiles[] = {
     text_true_offset,
     text_waiting_for_offset,
     text_worker_offset,
+
+    pb1_offset,
+    pb2_offset,
+    pb3_offset,
+    pb4_offset,
+    pb5_offset,
+    pb6_offset,
+    pb7_offset,
+    pb8_offset,
+
     tiles_end
 };
 
-void set_tiles_row_repeat(uint8_t x, uint8_t y, const range_t tiles, uint8_t width) {
+void set_tiles_row_repeat(uint8_t x, uint8_t y, range_t tiles, uint8_t width) {
     x += SCREEN_COORDINATE_TILE_X;
     y += SCREEN_COORDINATE_TILE_Y;
     uint8_t tile_index = tiles.start;
