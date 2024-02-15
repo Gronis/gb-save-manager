@@ -1,5 +1,6 @@
 #include "transfer.h"
 #include "hardware.h"
+#include "graphics.h"
 
 // This will ensure code is executable from RAM
 #include "area_ram.h"
@@ -9,14 +10,9 @@ typedef struct {
     uint8_t line[8];
 } tile_t;
 
-void ram_rasterize_tile(uint8_t id, tile_t* tile) {
-    uint16_t _id = ((uint16_t)id) * 16;
-    for (uint8_t i = 0; i < 8; i++){
-        uint8_t line = tile->line[i];
-        _VRAM[_id] = line;
-        // Skip second byte (colors 0/2). Can be any value because of palette
-        _id+= 2; 
-    }
+void wait_for_vblank_or_link_cable() {
+    bool done;
+    while (!(done = *rLY == 144));
 }
 
 #define CARTRIDGE_TITLE ((char*)(0x0134))
@@ -53,6 +49,8 @@ const tile_t checker = {
 };
 void ram_tile_to_checker() {
     if(is_leader_cartridge_inserted()){
-        ram_rasterize_tile(0, &checker);
+        range_t* range = ((range_t*)(&tiles + pb_8_tile_index));
+        wait_for_vblank_or_link_cable();
+        set_tiles_row_repeat(9, 0, *range, 1);
     }
 }

@@ -109,6 +109,12 @@ $(BUILD_DIR)/$(BIN): $(BUILD_DIR)/$(IHX)
 $(BUILD_DIR)/ram_code.gbc: $(BUILD_DIR)/ram_code.ihx
 	$(BN) -Z -s $(RAM1) -o $(RAM0) $< $@
 
+$(BUILD_DIR)/$(IHX): $(OBJS)
+	$(LD) $(LDFLAGS) -i $@ $^ -e
+
+$(BUILD_DIR)/ram_code.ihx: $(OBJS)
+	$(LD) $(LDFLAGS) -g _main=0x0100 -i $@ $^ -e
+
 $(BUILD_DIR)/%.rel: src/%.c $(HEADERS) $(ASSETS) Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -117,9 +123,6 @@ $(BUILD_DIR)/%.rel: src/%.asm $(ASSETS) Makefile
 
 $(BUILD_DIR)/%.png: assets/%.png
 	@cp $< $@
-
-%.ihx:
-	$(LD) $(LDFLAGS) -i $@ $^ -e
 
 %_gbc.h: %.gbc
 	bin2c $< $(notdir $(basename $<)) > $(basename $@).h
@@ -137,12 +140,6 @@ $(BUILD_DIR)/%.png: assets/%.png
 ###############################################################################
 #	Specific dependencies for certain files
 ###############################################################################
-
-$(BUILD_DIR)/$(IHX): \
-	$(OBJS)
-
-$(BUILD_DIR)/ram_code.ihx: \
-	$(BUILD_DIR)/transfer.rel $(BUILD_DIR)/definitions.rel
 
 $(BUILD_DIR)/main.rel: \
 	$(BUILD_DIR)/ram_code_gbc.h
