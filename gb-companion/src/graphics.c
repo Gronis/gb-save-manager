@@ -119,18 +119,20 @@ void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void) {
 }
 
 void rasterize_progress_bar_tiles(void) {
-    uint8_t row = 0xFF;
-    uint8_t pattern = 0x01;
+    uint8_t row = 0x80;
+    uint8_t pattern = 0x80;
     for (uint8_t i = 0; i < 10; ++i){
         tile_bitmap_t bitmap = { {
             row, pattern, pattern, pattern,
             pattern, pattern, pattern, row,
         }};
         rasterize_tiles(((range_t*)(&tiles + pb_end_tile_index + i)), &bitmap);
-        pattern = (pattern >> 1);
-        if (i != 0){
-            pattern = pattern | 0x80;
+        if (i == 0){
+            pattern = 0;
+        } else {
+            pattern = (pattern >> 1) | 0x80;
         }
+        row = 0xFF;
     }
 }
 
@@ -175,6 +177,14 @@ void render_message(message_list_t* messages) {
         set_tiles_row(m->x, m->y, *range);
         flush_screen();
     }
+}
+
+void update_progress_bar(uint8_t progress){
+    uint8_t x = 3 + progress / 8;
+    uint8_t y = 6;
+    uint8_t tile_index = pb_1_tile_index + (progress & 7);
+    range_t* range = ((range_t*)(&tiles + tile_index));
+    set_tiles_row(x, y, *range);
 }
 
 #define clear_arr_start ((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 4) * 32)

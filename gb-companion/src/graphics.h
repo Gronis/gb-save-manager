@@ -49,6 +49,9 @@ void set_tiles_row_repeat(uint8_t x, uint8_t y, const range_t tiles, uint8_t wid
 // Render all messages in list. Note: messages should be placed consecutivly in memory
 void render_message(message_list_t* messages);
 
+// Update progress bar graphics, min: 1, max: 72
+void update_progress_bar(uint8_t progress);
+
 void clear_message(void);
 void clear_message_from_row(uint8_t row);
 
