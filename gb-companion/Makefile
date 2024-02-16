@@ -43,7 +43,7 @@ RAM1			:=	0xD000
 ###############################################################################
 PROJECTNAME		:=	gb-companion
 CODE_LOC		:=	$(VRAM0)
-CODE_OFFSET		:=	0x02A4  # Leave space for gfx, expand if more gxf is needed
+CODE_OFFSET		:=	0x0260  # Leave space for gfx, expand if more gxf is needed
 STACK_PTR		:=  0x9800
 DATA_OFFSET		:=  0x1000
 OUTPUT			:=	.

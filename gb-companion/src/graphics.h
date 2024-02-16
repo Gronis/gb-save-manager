@@ -38,7 +38,7 @@ void rasterize_tiles(range_t* tile_index, tile_bitmap_t* tile_bitmap);
 
 // Rasterize all tiles in bitmaps.h to VRAM. This is placed in memory so that it
 // overwrites the old locations to reuse memory that is no longer needed.
-void rasterize_all_bitmap_tiles_to_VRAM(void);
+void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void);
 
 //
 void set_tiles_row(uint8_t x, uint8_t y, const range_t tiles);
@@ -50,6 +50,7 @@ void set_tiles_row_repeat(uint8_t x, uint8_t y, const range_t tiles, uint8_t wid
 void render_message(message_list_t* messages);
 
 void clear_message(void);
+void clear_message_from_row(uint8_t row);
 
 extern const uint8_t tiles[];
 
@@ -80,7 +81,9 @@ extern const uint8_t tiles[];
 #define text_waiting_for_tile_index     ((text_true_tile_index) + 1)
 #define text_worker_tile_index          ((text_waiting_for_tile_index) + 1)
 
-#define pb_0_tile_index                 ((text_worker_tile_index) + 1)
+#define pb_end_tile_index               ((text_worker_tile_index) + 1)
+#define pb_0_tile_index                 ((pb_end_tile_index) + 1)
+#define pb_start_tile_index             ((pb_0_tile_index) + 1)
 #define pb_1_tile_index                 ((pb_0_tile_index) + 1)
 #define pb_2_tile_index                 ((pb_1_tile_index) + 1)
 #define pb_3_tile_index                 ((pb_2_tile_index) + 1)

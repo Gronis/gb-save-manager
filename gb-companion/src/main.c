@@ -48,7 +48,8 @@ const uint8_t CORPORATE_LOGO[] = {
 
 void main(void) {
     render_message_no_screen_flush_call_only_before_rasterize(message_header);
-    rasterize_all_bitmap_tiles_to_VRAM();
+    rasterize_all_bitmap_tiles_to_VRAM_call_only_once();
+    render_message(message_progress_bar);
     {
         bool did_write_to_ram = false;
         bool state_changed = true;

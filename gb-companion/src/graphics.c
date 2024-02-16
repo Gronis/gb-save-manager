@@ -2,7 +2,94 @@
 #include "bitmaps.h"
 #include "hardware.h"
 
-void rasterize_all_bitmap_tiles_to_VRAM(void) {
+
+#define       empty_length                  (8)
+#define       empty_offset                  (0)
+#define       text_a_offset                 ((empty_offset)                     + (empty_length)                / 8)
+#define       text_b_offset                 ((text_a_offset)                    + (text_a_length)               / 8)
+#define       text_backing_up_offset        ((text_b_offset)                    + (text_b_length)               / 8)
+#define       text_backup_offset            ((text_backing_up_offset)           + (text_backing_up_length)      / 8)
+#define       text_cartridge_offset         ((text_backup_offset)               + (text_backup_length)          / 8)
+#define       text_connect_gbc_offset       ((text_cartridge_offset)            + (text_cartridge_length)       / 8)
+#define       text_false_offset             ((text_connect_gbc_offset)          + (text_connect_gbc_length)     / 8)
+#define       text_fast_offset              ((text_false_offset)                + (text_false_length)           / 8)
+#define       text_insert_gbc_offset        ((text_fast_offset)                 + (text_fast_length)            / 8)
+#define       text_leader_offset            ((text_insert_gbc_offset)           + (text_insert_gbc_length)      / 8)
+#define       text_link_cable_offset        ((text_leader_offset)               + (text_leader_length)          / 8)
+#define       text_mode_offset              ((text_link_cable_offset)           + (text_link_cable_length)      / 8)
+#define       text_or_remove_the_offset     ((text_mode_offset)                 + (text_mode_length)            / 8)
+#define       text_press_button_to_offset   ((text_or_remove_the_offset)        + (text_or_remove_the_length)   / 8)
+#define       text_restore_offset           ((text_press_button_to_offset)      + (text_press_button_to_length) / 8)
+#define       text_role_offset              ((text_restore_offset)              + (text_restore_length)         / 8)
+#define       text_rom_offset               ((text_role_offset)                 + (text_role_length)            / 8)
+#define       text_save_offset              ((text_rom_offset)                  + (text_rom_length)             / 8)
+#define       text_slow_offset              ((text_save_offset)                 + (text_save_length)            / 8)
+#define       text_start_offset             ((text_slow_offset)                 + (text_slow_length)            / 8)
+#define       text_state_offset             ((text_start_offset)                + (text_start_length)           / 8)
+#define       text_to_change_role_offset    ((text_state_offset)                + (text_state_length)           / 8)
+#define       text_true_offset              ((text_to_change_role_offset)       + (text_to_change_role_length)  / 8)
+#define       text_waiting_for_offset       ((text_true_offset)                 + (text_true_length)            / 8)
+#define       text_worker_offset            ((text_waiting_for_offset)          + (text_waiting_for_length)     / 8)
+
+#define       pb_end_offset                 ((text_worker_offset)               + (text_worker_length)          / 8)
+#define       pb_0_offset                   ((pb_end_offset)                    + (1))
+#define       pb_start_offset               ((pb_0_offset)                      + (1))
+#define       pb_1_offset                   ((pb_0_offset)                      + (1))
+#define       pb_2_offset                   ((pb_1_offset)                      + (1))
+#define       pb_3_offset                   ((pb_2_offset)                      + (1))
+#define       pb_4_offset                   ((pb_3_offset)                      + (1))
+#define       pb_5_offset                   ((pb_4_offset)                      + (1))
+#define       pb_6_offset                   ((pb_5_offset)                      + (1))
+#define       pb_7_offset                   ((pb_6_offset)                      + (1))
+#define       pb_8_offset                   ((pb_7_offset)                      + (1))
+
+#define       tiles_end                     ((pb_8_offset)                      + (1))
+
+const uint8_t tiles[] = {
+    empty_offset,
+    text_a_offset,
+    text_b_offset,
+    text_backing_up_offset,
+    text_backup_offset,
+    text_cartridge_offset,
+    text_connect_gbc_offset,
+    text_false_offset,
+    text_fast_offset,
+    text_insert_gbc_offset,
+    text_leader_offset,
+    text_link_cable_offset,
+    text_mode_offset,
+    text_or_remove_the_offset,
+    text_press_button_to_offset,
+    text_restore_offset,
+    text_role_offset,
+    text_rom_offset,
+    text_save_offset,
+    text_slow_offset,
+    text_start_offset,
+    text_state_offset,
+    text_to_change_role_offset,
+    text_true_offset,
+    text_waiting_for_offset,
+    text_worker_offset,
+
+    pb_end_offset,
+    pb_0_offset,
+    pb_1_offset,
+    pb_2_offset,
+    pb_3_offset,
+    pb_4_offset,
+    pb_5_offset,
+    pb_6_offset,
+    pb_7_offset,
+    pb_8_offset,
+
+    tiles_end
+};
+
+// This function is overwritten when executing rasterize_progress_bar_tiles,
+// which fills some of this function code area with progress bar tiles
+void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void) {
     rasterize_tiles(((range_t*)(&tiles + text_a_tile_index)),               (tile_bitmap_t*)&text_a);
     rasterize_tiles(((range_t*)(&tiles + text_b_tile_index)),               (tile_bitmap_t*)&text_b);
     rasterize_tiles(((range_t*)(&tiles + text_backing_up_tile_index)),      (tile_bitmap_t*)&text_backing_up);
@@ -33,14 +120,17 @@ void rasterize_all_bitmap_tiles_to_VRAM(void) {
 
 void rasterize_progress_bar_tiles(void) {
     uint8_t row = 0xFF;
-    uint8_t pattern = 0;
-    for (uint8_t i = 0; i <= 8; ++i){
+    uint8_t pattern = 0x01;
+    for (uint8_t i = 0; i < 10; ++i){
         tile_bitmap_t bitmap = { {
             row, pattern, pattern, pattern,
             pattern, pattern, pattern, row,
         }};
-        rasterize_tiles(((range_t*)(&tiles + pb_0_tile_index + i)), &bitmap);
-        pattern = (pattern >> 1) | 0x80;
+        rasterize_tiles(((range_t*)(&tiles + pb_end_tile_index + i)), &bitmap);
+        pattern = (pattern >> 1);
+        if (i != 0){
+            pattern = pattern | 0x80;
+        }
     }
 }
 
@@ -56,88 +146,6 @@ void rasterize_tiles(range_t* tile_index, tile_bitmap_t* tile_bitmap) {
         }
     }
 }
-
-
-#define       empty_length                  (8)
-#define       empty_offset                  (0)
-#define       text_a_offset                 ((empty_offset)                     + (empty_length)                / 8)
-#define       text_b_offset                 ((text_a_offset)                    + (text_a_length)               / 8)
-#define       text_backing_up_offset        ((text_b_offset)                    + (text_b_length)               / 8)
-#define       text_backup_offset            ((text_backing_up_offset)           + (text_backing_up_length)      / 8)
-#define       text_cartridge_offset         ((text_backup_offset)               + (text_backup_length)          / 8)
-#define       text_connect_gbc_offset       ((text_cartridge_offset)            + (text_cartridge_length)       / 8)
-#define       text_false_offset             ((text_connect_gbc_offset)          + (text_connect_gbc_length)     / 8)
-#define       text_fast_offset              ((text_false_offset)                + (text_false_length)           / 8)
-#define       text_insert_gbc_offset        ((text_fast_offset)                 + (text_fast_length)            / 8)
-#define       text_leader_offset            ((text_insert_gbc_offset)           + (text_insert_gbc_length)      / 8)
-#define       text_link_cable_offset        ((text_leader_offset)               + (text_leader_length)          / 8)
-#define       text_mode_offset              ((text_link_cable_offset)           + (text_link_cable_length)      / 8)
-#define       text_or_remove_the_offset     ((text_mode_offset)                 + (text_mode_length)            / 8)
-#define       text_press_button_to_offset   ((text_or_remove_the_offset)        + (text_or_remove_the_length)   / 8)
-#define       text_restore_offset           ((text_press_button_to_offset)      + (text_press_button_to_length) / 8)
-#define       text_role_offset              ((text_restore_offset)              + (text_restore_length)         / 8)
-#define       text_rom_offset               ((text_role_offset)                 + (text_role_length)            / 8)
-#define       text_save_offset              ((text_rom_offset)                  + (text_rom_length)             / 8)
-#define       text_slow_offset              ((text_save_offset)                 + (text_save_length)            / 8)
-#define       text_start_offset             ((text_slow_offset)                 + (text_slow_length)            / 8)
-#define       text_state_offset             ((text_start_offset)                + (text_start_length)           / 8)
-#define       text_to_change_role_offset    ((text_state_offset)                + (text_state_length)           / 8)
-#define       text_true_offset              ((text_to_change_role_offset)       + (text_to_change_role_length)  / 8)
-#define       text_waiting_for_offset       ((text_true_offset)                 + (text_true_length)            / 8)
-#define       text_worker_offset            ((text_waiting_for_offset)          + (text_waiting_for_length)     / 8)
-
-#define       pb_0_offset                    ((text_worker_offset)               + (text_worker_length)          / 8)
-#define       pb_1_offset                    ((pb_0_offset)                       + (1))
-#define       pb_2_offset                    ((pb_1_offset)                       + (1))
-#define       pb_3_offset                    ((pb_2_offset)                       + (1))
-#define       pb_4_offset                    ((pb_3_offset)                       + (1))
-#define       pb_5_offset                    ((pb_4_offset)                       + (1))
-#define       pb_6_offset                    ((pb_5_offset)                       + (1))
-#define       pb_7_offset                    ((pb_6_offset)                       + (1))
-#define       pb_8_offset                    ((pb_7_offset)                       + (1))
-
-#define       tiles_end                     ((pb_8_offset)                       + (1))
-
-const uint8_t tiles[] = {
-    empty_offset,
-    text_a_offset,
-    text_b_offset,
-    text_backing_up_offset,
-    text_backup_offset,
-    text_cartridge_offset,
-    text_connect_gbc_offset,
-    text_false_offset,
-    text_fast_offset,
-    text_insert_gbc_offset,
-    text_leader_offset,
-    text_link_cable_offset,
-    text_mode_offset,
-    text_or_remove_the_offset,
-    text_press_button_to_offset,
-    text_restore_offset,
-    text_role_offset,
-    text_rom_offset,
-    text_save_offset,
-    text_slow_offset,
-    text_start_offset,
-    text_state_offset,
-    text_to_change_role_offset,
-    text_true_offset,
-    text_waiting_for_offset,
-    text_worker_offset,
-
-    pb_0_offset,
-    pb_1_offset,
-    pb_2_offset,
-    pb_3_offset,
-    pb_4_offset,
-    pb_5_offset,
-    pb_6_offset,
-    pb_7_offset,
-    pb_8_offset,
-
-    tiles_end
-};
 
 void set_tiles_row(uint8_t x, uint8_t y, const range_t tiles) {
     uint8_t width = tiles.end - tiles.start;
@@ -181,8 +189,12 @@ const uint8_t clear_arr[] = {
     (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 15 + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 7) * 32 - clear_arr_start),
 };
 
-void clear_message(void) {
-    for (uint8_t r = 0; r < 8; r+= 2){
+void clear_message() {
+    clear_message_from_row(0);
+}
+
+void clear_message_from_row(uint8_t row) {
+    for (uint8_t r = row; r < 8; r+= 2){
         for (uint8_t s = clear_arr[r], e = clear_arr[r + 1]; s != e; ++s) {
             *(_SCRN1 + s + clear_arr_start) = 0;
         }
