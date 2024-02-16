@@ -49,6 +49,8 @@ void set_tiles_row_repeat(uint8_t x, uint8_t y, const range_t tiles, uint8_t wid
 // Render all messages in list. Note: messages should be placed consecutivly in memory
 void render_message(message_list_t* messages);
 
+void clear_message(void);
+
 extern const uint8_t tiles[];
 
 #define empty_tile_index                (0)

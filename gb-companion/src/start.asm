@@ -152,8 +152,11 @@ hram_run_in_parallel_to_screen:
     ld (rAppSP), sp                                     ; Save the stack pointer, since we have
     ld sp, #_HRAM_STACK_PTR                             ; to use HRAM for stack while LCD is on
 hram_enable_screen:                                     ; VRAM becomes inaccessible after this point
+    push hl
+    call hram_wait_for_VRAM_accessible-hram_code+_HRAM
     ld a, #LCDCF_ON | #LCDCF_BG8000 | #LCDCF_BG9C00 | #LCDCF_OBJ8 | #LCDCF_OBJOFF | #LCDCF_WINOFF | #LCDCF_BGON
     ld (rLCDC), a                                       ; setup screen to show img
+    pop hl
 hram_do_task:
     ld de, #hram_flush_screen_wait_for_screen_to_finish-hram_code+_HRAM
     push de                                             ; This is return addr since call r16 does not exist

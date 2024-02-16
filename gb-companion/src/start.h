@@ -28,10 +28,10 @@
 // Calls the provided function pointer
 // Disables the screen
 // Reset the stack pointer to what it was before
-void run_in_parallel_to_screen(void (*function)(void));
+volatile void run_in_parallel_to_screen(void (*function)(void));
 
 // This does the same as `run_in_parallel_to_screen` except it 
 // is hard-coded to just wait roughly 2 frames before returning.
-void flush_screen(void);
+volatile void flush_screen(void);
 
 #endif // START_H

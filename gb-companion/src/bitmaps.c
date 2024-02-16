@@ -56,6 +56,11 @@ const uint8_t message_insert_gbc_cartridge_data[] = {
     0xFF, 1, 0xFF, 5, 0xFF, text_insert_gbc_tile_index,         0xFF, 9, 0xFF, 5, 0xFF, text_cartridge_tile_index,
 };
 
+const uint8_t message_insert_gbc_link_cable_data[] = { 
+    0xFF, 2,
+    0xFF, 1, 0xFF, 5, 0xFF, text_connect_gbc_tile_index,        0xFF, 8, 0xFF, 5, 0xFF, text_link_cable_tile_index,
+};
+
 const uint8_t message_waiting_for_leader_data[] = { 
     0xFF, 2,
     0xFF, 2, 0xFF, 5, 0xFF, text_waiting_for_tile_index,        0xFF, 8, 0xFF, 5, 0xFF, text_leader_tile_index,

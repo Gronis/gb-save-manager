@@ -163,10 +163,29 @@ void render_message(message_list_t* messages) {
     for(uint8_t i = 0; i < len; ++i){
         message_t* m = (message_t*)(messages) + i;
         range_t* range = ((range_t*)(&tiles + m->message_tile_index));
-        if(len > 6){
-            flush_screen();
-        }
+        flush_screen();
         set_tiles_row(m->x, m->y, *range);
+        flush_screen();
+    }
+}
+
+#define clear_arr_start ((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 4) * 32)
+const uint8_t clear_arr[] = {
+    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 4) * 32 - clear_arr_start),
+    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 15 + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 4) * 32 - clear_arr_start),
+    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 5) * 32 - clear_arr_start),
+    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 15 + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 5) * 32 - clear_arr_start),
+    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 6) * 32 - clear_arr_start),
+    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 15 + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 6) * 32 - clear_arr_start),
+    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 7) * 32 - clear_arr_start),
+    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 15 + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 7) * 32 - clear_arr_start),
+};
+
+void clear_message(void) {
+    for (uint8_t r = 0; r < 8; r+= 2){
+        for (uint8_t s = clear_arr[r], e = clear_arr[r + 1]; s != e; ++s) {
+            *(_SCRN1 + s + clear_arr_start) = 0;
+        }
         flush_screen();
     }
 }
