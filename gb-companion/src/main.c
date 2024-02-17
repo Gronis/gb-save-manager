@@ -39,20 +39,27 @@ const uint8_t CORPORATE_LOGO[] = {
     0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73
 };
 
+#define LINK_CABLE_ENABLE_MASTER    0x81
+#define LINK_CABLE_ENABLE           0x80
+#define LINK_CABLE_NO_DATA          0xFF
+#define LINK_CABLE_PULSE_DATA       0xAA
+
 void main(void) {
     render_message_no_screen_flush_call_only_before_rasterize(message_header);
     rasterize_all_bitmap_tiles_to_VRAM_call_only_once();
-    render_message(message_progress_bar);
-    for(uint8_t i = 1; i < 72; ++i){
-        update_progress_bar(i);
-        flush_screen();
-    }
+    // render_message(message_progress_bar);
+    // for(uint8_t i = 1; i < 72; ++i){
+    //     update_progress_bar(i);
+    //     flush_screen();
+    // }
     {
         bool did_write_to_ram = false;
         bool state_changed = true;
         bool is_leader = false;
         bool cartridge_state = false;
         bool link_cable_state = false;
+
+        uint8_t link_cable_connected_confidence = 0;
 
         // Infinite loop to keep the program running
         while (1) {
@@ -62,12 +69,31 @@ void main(void) {
             bool new_cartridge_state = true;
             bool new_link_cable_state = false;
 
+            // Check Cartridge State
             for (uint8_t i = 0; i < 10; ++i){
                 if (CARTRIDGE_LOGO[i] != CORPORATE_LOGO[i]){
                     new_cartridge_state = false;
                 }
                 if (CARTRIDGE_TITLE[i] != LEADER_CARTRIDGE_TITLE[i]){
                     new_is_leader = false;
+                }
+            }
+
+            flush_screen();
+
+            // Check Link Cable State
+            {
+                uint8_t internal_clock = is_leader;
+                *rSC = LINK_CABLE_ENABLE | internal_clock;
+                uint8_t serial_data = *rSB;
+                if (serial_data != LINK_CABLE_NO_DATA && link_cable_connected_confidence < 8){
+                    link_cable_connected_confidence++;
+                } else if (link_cable_connected_confidence > 0){
+                    link_cable_connected_confidence--;
+                }
+                new_link_cable_state = link_cable_connected_confidence > 4;
+                if (internal_clock) {
+                    *rSB = LINK_CABLE_PULSE_DATA;
                 }
             }
 
@@ -119,18 +145,40 @@ void main(void) {
                     }
                     continue;
                 }
+                // uint8_t is_worker = !is_leader;
+                // *rTransferFlags = 
+                //     ((0 - is_worker) & TRANSFER_FLAGS_IS_WORKER) |
+                //     ((0 - is_leader)  & TRANSFER_FLAGS_IS_LEADER) |
+                //     ((0) & TRANSFER_FLAGS_CGB_MODE) |
+                //     ((0) & TRANSFER_FLAGS_AGB_MODE);
+
+                *rWorker = !is_leader;
+                *rLeader = is_leader;
+                *rCGB_mode = false;
+                *rAGB_mode = false;
+
+                run_in_parallel_to_screen(transfer_header);
+
                 if(is_leader){
                     render_message(message_choose_action);
                     // TODO: Here we should wait for user to make a choice (save/restore etc)
+                    while(1){
+                        flush_screen();
+                    }
                 } else {
                     render_message(message_waiting_for_leader);
                     // TODO: Here we should communicate with leader and continue only when leader
                     // made a choice
+                    while(1){
+                        flush_screen();
+                    }
                 }
                 clear_message();
                 render_message(message_progress_bar);
                 // TODO: here we should start the transfer
-                while(1);
+                while(1){
+                    flush_screen();
+                }
             }
 
             // if(!did_write_to_ram){

@@ -15,3 +15,7 @@ void show_ram_is_working() {
     wait_for_vblank_or_link_cable();
     set_tiles_row_repeat(14, 0, *range, 1);
 }
+
+void transfer_header(void) {
+
+}
