@@ -34,4 +34,9 @@ volatile void run_in_parallel_to_screen(void (*function)(void));
 // is hard-coded to just wait roughly 2 frames before returning.
 volatile void flush_screen(void);
 
+// This function just loops cycles until its done.
+// Function is located in HRAM so it can be used anytime (no
+// timing requirements).
+volatile void wait_n_cycles(uint16_t cycles);
+
 #endif // START_H

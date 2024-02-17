@@ -39,11 +39,6 @@ const uint8_t CORPORATE_LOGO[] = {
     0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73
 };
 
-#define LINK_CABLE_ENABLE_MASTER    0x81
-#define LINK_CABLE_ENABLE           0x80
-#define LINK_CABLE_NO_DATA          0xFF
-#define LINK_CABLE_PULSE_DATA       0xAA
-
 void main(void) {
     render_message_no_screen_flush_call_only_before_rasterize(message_header);
     rasterize_all_bitmap_tiles_to_VRAM_call_only_once();
@@ -82,19 +77,19 @@ void main(void) {
             flush_screen();
 
             // Check Link Cable State
-            {
-                uint8_t internal_clock = is_leader;
-                *rSC = LINK_CABLE_ENABLE | internal_clock;
+            if (cartridge_state) {
+                uint8_t use_internal_clock = is_leader;
                 uint8_t serial_data = *rSB;
-                if (serial_data != LINK_CABLE_NO_DATA && link_cable_connected_confidence < 8){
+                if (link_cable_connected_confidence < 8 && serial_data == LINK_CABLE_PULSE_DATA){
                     link_cable_connected_confidence++;
                 } else if (link_cable_connected_confidence > 0){
                     link_cable_connected_confidence--;
                 }
                 new_link_cable_state = link_cable_connected_confidence > 4;
-                if (internal_clock) {
+                if (use_internal_clock) {
                     *rSB = LINK_CABLE_PULSE_DATA;
                 }
+                *rSC = LINK_CABLE_ENABLE | use_internal_clock;
             }
 
             flush_screen();
@@ -136,6 +131,11 @@ void main(void) {
                     copy_ram_functions_to_ram();
                     did_write_to_ram = true;
                 }
+
+                /// TODO: Testing only Remove these functions
+                // clear_message();
+                // run_in_parallel_to_screen(ram_fn_transfer_header);
+
                 if(!link_cable_state){
                     if(is_leader){
                         render_message(message_idle_role_change_info);
@@ -145,19 +145,19 @@ void main(void) {
                     }
                     continue;
                 }
-                // uint8_t is_worker = !is_leader;
-                // *rTransferFlags = 
-                //     ((0 - is_worker) & TRANSFER_FLAGS_IS_WORKER) |
-                //     ((0 - is_leader)  & TRANSFER_FLAGS_IS_LEADER) |
-                //     ((0) & TRANSFER_FLAGS_CGB_MODE) |
-                //     ((0) & TRANSFER_FLAGS_AGB_MODE);
 
+                // The VRAM version should only be used on GBA hardware
+#ifdef VRAM_VERSION
+                *rAGB_mode = true;
+#else 
+                *rAGB_mode = false;
+#endif
+                *rCGB_mode = false;
                 *rWorker = !is_leader;
                 *rLeader = is_leader;
-                *rCGB_mode = false;
-                *rAGB_mode = false;
 
-                run_in_parallel_to_screen(transfer_header);
+                // clear_message();
+                run_in_parallel_to_screen(ram_fn_transfer_header);
 
                 if(is_leader){
                     render_message(message_choose_action);

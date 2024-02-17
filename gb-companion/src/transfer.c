@@ -1,6 +1,7 @@
 #include "transfer.h"
 #include "hardware.h"
 #include "graphics.h"
+#include "start.h"
 
 // This will ensure code is executable from RAM
 #include "area_ram.h"
@@ -16,6 +17,34 @@ void show_ram_is_working() {
     set_tiles_row_repeat(14, 0, *range, 1);
 }
 
-void transfer_header(void) {
+// typedef struct {
 
+// } packet_t;
+
+void send_message(uint8_t* data, uint8_t len){
+}
+
+void send_byte(uint8_t byte, uint8_t use_internal_clock) {
+    *rSB = byte;
+    *rSC = LINK_CABLE_ENABLE | use_internal_clock;
+    // Wait for transfer to complete
+    while((*rSC & 0x80) != 0);
+}
+
+void wait_for_other_device(void) {
+    // uint8_t use_internal_clock = true;
+    uint8_t use_internal_clock = rWorker;
+    uint8_t my_magic_byte = 0x18;
+    if(rWorker){
+        my_magic_byte = ~my_magic_byte;
+    }
+    uint8_t their_magic_byte = ~my_magic_byte;
+    while(*rSB != my_magic_byte){
+        send_byte(their_magic_byte, use_internal_clock);
+    }
+}
+
+void ram_fn_transfer_header(void) {
+    wait_for_other_device();
+    show_ram_is_working();
 }

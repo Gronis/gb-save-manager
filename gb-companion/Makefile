@@ -43,6 +43,7 @@ RAM1			:=	0xD000
 ###############################################################################
 PROJECTNAME		:=	gb-companion
 CODE_LOC		:=	$(VRAM0)
+RAM_LOC			:=  $(RAM0)
 CODE_OFFSET		:=	0x0260  # Leave space for gfx, expand if more gxf is needed
 STACK_PTR		:=  0x9800
 DATA_OFFSET		:=  0x1000
@@ -54,7 +55,7 @@ OUTPUT			:=	.
 CFLAGS			:=	--verbose --std-c99 -msm83 --opt-code-size --peep-asm \
 					-Isrc -I$(OUTPUT)/$(PROJECTNAME) \
 					--peep-return -Wa-l -Wl-m \
-					-DRAM_LOC=$(RAM0) \
+					-DRAM_LOC=$(RAM_LOC) \
 					-DCODE_LOC=$(CODE_LOC) \
 					-DLOCK_VERSION=13 \
 					-DNO_NUMERIC \
@@ -63,15 +64,15 @@ CFLAGS			:=	--verbose --std-c99 -msm83 --opt-code-size --peep-asm \
 ASFLAGS			:=	-l -plosgffw -Isrc -I$(OUTPUT)/$(PROJECTNAME)
 
 LDFLAGS			:=	-mjwx -m \
-					-b _RAM_LOC=$(RAM0) \
 					-b _CODE_LOC=$(CODE_LOC) \
+					-b _RAM_LOC=$(RAM_LOC) \
 					-b _INIT_LOC=$(CODE_LOC)+0x150 \
 					-b _CODE=$(CODE_LOC)+$(CODE_OFFSET) \
 					-b _DATA=$(CODE_LOC)+$(DATA_OFFSET) \
 					-b _ENTRYPOINT=$(CODE_LOC)+0x100 \
 					-g _STACK_PTR=$(STACK_PTR)
 
-FXFLAGS			:=	-C -p 0 -r 0 -t GBSAVEMANAGER -v
+FXFLAGS			:=	-C -p 0 -r 0 -t GBSMCOMPANION -v
 
 ###############################################################################
 #	 Files used to build

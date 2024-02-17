@@ -35,7 +35,7 @@ copy_program_and_run_loop:
     inc de
     ld  (hl+), a
     ld  a, d
-    cp  a, #0x20                    ; Code in RAM (max 8kB, the size of VRAM)
+    cp  a, #0x12                    ; Code in RAM (max 4kB, half the size of VRAM)
     jr  nz, copy_program_and_run_loop
     jp  CODE_LOC
 
@@ -200,14 +200,24 @@ entrypoint:
     jp start_from_rom-CODE_LOC  ; Must subtract CODE_LOC for correct address when code in ROM area
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; HRAM functions exposed to c main application
+; define labels for HRAM functions exposed to c main application
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.area _DABS (ABS)
+
+.globl _flush_screen
+.org hram_flush_screen-hram_code+_HRAM
+_flush_screen:
+
+.globl _wait_n_cycles
+.org hram_wait_loop-hram_code+_HRAM
+_wait_n_cycles:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; wrap HRAM functions exposed to c main application
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .area _CODE
-
-.globl _flush_screen
-_flush_screen:
-    jp hram_flush_screen-hram_code+_HRAM
 
 .globl _run_in_parallel_to_screen
 _run_in_parallel_to_screen:    ; function to call in reg de
@@ -215,5 +225,5 @@ _run_in_parallel_to_screen:    ; function to call in reg de
     ld	h, d    ; move de to hl
     jp hram_run_in_parallel_to_screen-hram_code+_HRAM
 
-end:; Important to have a non 0x00 or 0xFF in the end because bin2c strips away trailing data
+end_code:; Important to have a non 0xFF in the end because bin2c strips away trailing data
     .db 0x99

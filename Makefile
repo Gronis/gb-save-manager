@@ -12,7 +12,7 @@ endif
 OUTPUT			:= $(shell pwd)/build
 
 # Build Targets
-all: gb-companion_mb gb-companion_ram
+all: gb-companion_mb gb-companion_ram gb-save-manager
 
 clean:
 	rm -r $(OUTPUT)
@@ -23,7 +23,7 @@ clean:
 ifeq ($(shell which docker),)
 ###############################################################################
 
-.PHONY: all clean gb-companion gb-companion_mb gb-companion_ram
+.PHONY: all clean gb-companion gb-companion_mb gb-companion_ram gb-save-manager
 
 gb-companion_ram:
 	@(cd gb-companion && make OUTPUT=${OUTPUT} PROJECTNAME=gb-companion_ram CODE_LOC=0xC000 STACK_PTR=0xD000)
@@ -33,6 +33,9 @@ gb-companion:
 
 gb-companion_mb:
 	@(cd gba-switch2gbc && make GBC_ROM=gb-companion.gbc OUTPUT=${OUTPUT})
+
+gb-save-manager:
+	@(cd gb-save-manager && make OUTPUT=${OUTPUT} ROM_VRAM=gb-companion.gbc ROM_RAM=gb-companion_ram.gbc)
 
 ###############################################################################
 # Build using docker (on host machine)
@@ -50,7 +53,7 @@ $(OUTPUT)/.docker: $(OUTPUT)/. docker/* docker/*/* docker/*/*/*
 gb-companion_ram:
 	@(docker run --rm -it -v `pwd`:/workdir gbdev bash -c "cd /workdir && make gb-companion_ram")
 
-%: $(OUTPUT)/.docker %/Makefile
+%: %/* $(OUTPUT)/.docker %/Makefile
 	@(docker run --rm -it -v `pwd`:/workdir gbdev bash -c "cd /workdir && make $@")
 
 %_mb: $(OUTPUT)/.docker
