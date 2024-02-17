@@ -42,11 +42,11 @@ const uint8_t CORPORATE_LOGO[] = {
 bool send_detect_link_cable_packet(bool use_internal_clock) {
     uint8_t serial_data = *rSB;
     bool connected = false;
-    if (serial_data == LINK_CABLE_MAGIC_PACKET || serial_data == ~LINK_CABLE_MAGIC_PACKET){
+    if (serial_data == LINK_CABLE_MAGIC_PACKET_SYNC || serial_data == ~LINK_CABLE_MAGIC_PACKET_SYNC){
         connected = true;
     }
     if (use_internal_clock) {
-        *rSB = LINK_CABLE_MAGIC_PACKET;
+        *rSB = LINK_CABLE_MAGIC_PACKET_SYNC;
     }
     *rSC = LINK_CABLE_ENABLE | use_internal_clock;
     return connected;
@@ -126,6 +126,8 @@ void main(void) {
                     render_message(message_insert_gbc_cartridge);
                     continue;
                 }
+
+                // Has cartridge, safe to write to ram at this point
                 if(!did_write_to_ram){
                     copy_ram_functions_to_ram();
                     did_write_to_ram = true;
@@ -144,6 +146,9 @@ void main(void) {
                     }
                     continue;
                 }
+
+                // Has sent and received a few packets over link cable
+                // Prepare actual transfer
 
                 // The VRAM version should only be used on GBA hardware
 #ifdef VRAM_VERSION

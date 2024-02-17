@@ -6,62 +6,56 @@
 // This will ensure code is executable from RAM
 #include "area_ram.h"
 
-void wait_for_vblank_or_link_cable() {
+void wait_for_vblank_or_recv_byte() {
     bool done;
     while (!(done = *rLY == 144));
 }
 
 void show_ram_is_working() {
     range_t* range = ((range_t*)(&tiles + pb_8_tile_index));
-    wait_for_vblank_or_link_cable();
+    wait_for_vblank_or_recv_byte();
     set_tiles_row_repeat(14, 0, *range, 1);
 }
 
 // typedef struct {
-
-// } packet_t;
+//     uint8_t mode;
+// } header_t;
 
 void send_message(uint8_t* data, uint8_t len){
 }
 
-void send_byte(uint8_t byte, uint8_t use_internal_clock) {
+void send_byte(uint8_t byte, uint8_t use_internal_clock){
     *rSB = byte;
+    *_VRAM = byte;
     *rSC = LINK_CABLE_ENABLE | use_internal_clock;
-    // Wait for transfer to complete
-    while((*rSC & 0x80) != 0);
 }
 
-void wait_for_other_device(void) {
-    // uint8_t use_internal_clock = true;
-    uint8_t use_internal_clock = rWorker;
-    uint8_t magic_byte = 0x18;
-    while(*rSB != magic_byte){
-        send_byte(magic_byte, use_internal_clock);
+uint8_t recv_byte(uint8_t timeout){
+    for(uint16_t i = 0; i < (((uint16_t)timeout) << 8) || ((*rSC) & 0x80) != 0; ++i);
+    return *rSB;
+}
+
+void wait_for_other_device(uint8_t use_internal_clock) {
+    uint8_t packet_to_send = use_internal_clock? ~LINK_CABLE_MAGIC_PACKET_SYNC : LINK_CABLE_MAGIC_PACKET_SYNC;
+    uint8_t packet_to_receive = ~packet_to_send;
+retry:
+    send_byte(packet_to_send, use_internal_clock);
+    uint8_t received_packet = recv_byte(0);
+    if(received_packet != packet_to_receive){
+        goto retry;
     }
+}
+
+void send_recv_header(uint8_t use_internal_clock){
+    send_byte(*rCGB_mode, use_internal_clock);
+    *rCGB_remote_mode = recv_byte(0);
+    send_byte(*rAGB_mode, use_internal_clock);
+    *rAGB_remote_mode = recv_byte(0);
 }
 
 void ram_fn_transfer_header(void) {
-    // wait_for_other_device();
-    uint8_t use_internal_clock = rLeader;
-    retry:
-    if (use_internal_clock) {
-        send_byte(LINK_CABLE_MAGIC_PACKET, use_internal_clock);
-        if(*rSB != ~LINK_CABLE_MAGIC_PACKET){
-            goto retry;
-        }
-        // send_byte(0x23, use_internal_clock);
-        // if(*rSB != 0x12){
-        //     while(1);
-        // }
-    } else {
-        send_byte(~LINK_CABLE_MAGIC_PACKET, use_internal_clock);
-        if(*rSB != LINK_CABLE_MAGIC_PACKET){
-            goto retry;
-        }
-        // send_byte(0x23, use_internal_clock);
-        // if(*rSB != 0x23){
-        //     while(1);
-        // }
-    }
+    uint8_t use_internal_clock = *rLeader;
+    wait_for_other_device(use_internal_clock);
+    send_recv_header(use_internal_clock);
     show_ram_is_working();
 }
