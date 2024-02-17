@@ -13,7 +13,7 @@
 #define LINK_CABLE_ENABLE_MASTER    0x81
 #define LINK_CABLE_ENABLE           0x80
 #define LINK_CABLE_NO_DATA          0xFF
-#define LINK_CABLE_PULSE_DATA       0xAA
+#define LINK_CABLE_MAGIC_PACKET     0xAA
 
 void ram_fn_transfer_header(void);
 

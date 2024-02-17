@@ -34,17 +34,34 @@ void send_byte(uint8_t byte, uint8_t use_internal_clock) {
 void wait_for_other_device(void) {
     // uint8_t use_internal_clock = true;
     uint8_t use_internal_clock = rWorker;
-    uint8_t my_magic_byte = 0x18;
-    if(rWorker){
-        my_magic_byte = ~my_magic_byte;
-    }
-    uint8_t their_magic_byte = ~my_magic_byte;
-    while(*rSB != my_magic_byte){
-        send_byte(their_magic_byte, use_internal_clock);
+    uint8_t magic_byte = 0x18;
+    while(*rSB != magic_byte){
+        send_byte(magic_byte, use_internal_clock);
     }
 }
 
 void ram_fn_transfer_header(void) {
-    wait_for_other_device();
+    // wait_for_other_device();
+    uint8_t use_internal_clock = rLeader;
+    retry:
+    if (use_internal_clock) {
+        send_byte(LINK_CABLE_MAGIC_PACKET, use_internal_clock);
+        if(*rSB != ~LINK_CABLE_MAGIC_PACKET){
+            goto retry;
+        }
+        // send_byte(0x23, use_internal_clock);
+        // if(*rSB != 0x12){
+        //     while(1);
+        // }
+    } else {
+        send_byte(~LINK_CABLE_MAGIC_PACKET, use_internal_clock);
+        if(*rSB != LINK_CABLE_MAGIC_PACKET){
+            goto retry;
+        }
+        // send_byte(0x23, use_internal_clock);
+        // if(*rSB != 0x23){
+        //     while(1);
+        // }
+    }
     show_ram_is_working();
 }

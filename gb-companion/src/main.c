@@ -39,6 +39,19 @@ const uint8_t CORPORATE_LOGO[] = {
     0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73
 };
 
+bool send_detect_link_cable_packet(bool use_internal_clock) {
+    uint8_t serial_data = *rSB;
+    bool connected = false;
+    if (serial_data == LINK_CABLE_MAGIC_PACKET || serial_data == ~LINK_CABLE_MAGIC_PACKET){
+        connected = true;
+    }
+    if (use_internal_clock) {
+        *rSB = LINK_CABLE_MAGIC_PACKET;
+    }
+    *rSC = LINK_CABLE_ENABLE | use_internal_clock;
+    return connected;
+}
+
 void main(void) {
     render_message_no_screen_flush_call_only_before_rasterize(message_header);
     rasterize_all_bitmap_tiles_to_VRAM_call_only_once();
@@ -54,7 +67,7 @@ void main(void) {
         bool cartridge_state = false;
         bool link_cable_state = false;
 
-        uint8_t link_cable_connected_confidence = 0;
+        // uint8_t link_cable_connected_confidence = 0;
 
         // Infinite loop to keep the program running
         while (1) {
@@ -65,31 +78,13 @@ void main(void) {
             bool new_link_cable_state = false;
 
             // Check Cartridge State
-            for (uint8_t i = 0; i < 10; ++i){
+            for (uint8_t i = 0; i < 8; ++i){
                 if (CARTRIDGE_LOGO[i] != CORPORATE_LOGO[i]){
                     new_cartridge_state = false;
                 }
                 if (CARTRIDGE_TITLE[i] != LEADER_CARTRIDGE_TITLE[i]){
                     new_is_leader = false;
                 }
-            }
-
-            flush_screen();
-
-            // Check Link Cable State
-            if (cartridge_state) {
-                uint8_t use_internal_clock = is_leader;
-                uint8_t serial_data = *rSB;
-                if (link_cable_connected_confidence < 8 && serial_data == LINK_CABLE_PULSE_DATA){
-                    link_cable_connected_confidence++;
-                } else if (link_cable_connected_confidence > 0){
-                    link_cable_connected_confidence--;
-                }
-                new_link_cable_state = link_cable_connected_confidence > 4;
-                if (use_internal_clock) {
-                    *rSB = LINK_CABLE_PULSE_DATA;
-                }
-                *rSC = LINK_CABLE_ENABLE | use_internal_clock;
             }
 
             flush_screen();
@@ -108,6 +103,10 @@ void main(void) {
                     message_cartridge_state_ok : 
                     message_cartridge_state_error;
                 render_message(message);
+            }
+
+            if (cartridge_state) {
+                new_link_cable_state = send_detect_link_cable_packet(is_leader);
             }
        
             if(link_cable_state != new_link_cable_state){
@@ -156,7 +155,6 @@ void main(void) {
                 *rWorker = !is_leader;
                 *rLeader = is_leader;
 
-                // clear_message();
                 run_in_parallel_to_screen(ram_fn_transfer_header);
 
                 if(is_leader){
@@ -180,16 +178,6 @@ void main(void) {
                     flush_screen();
                 }
             }
-
-            // if(!did_write_to_ram){
-            //     *((uint8_t*)_RAM+400) = 0x44;
-            //     if (*((uint8_t*)_RAM+400) == 0x44) {
-            //         did_write_to_ram = true;
-            //         copy_ram_functions_to_ram();
-            //         run_in_parallel_to_screen(show_ram_is_working);
-            //     }
-            // }
-
         }
     }
 }
