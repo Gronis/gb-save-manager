@@ -145,7 +145,7 @@
 // -- P1 (0xFF00)
 // -- Register for reading joy pad info. (R/W)
 // --
-#define rP1  ((uint8_t*)0xFF00)
+#define rP1  ((volatile uint8_t*)0xFF00)
 
 #define P1F_5  0x20 // %0010 0000 // P15 out port, set to 0 to get buttons
 #define P1F_4  0x10 // %0001 0000 // P14 out port, set to 0 to get dpad
@@ -163,14 +163,14 @@
 // -- SB (0xFF01)
 // -- Serial Transfer Data (R/W)
 // --
-#define rSB  ((uint8_t*)0xFF01)
+#define rSB  ((volatile uint8_t*)0xFF01)
 
 
 // --
 // -- SC (0xFF02)
 // -- Serial I/O Control (R/W)
 // --
-#define rSC  ((uint8_t*)0xFF02)
+#define rSC  ((volatile uint8_t*)0xFF02)
 
 #define SCF_START   0x80 // %10000000 // Transfer Start Flag (1=Transfer in progress, or requested)
 #define SCF_SPEED   0x02 // %00000010 // Clock Speed (0=Normal, 1=Fast) ** CGB Mode Only **
@@ -184,28 +184,28 @@
 // -- DIV (0xFF04)
 // -- Divider register (R/W)
 // --
-#define rDIV  ((uint8_t*)0xFF04)
+#define rDIV  ((volatile uint8_t*)0xFF04)
 
 
 // --
 // -- TIMA (0xFF05)
 // -- Timer counter (R/W)
 // --
-#define rTIMA  ((uint8_t*)0xFF05)
+#define rTIMA  ((volatile uint8_t*)0xFF05)
 
 
 // --
 // -- TMA (0xFF06)
 // -- Timer modulo (R/W)
 // --
-#define rTMA  ((uint8_t*)0xFF06)
+#define rTMA  ((volatile uint8_t*)0xFF06)
 
 
 // --
 // -- TAC (0xFF07)
 // -- Timer control (R/W)
 // --
-#define rTAC  ((uint8_t*)0xFF07)
+#define rTAC  ((volatile uint8_t*)0xFF07)
 
 #define TACF_START   0x04 // %00000100
 #define TACF_STOP    0x00 // %00000000
@@ -221,7 +221,7 @@
 // -- IF (0xFF0F)
 // -- Interrupt Flag (R/W)
 // --
-#define rIF  ((uint8_t*)0xFF0F)
+#define rIF  ((volatile uint8_t*)0xFF0F)
 
 
 // --
@@ -235,8 +235,8 @@
 // -- Bit 2-0 - Number of sweep shift (# 0-7)
 // -- Sweep Time: (n*7.8ms)
 // --
-#define rNR10  ((uint8_t*)0xFF10)
-#define rAUD1SWEEP  ((uint8_t*)rNR10)
+#define rNR10  ((volatile uint8_t*)0xFF10)
+#define rAUD1SWEEP  ((volatile uint8_t*)rNR10)
 
 #define AUD1SWEEP_UP    0x00 // %00000000
 #define AUD1SWEEP_DOWN  0x08 // %00001000
@@ -249,8 +249,8 @@
 // -- Bit 7-6 - Wave Pattern Duty (00:12.5% 01:25% 10:50% 11:75%)
 // -- Bit 5-0 - Sound length data (# 0-63)
 // --
-#define rNR11  ((uint8_t*)0xFF11)
-#define rAUD1LEN  ((uint8_t*)rNR11)
+#define rNR11  ((volatile uint8_t*)0xFF11)
+#define rAUD1LEN  ((volatile uint8_t*)rNR11)
 
 
 // --
@@ -263,16 +263,16 @@
 // --           1: Range of increase
 // -- Bit 2-0 - Number of envelope sweep (# 0-7)
 // --
-#define rNR12  ((uint8_t*)0xFF12)
-#define rAUD1ENV  ((uint8_t*)rNR12)
+#define rNR12  ((volatile uint8_t*)0xFF12)
+#define rAUD1ENV  ((volatile uint8_t*)rNR12)
 
 
 // --
 // -- AUD1LOW/NR13 (0xFF13)
 // -- Frequency low byte (W)
 // --
-#define rNR13  ((uint8_t*)0xFF13)
-#define rAUD1LOW  ((uint8_t*)rNR13)
+#define rNR13  ((volatile uint8_t*)0xFF13)
+#define rAUD1LOW  ((volatile uint8_t*)rNR13)
 
 
 // --
@@ -283,8 +283,8 @@
 // -- Bit 6   - Counter/consecutive selection
 // -- Bit 2-0 - Frequency`s higher 3 bits
 // --
-#define rNR14  ((uint8_t*)0xFF14)
-#define rAUD1HIGH  ((uint8_t*)rNR14)
+#define rNR14  ((volatile uint8_t*)0xFF14)
+#define rAUD1HIGH  ((volatile uint8_t*)rNR14)
 
 
 // --
@@ -293,8 +293,8 @@
 // --
 // -- see AUD1LEN for info
 // --
-#define rNR21  ((uint8_t*)0xFF16)
-#define rAUD2LEN  ((uint8_t*)rNR21)
+#define rNR21  ((volatile uint8_t*)0xFF16)
+#define rAUD2LEN  ((volatile uint8_t*)rNR21)
 
 
 // --
@@ -303,16 +303,16 @@
 // --
 // -- see AUD1ENV for info
 // --
-#define rNR22  ((uint8_t*)0xFF17)
-#define rAUD2ENV  ((uint8_t*)rNR22)
+#define rNR22  ((volatile uint8_t*)0xFF17)
+#define rAUD2ENV  ((volatile uint8_t*)rNR22)
 
 
 // --
 // -- AUD2LOW/NR23 (0xFF18)
 // -- Frequency low byte (W)
 // --
-#define rNR23  ((uint8_t*)0xFF18)
-#define rAUD2LOW  ((uint8_t*)rNR23)
+#define rNR23  ((volatile uint8_t*)0xFF18)
+#define rAUD2LOW  ((volatile uint8_t*)rNR23)
 
 
 // --
@@ -321,8 +321,8 @@
 // --
 // -- see AUD1HIGH for info
 // --
-#define rNR24  ((uint8_t*)0xFF19)
-#define rAUD2HIGH  ((uint8_t*)rNR24)
+#define rNR24  ((volatile uint8_t*)0xFF19)
+#define rAUD2HIGH  ((volatile uint8_t*)rNR24)
 
 
 // --
@@ -331,8 +331,8 @@
 // --
 // -- Bit 7   - Sound ON/OFF (1=ON,0=OFF)
 // --
-#define rNR30  ((uint8_t*)0xFF1A)
-#define rAUD3ENA  ((uint8_t*)rNR30)
+#define rNR30  ((volatile uint8_t*)0xFF1A)
+#define rAUD3ENA  ((volatile uint8_t*)rNR30)
 
 #define AUD3ENA_OFF  0x00 // %00000000
 #define AUD3ENA_ON   0x80 // %10000000
@@ -344,8 +344,8 @@
 // --
 // -- Bit 7-0 - Sound length
 // --
-#define rNR31  ((uint8_t*)0xFF1B)
-#define rAUD3LEN  ((uint8_t*)rNR31)
+#define rNR31  ((volatile uint8_t*)0xFF1B)
+#define rAUD3LEN  ((volatile uint8_t*)rNR31)
 
 
 // --
@@ -358,8 +358,8 @@
 // --           10: 1/2
 // --           11: 1/4
 // --
-#define rNR32  ((uint8_t*)0xFF1C)
-#define rAUD3LEVEL  ((uint8_t*)rNR32)
+#define rNR32  ((volatile uint8_t*)0xFF1C)
+#define rAUD3LEVEL  ((volatile uint8_t*)rNR32)
 
 #define AUD3LEVEL_MUTE  0x00 // %0000 0000
 #define AUD3LEVEL_100   0x20 // %0010 0000
@@ -373,8 +373,8 @@
 // --
 // -- see AUD1LOW for info
 // --
-#define rNR33  ((uint8_t*)0xFF1D)
-#define rAUD3LOW  ((uint8_t*)rNR33)
+#define rNR33  ((volatile uint8_t*)0xFF1D)
+#define rAUD3LOW  ((volatile uint8_t*)rNR33)
 
 
 // --
@@ -383,8 +383,8 @@
 // --
 // -- see AUD1HIGH for info
 // --
-#define rNR34  ((uint8_t*)0xFF1E)
-#define rAUD3HIGH  ((uint8_t*)rNR34)
+#define rNR34  ((volatile uint8_t*)0xFF1E)
+#define rAUD3HIGH  ((volatile uint8_t*)rNR34)
 
 
 // --
@@ -393,8 +393,8 @@
 // --
 // -- Bit 5-0 - Sound length data (# 0-63)
 // --
-#define rNR41  ((uint8_t*)0xFF20)
-#define rAUD4LEN  ((uint8_t*)rNR41)
+#define rNR41  ((volatile uint8_t*)0xFF20)
+#define rAUD4LEN  ((volatile uint8_t*)rNR41)
 
 
 // --
@@ -403,8 +403,8 @@
 // --
 // -- see AUD1ENV for info
 // --
-#define rNR42  ((uint8_t*)0xFF21)
-#define rAUD4ENV  ((uint8_t*)rNR42)
+#define rNR42  ((volatile uint8_t*)0xFF21)
+#define rAUD4ENV  ((volatile uint8_t*)rNR42)
 
 
 // --
@@ -421,8 +421,8 @@
 // --           000: f/4   001: f/8   010: f/16  011: f/24
 // --           100: f/32  101: f/40  110: f/48  111: f/56  (f=4.194304 Mhz)
 // --
-#define rNR43  ((uint8_t*)0xFF22)
-#define rAUD4POLY  ((uint8_t*)rNR43)
+#define rNR43  ((volatile uint8_t*)0xFF22)
+#define rAUD4POLY  ((volatile uint8_t*)rNR43)
 
 #define AUD4POLY_15STEP  0x00 // %00000000
 #define AUD4POLY_7STEP   0x08 // %00001000
@@ -434,8 +434,8 @@
 // -- Bit 7 -   Initial (when set, sound restarts)
 // -- Bit 6 -   Counter/consecutive selection
 // --
-#define rNR44  ((uint8_t*)0xFF23)
-#define rAUD4GO  ((uint8_t*)rNR44)
+#define rNR44  ((volatile uint8_t*)0xFF23)
+#define rAUD4GO  ((volatile uint8_t*)rNR44)
 
 
 
@@ -450,8 +450,8 @@
 // -- Bit 3   - Vin->SO1 ON/OFF (right)
 // -- Bit 2-0 - SO1 output level (right speaker) (# 0-7)
 // --
-#define rNR50  ((uint8_t*)0xFF24)
-#define rAUDVOL  ((uint8_t*)rNR50)
+#define rNR50  ((volatile uint8_t*)0xFF24)
+#define rAUDVOL  ((volatile uint8_t*)rNR50)
 
 #define AUDVOL_VIN_LEFT   0x80 // %10000000 // SO2
 #define AUDVOL_VIN_RIGHT  0x08 // %00001000 // SO1
@@ -470,8 +470,8 @@
 // -- Bit 1   - Output channel 2 to SO1 terminal (right)
 // -- Bit 0   - Output channel 1 to SO1 terminal (right)
 // --
-#define rNR51  ((uint8_t*)0xFF25)
-#define rAUDTERM  ((uint8_t*)rNR51)
+#define rNR51  ((volatile uint8_t*)0xFF25)
+#define rAUDTERM  ((volatile uint8_t*)rNR51)
 
 // SO2
 #define AUDTERM_4_LEFT   0x80 // %1000 0000
@@ -495,8 +495,8 @@
 // -- Bit 1   - Sound 2 ON flag (read only)
 // -- Bit 0   - Sound 1 ON flag (read only)
 // --
-#define rNR52  ((uint8_t*)0xFF26)
-#define rAUDENA  ((uint8_t*)rNR52)
+#define rNR52  ((volatile uint8_t*)0xFF26)
+#define rAUDENA  ((volatile uint8_t*)rNR52)
 
 #define AUDENA_ON     0x80 // %10000000
 #define AUDENA_OFF    0x00 // %00000000  // sets all audio regs to 0!
@@ -506,7 +506,7 @@
 // -- LCDC (0xFF40)
 // -- LCD Control (R/W)
 // --
-#define rLCDC  ((uint8_t*)0xFF40)
+#define rLCDC  ((volatile uint8_t*)0xFF40)
 
 #define LCDCF_OFF      0x00 // %0000 0000 // LCD Control Operation
 #define LCDCF_ON       0x80 // %1000 0000 // LCD Control Operation
@@ -540,7 +540,7 @@
 // -- STAT (0xFF41)
 // -- LCDC Status   (R/W)
 // --
-#define rSTAT  ((uint8_t*)0xFF41)
+#define rSTAT  ((volatile uint8_t*)0xFF41)
 
 #define STATF_LYC       0x40 // %0100 0000 // LYC=LY Coincidence (Selectable)
 #define STATF_MODE10    0x20 // %0010 0000 // Mode 10
@@ -564,14 +564,14 @@
 // -- SCY (0xFF42)
 // -- Scroll Y (R/W)
 // --
-#define rSCY  ((uint8_t*)0xFF42)
+#define rSCY  ((volatile uint8_t*)0xFF42)
 
 
 // --
 // -- SCX (0xFF43)
 // -- Scroll X (R/W)
 // --
-#define rSCX  ((uint8_t*)0xFF43)
+#define rSCX  ((volatile uint8_t*)0xFF43)
 
 
 // --
@@ -580,7 +580,7 @@
 // --
 // -- Values range from 0->153. 144->153 is the VBlank period.
 // --
-#define rLY  ((uint8_t*)0xFF44)
+#define rLY  ((volatile uint8_t*)0xFF44)
 
 
 // --
@@ -589,14 +589,14 @@
 // --
 // -- When LY==LYC, STATF_LYCF will be set in STAT
 // --
-#define rLYC  ((uint8_t*)0xFF45)
+#define rLYC  ((volatile uint8_t*)0xFF45)
 
 
 // --
 // -- DMA (0xFF46)
 // -- DMA Transfer and Start Address (W)
 // --
-#define rDMA  ((uint8_t*)0xFF46)
+#define rDMA  ((volatile uint8_t*)0xFF46)
 
 
 // --
@@ -608,7 +608,7 @@
 // -- Bit 3-2 - Intensity for %01
 // -- Bit 1-0 - Intensity for %00
 // --
-#define rBGP  ((uint8_t*)0xFF47)
+#define rBGP  ((volatile uint8_t*)0xFF47)
 
 
 // --
@@ -617,7 +617,7 @@
 // --
 // -- See BGP for info
 // --
-#define rOBP0  ((uint8_t*)0xFF48)
+#define rOBP0  ((volatile uint8_t*)0xFF48)
 
 
 // --
@@ -626,7 +626,7 @@
 // --
 // -- See BGP for info
 // --
-#define rOBP1  ((uint8_t*)0xFF49)
+#define rOBP1  ((volatile uint8_t*)0xFF49)
 
 
 // --
@@ -636,7 +636,7 @@
 // -- 0 <= WY <= 143
 // -- When WY = 0, the window is displayed from the top edge of the LCD screen.
 // --
-#define rWY  ((uint8_t*)0xFF4A)
+#define rWY  ((volatile uint8_t*)0xFF4A)
 
 
 // --
@@ -647,7 +647,7 @@
 // -- When WX = 7, the window is displayed from the left edge of the LCD screen.
 // -- Values of 0-6 and 166 are unreliable due to hardware bugs.
 // --
-#define rWX  ((uint8_t*)0xFF4B)
+#define rWX  ((volatile uint8_t*)0xFF4B)
 
 #define WX_OFS  7 // add this to a screen position to get a WX position
 
@@ -656,14 +656,14 @@
 // -- accessed by a game in DMG mode. This could be tested. The CGB boot ROM
 // -- sets this to $80 if a CGB game is inserted, or $04 if a DMG game is
 // -- inserted.
-#define rLCDMODE ((uint8_t*)0xFF4C)
+#define rLCDMODE ((volatile uint8_t*)0xFF4C)
 
 // --
 // -- SPEED (0xFF4D)
 // -- Select CPU Speed (R/W)
 // --
-#define rKEY1  ((uint8_t*)0xFF4D)
-#define rSPD   ((uint8_t*)rKEY1)
+#define rKEY1  ((volatile uint8_t*)0xFF4D)
+#define rSPD   ((volatile uint8_t*)rKEY1)
 
 #define KEY1F_DBLSPEED  0x80 // %10000000 // 0=Normal Speed, 1=Double Speed (R)
 #define KEY1F_PREPARE   0x01 // %00000001 // 0=No, 1=Prepare (R/W)
@@ -675,18 +675,18 @@
 // --
 // -- Bit 0 - Bank Specification (0: Specify Bank 0// 1: Specify Bank 1)
 // --
-#define rVBK  ((uint8_t*)0xFF4F)
+#define rVBK  ((volatile uint8_t*)0xFF4F)
 
 // -- Assigning this address to value 0x11 disables boot ROM. This is done by
 // -- GBC bios during boot process
-#define rBLCK ((uint8_t*)0xFF50)
+#define rBLCK ((volatile uint8_t*)0xFF50)
 
 // --
 // -- HDMA1 (0xFF51)
 // -- High byte for Horizontal Blanking/General Purpose DMA source address (W)
 // -- CGB Mode Only
 // --
-#define rHDMA1  ((uint8_t*)0xFF51)
+#define rHDMA1  ((volatile uint8_t*)0xFF51)
 
 
 // --
@@ -694,7 +694,7 @@
 // -- Low byte for Horizontal Blanking/General Purpose DMA source address (W)
 // -- CGB Mode Only
 // --
-#define rHDMA2  ((uint8_t*)0xFF52)
+#define rHDMA2  ((volatile uint8_t*)0xFF52)
 
 
 // --
@@ -702,7 +702,7 @@
 // -- High byte for Horizontal Blanking/General Purpose DMA destination address (W)
 // -- CGB Mode Only
 // --
-#define rHDMA3  ((uint8_t*)0xFF53)
+#define rHDMA3  ((volatile uint8_t*)0xFF53)
 
 
 // --
@@ -710,7 +710,7 @@
 // -- Low byte for Horizontal Blanking/General Purpose DMA destination address (W)
 // -- CGB Mode Only
 // --
-#define rHDMA4  ((uint8_t*)0xFF54)
+#define rHDMA4  ((volatile uint8_t*)0xFF54)
 
 
 // --
@@ -718,7 +718,7 @@
 // -- Transfer length (in tiles minus 1)/mode/start for Horizontal Blanking, General Purpose DMA (R/W)
 // -- CGB Mode Only
 // --
-#define rHDMA5  ((uint8_t*)0xFF55)
+#define rHDMA5  ((volatile uint8_t*)0xFF55)
 
 #define HDMA5F_MODE_GP   0x00 // %00000000 // General Purpose DMA (W)
 #define HDMA5F_MODE_HBL  0x80 // %10000000 // HBlank DMA (W)
@@ -733,7 +733,7 @@
 // -- Infrared Communications Port (R/W)
 // -- CGB Mode Only
 // --
-#define rRP  ((uint8_t*)0xFF56)
+#define rRP  ((volatile uint8_t*)0xFF56)
 
 #define RPF_ENREAD    0xC0 // %11000000
 #define RPF_DATAIN    0x02 // %00000010 // 0=Receiving IR Signal, 1=Normal
@@ -748,8 +748,8 @@
 // -- BCPS/BGPI (0xFF68)
 // -- Background Color Palette Specification (aka Background Palette Index) (R/W)
 // --
-#define rBCPS  ((uint8_t*)0xFF68)
-#define rBGPI  ((uint8_t*)rBCPS)
+#define rBCPS  ((volatile uint8_t*)0xFF68)
+#define rBGPI  ((volatile uint8_t*)rBCPS)
 
 #define BCPSF_AUTOINC  0x80 // %10000000 // Auto Increment (0=Disabled, 1=Increment after Writing)
 #define BCPSB_AUTOINC  7
@@ -761,16 +761,16 @@
 // -- BCPD/BGPD (0xFF69)
 // -- Background Color Palette Data (aka Background Palette Data) (R/W)
 // --
-#define rBCPD  ((uint8_t*)0xFF69)
-#define rBGPD  ((uint8_t*)rBCPD)
+#define rBCPD  ((volatile uint8_t*)0xFF69)
+#define rBGPD  ((volatile uint8_t*)rBCPD)
 
 
 // --
 // -- OCPS/OBPI (0xFF6A)
 // -- Object Color Palette Specification (aka Object Background Palette Index) (R/W)
 // --
-#define rOCPS  ((uint8_t*)0xFF6A)
-#define rOBPI  ((uint8_t*)rOCPS)
+#define rOCPS  ((volatile uint8_t*)0xFF6A)
+#define rOBPI  ((volatile uint8_t*)rOCPS)
 
 #define OCPSF_AUTOINC  0x80 // %10000000 // Auto Increment (0=Disabled, 1=Increment after Writing)
 #define OCPSB_AUTOINC  7
@@ -782,8 +782,8 @@
 // -- OCPD/OBPD (0xFF6B)
 // -- Object Color Palette Data (aka Object Background Palette Data) (R/W)
 // --
-#define rOCPD  ((uint8_t*)0xFF6B)
-#define rOBPD  ((uint8_t*)rOCPD)
+#define rOCPD  ((volatile uint8_t*)0xFF6B)
+#define rOBPD  ((volatile uint8_t*)rOCPD)
 
 
 // --
@@ -792,8 +792,8 @@
 // --
 // -- Bit 2-0 - Bank Specification (0,1: Specify Bank 1// 2-7: Specify Banks 2-7)
 // --
-#define rSVBK  ((uint8_t*)0xFF70)
-#define rSMBK  ((uint8_t*)rSVBK)
+#define rSVBK  ((volatile uint8_t*)0xFF70)
+#define rSMBK  ((volatile uint8_t*)rSVBK)
 
 
 // --
@@ -803,7 +803,7 @@
 // -- Bit 7-4 - Copy of sound channel 2`s PCM amplitude
 // -- Bit 3-0 - Copy of sound channel 1`s PCM amplitude
 // --
-#define rPCM12  ((uint8_t*)0xFF76)
+#define rPCM12  ((volatile uint8_t*)0xFF76)
 
 
 // --
@@ -813,14 +813,14 @@
 // -- Bit 7-4 - Copy of sound channel 4`s PCM amplitude
 // -- Bit 3-0 - Copy of sound channel 3`s PCM amplitude
 // --
-#define rPCM34  ((uint8_t*)0xFF77)
+#define rPCM34  ((volatile uint8_t*)0xFF77)
 
 
 // --
 // -- IE (0xFFFF)
 // -- Interrupt Enable (R/W)
 // --
-#define rIE  ((uint8_t*)0xFFFF)
+#define rIE  ((volatile uint8_t*)0xFFFF)
 
 #define IEF_HILO    0x10 // %0001 0000 // Transition from High to Low of Pin number P10-P13
 #define IEF_SERIAL  0x08 // %0000 1000 // Serial I/O transfer end
