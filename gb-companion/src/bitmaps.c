@@ -73,10 +73,18 @@ const uint8_t message_choose_action_data[] = {
     0xFF, 4, 0xFF, 7, 0xFF, text_b_tile_index,                  0xFF, 5, 0xFF, 7, 0xFF, text_restore_tile_index,    0xFF, 10, 0xFF, 7, 0xFF, text_save_tile_index,
 };
 
+const uint8_t message_restore_save_data[] = {
+    0xFF, 2,
+    0xFF, 3, 0xFF, 4, 0xFF,  text_restore_tile_index, 0xFF, 9, 0xFF, 4, 0xFF,  text_save_tile_index,
+};
+
+const uint8_t message_backing_up_save_data[] = {
+    0xFF, 2,
+    0xFF, 3, 0xFF, 4, 0xFF,  text_backing_up_tile_index, 0xFF, 9, 0xFF, 4, 0xFF,  text_save_tile_index,
+};
+
 const uint8_t message_progress_bar_data[] = {
-    0xFF, 12,
-    0xFF, 3, 0xFF, 4, 0xFF,  text_backing_up_tile_index,
-    0xFF, 9, 0xFF, 4, 0xFF,  text_save_tile_index,
+    0xFF, 10,
     0xFF, 3, 0xFF, 6, 0xFF,  pb_start_tile_index,
     0xFF, 4, 0xFF, 6, 0xFF,  pb_0_tile_index,
     0xFF, 5, 0xFF, 6, 0xFF,  pb_0_tile_index,

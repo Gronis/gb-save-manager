@@ -156,7 +156,7 @@
 
 #define P1F_GET_DPAD  P1F_5
 #define P1F_GET_BTN   P1F_4
-#define P1F_GET_NONE  P1F_4 | P1F_5
+#define P1F_GET_NONE  (P1F_4 | P1F_5)
 
 
 // --
