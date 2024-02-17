@@ -167,29 +167,35 @@ void main(void) {
                     render_message(message_waiting_for_leader);
                 }
 
-                // Only relevant for leader
-                uint8_t backup_save = is_button_pressed(button_state, BTN_A);
-                uint8_t restore_save = is_button_pressed(button_state, BTN_B);
-
                 // The VRAM version should only be used on GBA hardware
 #ifdef VRAM_VERSION
-                *rAGB_mode = true;
+                *rDevice_mode = DEVICE_MODE_AGB;
 #else 
-                *rAGB_mode = false;
+                *rDevice_mode = DEVICE_MODE_GB; // Check GB/CGB mode here
 #endif
-                *rCGB_mode = false;
-                *rWorker = !is_leader;
-                *rLeader = is_leader;
+                *rRole = is_leader? ROLE_LEADER : ROLE_WORKER;
+                *rTransfer_mode = TRANSFER_MODE_NO_ACTION;
+                *rTransfer_mode_remote = TRANSFER_MODE_NO_ACTION;
+
+                if (is_leader){
+                    if(is_button_pressed(button_state, BTN_A)){
+                        *rTransfer_mode = TRANSFER_MODE_BACKUP_SAVE;
+                    } else if(is_button_pressed(button_state, BTN_B)){
+                        *rTransfer_mode = TRANSFER_MODE_RESTORE_SAVE;
+                    }
+                }
+
                 run_in_parallel_to_screen(ram_fn_transfer_header);
 
+                uint8_t transfer_mode = (*rTransfer_mode | *rTransfer_mode_remote);
+                bool backup_save  = (0 != (transfer_mode & TRANSFER_MODE_BACKUP_SAVE));
+                bool restore_save = (0 != (transfer_mode & TRANSFER_MODE_RESTORE_SAVE));
+
                 clear_message();
-                if (is_leader) {
-                    if(backup_save){
-                        render_message(message_backing_up_save);
-                    }
-                    if(restore_save){
-                        render_message(message_restore_save);
-                    }
+                if(backup_save){
+                    render_message(message_backing_up_save);
+                } else if(restore_save){
+                    render_message(message_restore_save);
                 }
                 render_message(message_progress_bar);
                 // TODO: here we should start the transfer

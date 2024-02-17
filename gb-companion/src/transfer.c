@@ -47,14 +47,14 @@ retry:
 }
 
 void send_recv_header(uint8_t use_internal_clock){
-    send_byte(*rCGB_mode, use_internal_clock);
-    *rCGB_remote_mode = recv_byte(0);
-    send_byte(*rAGB_mode, use_internal_clock);
-    *rAGB_remote_mode = recv_byte(0);
+    send_byte(*rDevice_mode, use_internal_clock);
+    *rDevice_mode_remote = recv_byte(0);
+    send_byte(*rTransfer_mode, use_internal_clock);
+    *rTransfer_mode_remote = recv_byte(0);
 }
 
 void ram_fn_transfer_header(void) {
-    uint8_t use_internal_clock = *rLeader;
+    uint8_t use_internal_clock = *rRole == ROLE_LEADER;
     wait_for_other_device(use_internal_clock);
     send_recv_header(use_internal_clock);
     show_ram_is_working();
