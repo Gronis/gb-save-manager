@@ -97,6 +97,11 @@ const uint8_t message_progress_bar_data[] = {
     0xFF, 12, 0xFF, 6, 0xFF, pb_end_tile_index,
 };
 
+const uint8_t message_transfer_done_data[] = {
+    0xFF, 1,
+    0xFF, 12, 0xFF, 4, 0xFF, text_true_tile_index,
+};
+
 // This makes sure we include the binary data from bitmaps here
 #define INCLUDE_BIN_DATA
 #include "bitmaps.h"

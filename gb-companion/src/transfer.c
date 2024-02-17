@@ -59,3 +59,7 @@ void ram_fn_transfer_header(void) {
     send_recv_header(use_internal_clock);
     show_ram_is_working();
 }
+
+void ram_fn_perform_transfer(void) {
+
+}

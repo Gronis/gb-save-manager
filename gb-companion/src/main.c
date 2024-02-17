@@ -198,8 +198,14 @@ void main(void) {
                     render_message(message_restore_save);
                 }
                 render_message(message_progress_bar);
-                // TODO: here we should start the transfer
-                while(1){
+                
+                run_in_parallel_to_screen(ram_fn_perform_transfer);
+
+                clear_message_from_row(2);
+                render_message(message_transfer_done);
+
+                // Busy wait at the end. User has to turn off console here
+                while(1) {
                     flush_screen();
                 }
             }

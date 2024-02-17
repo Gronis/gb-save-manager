@@ -26,6 +26,7 @@
 #define LINK_CABLE_MAGIC_PACKET_SYNC    0xAA
 
 void ram_fn_transfer_header(void);
+void ram_fn_perform_transfer(void);
 
 #endif // TRANSFER_H
 
