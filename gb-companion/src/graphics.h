@@ -8,6 +8,8 @@
 #define SCREEN_COORDINATE_TILE_Y ((uint8_t)(32 - 10))
 #define SCREEN_COORDINATE_TILE_WIDTH ((uint8_t)(14))
 #define SCREEN_COORDINATE_TILE_HEIGHT ((uint8_t)(8))
+
+#define get_position_tile_index(x, y) ((uint16_t)(SCREEN_COORDINATE_TILE_X) + (x) + (uint16_t)(SCREEN_COORDINATE_TILE_Y + (y)) * 32)
 // BG has y-axis offsest 1/2 of a tile so 1 tile goes missing for some top+bottom margin
 
 typedef struct {
@@ -48,9 +50,6 @@ void set_tiles_row_repeat(uint8_t x, uint8_t y, const range_t tiles, uint8_t wid
 
 // Render all messages in list. Note: messages should be placed consecutivly in memory
 void render_message(message_list_t* messages);
-
-// Update progress bar graphics, min: 1, max: 72
-void update_progress_bar(uint8_t progress);
 
 void clear_message(void);
 void clear_message_from_row(uint8_t row);

@@ -17,13 +17,6 @@ void show_ram_is_working() {
     set_tiles_row_repeat(14, 0, *range, 1);
 }
 
-// typedef struct {
-//     uint8_t mode;
-// } header_t;
-
-void send_message(uint8_t* data, uint8_t len){
-}
-
 void send_byte(uint8_t byte, uint8_t use_internal_clock){
     *rSB = byte;
     *_VRAM = byte;
@@ -60,6 +53,25 @@ void ram_fn_transfer_header(void) {
     show_ram_is_working();
 }
 
+#define PROGRESS_BAR_TILE_INDEX get_position_tile_index(3, 6)
+void try_update_progress_bar(uint8_t progress){
+    uint8_t* dst = _SCRN1 + PROGRESS_BAR_TILE_INDEX + progress / 8;
+    uint8_t tile = tiles[pb_1_tile_index + (progress & 7)];
+    if (tile) {
+        *dst = tile;
+    }
+}
+
 void ram_fn_perform_transfer(void) {
 
+    for(uint8_t i = 0; i < 72; ++i){
+        // wait_for_vblank_or_recv_byte();
+        try_update_progress_bar(i);
+    }
+
+    // Send rom metadata (name, rom-banks info etc)
+
+    // Detect if we should send or receive data
+
+    // Send/Receive data, verify each packet with crc??
 }

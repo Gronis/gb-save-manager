@@ -179,24 +179,16 @@ void render_message(message_list_t* messages) {
     }
 }
 
-void update_progress_bar(uint8_t progress){
-    uint8_t x = 3 + progress / 8;
-    uint8_t y = 6;
-    uint8_t tile_index = pb_1_tile_index + (progress & 7);
-    range_t* range = ((range_t*)(&tiles + tile_index));
-    set_tiles_row(x, y, *range);
-}
-
-#define clear_arr_start ((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 4) * 32)
+#define CLEAR_MESSAGE_TILE_INDEX get_position_tile_index(1, 4) 
 const uint8_t clear_arr[] = {
-    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 4) * 32 - clear_arr_start),
-    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 15 + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 4) * 32 - clear_arr_start),
-    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 5) * 32 - clear_arr_start),
-    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 15 + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 5) * 32 - clear_arr_start),
-    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 6) * 32 - clear_arr_start),
-    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 15 + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 6) * 32 - clear_arr_start),
-    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 1  + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 7) * 32 - clear_arr_start),
-    (uint8_t)((uint16_t)(SCREEN_COORDINATE_TILE_X) + 15 + (uint16_t)(SCREEN_COORDINATE_TILE_Y + 7) * 32 - clear_arr_start),
+    (uint8_t)(get_position_tile_index(1,  4) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_position_tile_index(15, 4) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_position_tile_index(1,  5) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_position_tile_index(15, 5) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_position_tile_index(1,  6) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_position_tile_index(15, 6) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_position_tile_index(1,  7) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_position_tile_index(15, 7) - CLEAR_MESSAGE_TILE_INDEX),
 };
 
 void clear_message() {
@@ -206,7 +198,7 @@ void clear_message() {
 void clear_message_from_row(uint8_t row) {
     for (uint8_t r = row; r < 8; r+= 2){
         for (uint8_t s = clear_arr[r], e = clear_arr[r + 1]; s != e; ++s) {
-            *(_SCRN1 + s + clear_arr_start) = 0;
+            *(_SCRN1 + s + CLEAR_MESSAGE_TILE_INDEX) = 0;
         }
         flush_screen();
     }
