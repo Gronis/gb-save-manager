@@ -26,7 +26,7 @@ ifeq ($(shell which docker),)
 .PHONY: all clean gb-companion gb-companion_mb gb-companion_ram gb-save-manager
 
 gb-companion_ram:
-	@(cd gb-companion && make OUTPUT=${OUTPUT} PROJECTNAME=gb-companion_ram CODE_LOC=0xC000 STACK_PTR=0xD000)
+	@(cd gb-companion && make OUTPUT=${OUTPUT} PROJECTNAME=gb-companion_ram CODE_LOC=0xC000 STACK_PTR=0xDFF0)
 
 gb-companion:
 	@(cd gb-companion && make OUTPUT=${OUTPUT})

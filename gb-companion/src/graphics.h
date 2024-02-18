@@ -40,7 +40,7 @@ typedef struct {
 // Rasterize tiles to VRAM which can later be used by set_tiles_row
 void rasterize_tiles(range_t* tile_index, tile_bitmap_t* tile_bitmap);
 
-// Rasterize all tiles in bitmaps.h to VRAM. This is placed in memory so that it
+// Rasterize all tiles in data.h to VRAM. This is placed in memory so that it
 // overwrites the old locations to reuse memory that is no longer needed.
 void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void);
 

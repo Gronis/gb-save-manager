@@ -1,5 +1,5 @@
 #include "graphics.h"
-#include "bitmaps.h"
+#include "data.h"
 #include "hardware.h"
 
 // This function is overwritten when executing rasterize_progress_bar_tiles,
@@ -24,7 +24,7 @@ void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void) {
     rasterize_tiles(((range_t*)(&tiles + text_rom_tile_index)),             (tile_bitmap_t*)&text_rom);
     rasterize_tiles(((range_t*)(&tiles + text_save_tile_index)),            (tile_bitmap_t*)&text_save);
     rasterize_tiles(((range_t*)(&tiles + text_slow_tile_index)),            (tile_bitmap_t*)&text_slow);
-    rasterize_tiles(((range_t*)(&tiles + text_start_tile_index)),           (tile_bitmap_t*)&text_start);
+    rasterize_tiles(((range_t*)(&tiles + text_start_plus_tile_index)),      (tile_bitmap_t*)&text_start_plus);
     rasterize_tiles(((range_t*)(&tiles + text_state_tile_index)),           (tile_bitmap_t*)&text_state);
     rasterize_tiles(((range_t*)(&tiles + text_to_change_role_tile_index)),  (tile_bitmap_t*)&text_to_change_role);
     rasterize_tiles(((range_t*)(&tiles + text_true_tile_index)),            (tile_bitmap_t*)&text_true);

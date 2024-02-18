@@ -47,6 +47,14 @@ HEADERS			:=	$(wildcard src/*.h)
 ASSEMBLY		:=	$(wildcard src/*.asm)
 
 ###############################################################################
+#	Cartridge Header data
+#	https://gbdev.io/pandocs/The_Cartridge_Header.html#0147--cartridge-type
+###############################################################################
+TITLE			:=	GBSAVEMANAG
+MBC				:=  0x12	# MBC3 + RAM
+RAM_SIZE		:=	3		# 32kB
+
+###############################################################################
 #	Derived variables
 ###############################################################################
 BUILD_DIR		:=	$(OUTPUT)/$(PROJECTNAME)
@@ -68,7 +76,8 @@ LDFLAGS			:=	-mjwx -m \
 					-b _CODE=0x150 \
 					-g _STACK_PTR=$(STACK_PTR)
 
-FXFLAGS			:=	-C -p 0 -r 0 -t GBSAVEMANAGER -v
+FXFLAGS			:=	-C -p 0 -v -m $(MBC) -O -r $(RAM_SIZE) \
+					-t $(TITLE)
 
 ###############################################################################
 #	Build rules
@@ -86,8 +95,6 @@ $(BUILD_DIR)/$(IHX): $(OBJS)
 	$(LD) $(LDFLAGS) -i $@ $^ -e
 
 $(BUILD_DIR)/%.rel: src/%.c $(HEADERS) $(OUTPUT)/$(VRAM_PROJ)/$(ROM_VRAM_HEADER) Makefile
-	echo $(OBJS)
-	echo $(OUTPUT)/$(VRAM_PROJ)/$(ROM_VRAM_HEADER)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.rel: src/%.asm Makefile

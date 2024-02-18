@@ -6,7 +6,7 @@
 #include "start.h"
 #include "graphics.h"
 #include "graphics_init.h"
-#include "bitmaps.h"
+#include "data.h"
 #include "input.h"
 
 // TODO: Move this to its own source file
@@ -119,7 +119,7 @@ void main(void) {
 
             if (is_leader && link_cable_state) {
                 uint8_t new_button_state = read_button_state();
-                if (button_state != new_button_state) {
+                if ((button_state & BTN_A) != (new_button_state & BTN_A)) {
                     state_changed = true;
                     button_state = new_button_state;
                 }
@@ -155,7 +155,7 @@ void main(void) {
                 }
 
                 if(is_leader){
-                    if (!is_button_pressed(button_state, BTN_B | BTN_A)){
+                    if (!is_button_pressed(button_state, BTN_A)){
                         render_message(message_choose_action);
                         continue;
                     }
@@ -174,10 +174,10 @@ void main(void) {
                 *rTransfer_mode_remote = TRANSFER_MODE_NO_ACTION;
 
                 if (is_leader){
-                    if(is_button_pressed(button_state, BTN_A)){
-                        *rTransfer_mode = TRANSFER_MODE_BACKUP_SAVE;
-                    } else if(is_button_pressed(button_state, BTN_B)){
+                    if(is_button_pressed(button_state, BTN_START)){
                         *rTransfer_mode = TRANSFER_MODE_RESTORE_SAVE;
+                    } else {
+                        *rTransfer_mode = TRANSFER_MODE_BACKUP_SAVE;
                     }
                 }
 

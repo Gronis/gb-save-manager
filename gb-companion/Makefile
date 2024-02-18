@@ -44,7 +44,7 @@ RAM1			:=	0xD000
 PROJECTNAME		:=	gb-companion
 CODE_LOC		:=	$(VRAM0)
 RAM_LOC			:=  $(RAM0)
-CODE_OFFSET		:=	0x01F8  # Leave space for gfx, expand if more gxf is needed
+CODE_OFFSET		:=	0x01F4  # Leave space for gfx, expand if more gxf is needed
 STACK_PTR		:=  0x9800
 DATA_OFFSET		:=  0x1000
 OUTPUT			:=	.
@@ -72,7 +72,7 @@ LDFLAGS			:=	-mjwx -m \
 					-b _ENTRYPOINT=$(CODE_LOC)+0x100 \
 					-g _STACK_PTR=$(STACK_PTR)
 
-FXFLAGS			:=	-C -p 0 -r 0 -t GBSMCOMPANION -v
+FXFLAGS			:=	-C -p 0 -r 0 -t GBSMCOMPANI -v -O
 
 ###############################################################################
 #	 Files used to build

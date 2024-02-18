@@ -22,6 +22,13 @@
 #define rTransfer_mode                  ((uint8_t*) (_RAMBANK - 4))
 #define rTransfer_mode_remote           ((uint8_t*) (_RAMBANK - 5))
 
+#define rCartridgeType_mode             ((uint8_t*) (0x0147))
+#define rCartridgeType_mode_remote      ((uint8_t*) (_RAMBANK - 6))
+#define rCartridgeROM_size              ((uint8_t*) (0x0148))
+#define rCartridgeROM_size_remote       ((uint8_t*) (_RAMBANK - 7))
+#define rCartridgeSRAM_size             ((uint8_t*) (0x0149))
+#define rCartridgeSRAM_size_remote      ((uint8_t*) (_RAMBANK - 8))
+
 #define LINK_CABLE_ENABLE               0x80
 #define LINK_CABLE_MAGIC_PACKET_SYNC    0xAA
 

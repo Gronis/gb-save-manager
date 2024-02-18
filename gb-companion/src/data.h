@@ -20,7 +20,7 @@
 #include "text_rom_bin.h"
 #include "text_save_bin.h"
 #include "text_slow_bin.h"
-#include "text_start_bin.h"
+#include "text_start_plus_bin.h"
 #include "text_state_bin.h"
 #include "text_to_change_role_bin.h"
 #include "text_true_bin.h"
@@ -49,8 +49,8 @@
 #define text_rom_tile_index             ((text_role_tile_index) + 2)
 #define text_save_tile_index            ((text_rom_tile_index) + 2)
 #define text_slow_tile_index            ((text_save_tile_index) + 2)
-#define text_start_tile_index           ((text_slow_tile_index) + 2)
-#define text_state_tile_index           ((text_start_tile_index) + 2)
+#define text_start_plus_tile_index      ((text_slow_tile_index) + 2)
+#define text_state_tile_index           ((text_start_plus_tile_index) + 2)
 #define text_to_change_role_tile_index  ((text_state_tile_index) + 2)
 #define text_true_tile_index            ((text_to_change_role_tile_index) + 2)
 #define text_waiting_for_tile_index     ((text_true_tile_index) + 2)
@@ -123,7 +123,7 @@ extern const uint8_t text_role[];
 extern const uint8_t text_rom[];
 extern const uint8_t text_save[];
 extern const uint8_t text_slow[];
-extern const uint8_t text_start[];
+extern const uint8_t text_start_plus[];
 extern const uint8_t text_state[];
 extern const uint8_t text_to_change_role[];
 extern const uint8_t text_true[];

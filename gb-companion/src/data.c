@@ -1,7 +1,7 @@
 
 #include "graphics.h"
-#include "bitmaps.h"
-// Messages are put in every other byte in the same location as bitmaps
+#include "data.h"
+// Messages are put in every other byte in the same location as data
 // are rendered to. This way, we can store the message and render with
 // minimal effort while reusing this "unuseable" memory.
 
@@ -26,8 +26,8 @@
 #define       text_rom_offset               ((text_role_offset)                 + (text_role_length)            / 8)
 #define       text_save_offset              ((text_rom_offset)                  + (text_rom_length)             / 8)
 #define       text_slow_offset              ((text_save_offset)                 + (text_save_length)            / 8)
-#define       text_start_offset             ((text_slow_offset)                 + (text_slow_length)            / 8)
-#define       text_state_offset             ((text_start_offset)                + (text_start_length)           / 8)
+#define       text_start_plus_offset        ((text_slow_offset)                 + (text_slow_length)            / 8)
+#define       text_state_offset             ((text_start_plus_offset)           + (text_start_plus_length)      / 8)
 #define       text_to_change_role_offset    ((text_state_offset)                + (text_state_length)           / 8)
 #define       text_true_offset              ((text_to_change_role_offset)       + (text_to_change_role_length)  / 8)
 #define       text_waiting_for_offset       ((text_true_offset)                 + (text_true_length)            / 8)
@@ -68,7 +68,7 @@ const uint8_t tiles[] = {
     0xFF, text_rom_offset,
     0xFF, text_save_offset,
     0xFF, text_slow_offset,
-    0xFF, text_start_offset,
+    0xFF, text_start_plus_offset,
     0xFF, text_state_offset,
     0xFF, text_to_change_role_offset,
     0xFF, text_true_offset,
@@ -88,6 +88,17 @@ const uint8_t tiles[] = {
 
     0xFF, tiles_end
 };
+
+// const uint8_t cartridge_mbc_1_data[] = {
+//     0xFF, 
+//     // RAM Enable
+//     0xFF, 
+//     // ROM Bank Selector
+//     0xFF,
+//     // RAM Bank Selector
+//     0xFF,
+//     // Banking mode (simple/advanced)
+// }
 
 const uint8_t message_header_data[] = { 
     0xFF, 8,
@@ -152,10 +163,17 @@ const uint8_t message_waiting_for_leader_data[] = {
 };
 
 const uint8_t message_choose_action_data[] = { 
-    0xFF, 7,
+    0xFF, 8,
     0xFF, 2, 0xFF, 4, 0xFF, text_press_button_to_tile_index,
-    0xFF, 4, 0xFF, 6, 0xFF, text_a_tile_index,                  0xFF, 5, 0xFF, 6, 0xFF, text_backup_tile_index,     0xFF, 10, 0xFF, 6, 0xFF, text_save_tile_index,
-    0xFF, 4, 0xFF, 7, 0xFF, text_b_tile_index,                  0xFF, 5, 0xFF, 7, 0xFF, text_restore_tile_index,    0xFF, 10, 0xFF, 7, 0xFF, text_save_tile_index,
+    
+    0xFF, 4, 0xFF, 6, 0xFF, text_a_tile_index,
+    0xFF, 5, 0xFF, 6, 0xFF, text_backup_tile_index,
+    0xFF, 10, 0xFF, 6, 0xFF, text_save_tile_index,
+    
+    0xFF, 1, 0xFF, 7, 0xFF, text_start_plus_tile_index,
+    0xFF, 4, 0xFF, 7, 0xFF, text_a_tile_index,
+    0xFF, 5, 0xFF, 7, 0xFF, text_restore_tile_index,
+    0xFF, 10, 0xFF, 7, 0xFF, text_save_tile_index,
 };
 
 const uint8_t message_restore_save_data[] = {
@@ -187,7 +205,7 @@ const uint8_t message_transfer_done_data[] = {
     0xFF, 12, 0xFF, 4, 0xFF, text_true_tile_index,
 };
 
-// This makes sure we include the binary data from bitmaps here
+// This makes sure we include the binary data from data here
 #define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
 #undef  BITMAPS_H
-#include "bitmaps.h"
+#include "data.h"
