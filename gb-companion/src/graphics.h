@@ -25,17 +25,17 @@ typedef struct {
 
 typedef struct {
     uint8_t FILLER1;
+    uint8_t len;
+} message_list_t;
+
+typedef struct {
+    uint8_t FILLER1;
     uint8_t x;
     uint8_t FILLER2;
     uint8_t y;
     uint8_t FILLER3;
     uint8_t message_tile_index;
 } message_t;
-
-typedef struct {
-    uint8_t FILLER1;
-    uint8_t len;
-} message_list_t;
 
 // Rasterize tiles to VRAM which can later be used by set_tiles_row
 void rasterize_tiles(range_t* tile_index, tile_bitmap_t* tile_bitmap);
