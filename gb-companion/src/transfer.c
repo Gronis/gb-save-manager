@@ -32,12 +32,11 @@ uint8_t recv_byte(uint8_t timeout){
 void wait_for_other_device(uint8_t use_internal_clock) {
     uint8_t packet_to_send = use_internal_clock? ~LINK_CABLE_MAGIC_PACKET_SYNC : LINK_CABLE_MAGIC_PACKET_SYNC;
     uint8_t packet_to_receive = ~packet_to_send;
-retry:
-    send_byte(packet_to_send, use_internal_clock);
-    uint8_t received_packet = recv_byte(0);
-    if(received_packet != packet_to_receive){
-        goto retry;
-    }
+    uint8_t received_packet;
+    do {
+        send_byte(packet_to_send, use_internal_clock);
+        received_packet = recv_byte(0);
+    } while (received_packet != packet_to_receive);
 }
 
 void send_recv_header(uint8_t use_internal_clock){

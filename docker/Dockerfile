@@ -1,7 +1,9 @@
+FROM devkitpro/devkitarm:20240202 as base
+
 ###################################################################################
 ### Build rbgds which is used to build assembly code for the Gameboy
 ###################################################################################
-FROM devkitpro/devkitarm AS build-rgbds
+FROM base AS build-rgbds
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
@@ -22,7 +24,7 @@ RUN mkdir -p /opt/rgbds/bin && \
 ###################################################################################
 ### Install bin2c
 ###################################################################################
-FROM devkitpro/devkitarm AS build-bin2c
+FROM base AS build-bin2c
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
@@ -37,7 +39,7 @@ RUN mkdir -p /opt/bin2c/bin && \
 ###################################################################################
 ### Rust base
 ###################################################################################
-FROM devkitpro/devkitarm AS rust-base
+FROM base AS rust-base
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
@@ -61,7 +63,7 @@ RUN mkdir -p /opt/mkfont/bin && \
 ###################################################################################
 ### Install sdcc
 ###################################################################################
-FROM devkitpro/devkitarm AS build-sdcc
+FROM base AS build-sdcc
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
@@ -83,7 +85,7 @@ RUN cd sdcc-4.4.0-rc2 && \
 ###################################################################################
 ### Final build image
 ###################################################################################
-FROM devkitpro/devkitarm
+FROM base
 
 RUN apt-get update \
   && apt-get install -y make \
