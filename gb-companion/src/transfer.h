@@ -29,8 +29,31 @@
 #define rCartridgeSRAM_size             ((uint8_t*) (0x0149))
 #define rCartridgeSRAM_size_remote      ((uint8_t*) (_RAMBANK - 8))
 
+#define rTransferError                  ((uint8_t*) (_RAMBANK - 9))
+
 #define LINK_CABLE_ENABLE               0x80
-#define LINK_CABLE_MAGIC_PACKET_SYNC    0xAA
+#define LINK_CABLE_MAGIC_BYTE_SYNC      0xAA
+
+#define PACKET_SIZE                     128
+
+typedef struct {
+    uint8_t FILLER1;
+    uint8_t bank_enable_addr_msb;
+    uint8_t FILLER2;
+    uint8_t bank_enable_value;
+    uint8_t FILLER3;
+    uint8_t bank_disable_value;
+    uint8_t FILLER4;
+    uint8_t bank_selector_addr_msb;
+    uint8_t FILLER5;
+    uint8_t bank_number_value_start;
+    uint8_t FILLER6;
+    uint8_t bank_number_value_end;
+    uint8_t FILLER7;
+    uint8_t bank_data_addr_msb_start;
+    uint8_t FILLER8;
+    uint8_t bank_data_addr_msb_end;
+} cartridge_mode_t;
 
 void ram_fn_transfer_header(void);
 void ram_fn_perform_transfer(void);

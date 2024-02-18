@@ -43,12 +43,12 @@ const uint8_t CORPORATE_LOGO[] = {
 bool send_detect_link_cable_packet(bool use_internal_clock) {
     uint8_t serial_data = *rSB;
     bool connected = false;
-    if ((serial_data == LINK_CABLE_MAGIC_PACKET_SYNC) || 
-        (serial_data == ~LINK_CABLE_MAGIC_PACKET_SYNC) ){
+    if ((serial_data == LINK_CABLE_MAGIC_BYTE_SYNC) || 
+        (serial_data == ~LINK_CABLE_MAGIC_BYTE_SYNC) ){
         connected = true;
     }
     if (use_internal_clock) {
-        *rSB = LINK_CABLE_MAGIC_PACKET_SYNC;
+        *rSB = LINK_CABLE_MAGIC_BYTE_SYNC;
     }
     *rSC = LINK_CABLE_ENABLE | use_internal_clock;
     return connected;
@@ -200,7 +200,11 @@ void main(void) {
                 run_in_parallel_to_screen(ram_fn_perform_transfer);
 
                 clear_message_from_row(2);
-                render_message(message_transfer_done);
+                if (*rTransferError) {
+                    render_message(message_transfer_error);
+                } else {
+                    render_message(message_transfer_done);
+                }
 
                 // Busy wait at the end. User has to turn off console here
                 while(1) {

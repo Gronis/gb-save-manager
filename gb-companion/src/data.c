@@ -5,6 +5,25 @@
 // Data is put in every other byte in the same location as tile data is
 // stored. This way, we can have useable data in between tiles.
 
+const uint8_t cartridge_mbc_3_ram_data[] = {
+    // bank_enable_addr_msb             (address, 8 msb)
+    0xFF,   0x00,
+    // bank_enable_value      
+    0xFF,   0x0A,
+    // bank_disable_value      
+    0xFF,   0x00,
+    // bank_selector_addr_msb           (address, 8 msb)
+    0xFF,   0x40,
+    // bank_number_value_start          (inclusive)
+    0xFF,   0x00,
+    // bank_number_value_end            (exclusive)
+    0xFF,   0x04,
+    // bank_data_addr_msb_start         (inclusive, address, 8 msb)
+    0xFF,   0xA0,
+    // bank_data_addr_msb_end           (exclusive, address, 8 msb)
+    0xFF,   0xC0,
+};
+
 const uint8_t tiles[] = {
     0xFF, empty_offset,
     0xFF, text_a_offset,
@@ -46,17 +65,6 @@ const uint8_t tiles[] = {
 
     0xFF, tiles_end
 };
-
-// const uint8_t cartridge_mbc_1_data[] = {
-//     0xFF, 
-//     // RAM Enable
-//     0xFF, 
-//     // ROM Bank Selector
-//     0xFF,
-//     // RAM Bank Selector
-//     0xFF,
-//     // Banking mode (simple/advanced)
-// }
 
 const uint8_t message_header_data[] = { 
     0xFF, 8,
@@ -161,6 +169,11 @@ const uint8_t message_progress_bar_data[] = {
 const uint8_t message_transfer_done_data[] = {
     0xFF, 1,
     0xFF, 12, 0xFF, 4, 0xFF, text_true_tile_index,
+};
+
+const uint8_t message_transfer_error_data[] = {
+    0xFF, 1,
+    0xFF, 12, 0xFF, 4, 0xFF, text_false_tile_index,
 };
 
 // This makes sure we include the binary data from data here

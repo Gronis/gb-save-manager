@@ -26,13 +26,17 @@ void send_byte(uint8_t byte, bool use_internal_clock){
 }
 
 uint8_t recv_byte(uint8_t timeout){
+    bool no_timeout_occured = true;
     timeout--;
-    for(uint16_t i = 0; i < ((((uint16_t)timeout) << 8) | timeout) && ((*rSC) & 0x80) != 0; ++i);
+    for(uint16_t i = 0; (no_timeout_occured = i < (((uint16_t)timeout) << 8)) && ((*rSC) & 0x80) != 0; ++i);
+    if (!no_timeout_occured){
+        *rTransferError = true;
+    }
     return *rSB;
 }
 
 void wait_for_other_device(bool use_internal_clock) {
-    uint8_t packet_to_send = use_internal_clock? ~LINK_CABLE_MAGIC_PACKET_SYNC : LINK_CABLE_MAGIC_PACKET_SYNC;
+    uint8_t packet_to_send = use_internal_clock? ~LINK_CABLE_MAGIC_BYTE_SYNC : LINK_CABLE_MAGIC_BYTE_SYNC;
     uint8_t packet_to_receive = ~packet_to_send;
     uint8_t received_packet;
     do {
@@ -60,11 +64,10 @@ void ram_fn_transfer_header(void) {
     send_recv_header(use_internal_clock);
 }
 
-#define PACKET_SIZE 128
 // #define JUGGLE_SPI_MASTER
-
 void ram_fn_perform_transfer(void) {
 
+    uint8_t timeout = 0x40;
     uint8_t transfer_mode = *rTransfer_mode | *rTransfer_mode_remote;
     bool backup_save  = (0 != (transfer_mode & TRANSFER_MODE_BACKUP_SAVE));
     bool restore_save = (0 != (transfer_mode & TRANSFER_MODE_RESTORE_SAVE));
@@ -80,6 +83,7 @@ void ram_fn_perform_transfer(void) {
     uint8_t* data_ptr = (uint8_t*)(is_receiving_data? 0xD000 : 0xC000);
 
     uint8_t visual_tile_index = 0;
+    *rTransferError = false;
 
     // If we control the message flow, Wait some time before starting actual transfer
     // So that we know that the other end is ready for us when transfer starts.
@@ -87,26 +91,23 @@ void ram_fn_perform_transfer(void) {
         wait_n_cycles(0x4000);
     }
 
-    for (uint16_t packet_num = 0; packet_num < 32; ++packet_num) {
+    for (uint16_t packet_num = 0; packet_num < 32 && !(*rTransferError); ++packet_num) {
         uint8_t checksum = 0;
 
         // Send packet number
         {
             send_byte(packet_num, use_internal_clock);
-            uint16_t received_packet_num = recv_byte(0);
+            uint16_t received_packet_num = recv_byte(timeout);
             send_byte(packet_num >> 8, use_internal_clock);
-            received_packet_num |= recv_byte(0) << 8;
+            received_packet_num |= recv_byte(timeout) << 8;
 
             // Remote wants to resend previous packet
-            if (is_receiving_data){
-                while (packet_num != received_packet_num){
-                    packet_num--;
-                    data_ptr -= PACKET_SIZE;
-                }
+            if (is_receiving_data && packet_num != received_packet_num){
+                *rTransferError = true;
             }
         }
 
-        for (uint8_t i = 0; i < PACKET_SIZE; ++i, ++data_ptr){
+        for (uint8_t i = 0; i < PACKET_SIZE && !(*rTransferError); ++i, ++data_ptr){
             if(!is_receiving_data){
                 uint8_t msg = *data_ptr;
                 checksum = checksum ^ msg;
@@ -120,10 +121,10 @@ void ram_fn_perform_transfer(void) {
             // If we are not juggling spi clock leader role back and forth,
             // wait to make sure worker is not behind and is missing packets.
             if (use_internal_clock){
-                wait_n_cycles(0x120);
+                wait_n_cycles(0x0110);
             }
 #endif
-            uint8_t received_byte = recv_byte(0);
+            uint8_t received_byte = recv_byte(timeout);
             // TODO: On timeout, break from loop and attempt error recovery (checksum + packet nr logic)
 
             if (is_receiving_data){
@@ -147,12 +148,11 @@ void ram_fn_perform_transfer(void) {
         // Exchange checksum to verify that packet was transfered correctly
         {
             send_byte(checksum, use_internal_clock);
-            uint8_t received_byte = recv_byte(0);
+            uint8_t received_byte = recv_byte(timeout);
 
-            // If we are sending and checksum from remote is incorrect, resend last packet
+            // If we are sending and checksum from remote is incorrect, error out
             if (!is_receiving_data && received_byte != checksum){
-                packet_num--;
-                data_ptr -= PACKET_SIZE;
+                *rTransferError = true;
             }
         }
     }

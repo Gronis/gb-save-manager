@@ -29,6 +29,10 @@
 
 #include "types.h"
 
+#define cartridge_mbc_3_ram                      ((cartridge_mode_t*)(&cartridge_mbc_3_ram_data))
+
+extern const uint8_t cartridge_mbc_3_ram_data[];
+
 #define empty_length                    (8)
 #define empty_offset                    (0)
 #define text_a_offset                   ((empty_offset)                     + (empty_length)                / 8)
@@ -126,6 +130,7 @@
 #define message_backing_up_save             ((message_list_t*)(&message_backing_up_save_data))
 #define message_progress_bar                ((message_list_t*)(&message_progress_bar_data))
 #define message_transfer_done               ((message_list_t*)(&message_transfer_done_data))
+#define message_transfer_error              ((message_list_t*)(&message_transfer_error_data))
 
 extern const uint8_t tiles[];
 
@@ -145,6 +150,7 @@ extern const uint8_t message_restore_save_data[];
 extern const uint8_t message_backing_up_save_data[];
 extern const uint8_t message_progress_bar_data[];
 extern const uint8_t message_transfer_done_data[];
+extern const uint8_t message_transfer_error_data[];
 
 extern const uint8_t text_a[];
 extern const uint8_t text_b[];
