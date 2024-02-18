@@ -1,7 +1,7 @@
 #ifndef TRANSFER_H
 #define TRANSFER_H
 
-#include "definitions.h"
+#include "version.h"
 #include "types.h"
 
 #define ROLE_WORKER                     0

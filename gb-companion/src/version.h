@@ -1,5 +1,5 @@
-#ifndef DEFINITIONS_H
-#define DEFINITIONS_H
+#ifndef VERSION_H
+#define VERSION_H
 
 #if RAM_LOC == CODE_LOC
 #define RAM_VERSION
@@ -7,4 +7,4 @@
 #define VRAM_VERSION
 #endif
 
-#endif // DEFINITIONS_H
+#endif // VERSION_H

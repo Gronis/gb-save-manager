@@ -1,4 +1,4 @@
-#include "definitions.h"
+#include "version.h"
 
 #ifdef VRAM_VERSION
 #pragma codeseg INIT_LOC

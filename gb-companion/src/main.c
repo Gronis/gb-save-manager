@@ -1,7 +1,7 @@
 #include "types.h"
 #include "hardware.h"
 
-#include "definitions.h"
+#include "version.h"
 #include "transfer.h"
 #include "start.h"
 #include "graphics.h"

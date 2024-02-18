@@ -227,3 +227,7 @@ _run_in_parallel_to_screen:    ; function to call in reg de
 
 end_code:; Important to have a non 0xFF in the end because bin2c strips away trailing data
     .db 0x99
+
+; Make linker happy
+.area _RAM_LOC
+.area _INIT_LOC
