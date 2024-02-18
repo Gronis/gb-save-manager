@@ -29,7 +29,7 @@
 
 #include "types.h"
 
-#define cartridge_mbc_3_ram                      ((cartridge_mode_t*)(&cartridge_mbc_3_ram_data))
+#define cartridge_mbc_3_ram             ((cartridge_mode_t*)(&cartridge_mbc_3_ram_data))
 
 extern const uint8_t cartridge_mbc_3_ram_data[];
 
@@ -73,8 +73,6 @@ extern const uint8_t cartridge_mbc_3_ram_data[];
 #define pb_8_offset                     ((pb_7_offset)                      + (1))
 #define tiles_end                       ((pb_8_offset)                      + (1))
 
-
-
 #define empty_tile_index                (0)
 #define text_a_tile_index               ((empty_tile_index) + 2)
 #define text_b_tile_index               ((text_a_tile_index) + 2)
@@ -114,23 +112,23 @@ extern const uint8_t cartridge_mbc_3_ram_data[];
 #define pb_7_tile_index                 ((pb_6_tile_index) + 2)
 #define pb_8_tile_index                 ((pb_7_tile_index) + 2)
 
-#define message_header                      ((message_list_t*)(&message_header_data))
-#define message_role_worker                 ((message_list_t*)(&message_role_worker_data))
-#define message_role_leader                 ((message_list_t*)(&message_role_leader_data))
-#define message_cartridge_state_ok          ((message_list_t*)(&message_cartridge_state_ok_data))
-#define message_cartridge_state_error       ((message_list_t*)(&message_cartridge_state_error_data))
-#define message_link_cable_state_ok         ((message_list_t*)(&message_link_cable_state_ok_data))
-#define message_link_cable_state_error      ((message_list_t*)(&message_link_cable_state_error_data))
-#define message_idle_role_change_info       ((message_list_t*)(&message_idle_role_change_info_data))
-#define message_insert_gbc_cartridge        ((message_list_t*)(&message_insert_gbc_cartridge_data))
-#define message_insert_gbc_link_cable       ((message_list_t*)(&message_insert_gbc_link_cable_data))
-#define message_waiting_for_leader          ((message_list_t*)(&message_waiting_for_leader_data))
-#define message_choose_action               ((message_list_t*)(&message_choose_action_data))
-#define message_restore_save                ((message_list_t*)(&message_restore_save_data))
-#define message_backing_up_save             ((message_list_t*)(&message_backing_up_save_data))
-#define message_progress_bar                ((message_list_t*)(&message_progress_bar_data))
-#define message_transfer_done               ((message_list_t*)(&message_transfer_done_data))
-#define message_transfer_error              ((message_list_t*)(&message_transfer_error_data))
+#define message_header                  ((message_list_t*)(&message_header_data))
+#define message_role_worker             ((message_list_t*)(&message_role_worker_data))
+#define message_role_leader             ((message_list_t*)(&message_role_leader_data))
+#define message_cartridge_state_ok      ((message_list_t*)(&message_cartridge_state_ok_data))
+#define message_cartridge_state_error   ((message_list_t*)(&message_cartridge_state_error_data))
+#define message_link_cable_state_ok     ((message_list_t*)(&message_link_cable_state_ok_data))
+#define message_link_cable_state_error  ((message_list_t*)(&message_link_cable_state_error_data))
+#define message_idle_role_change_info   ((message_list_t*)(&message_idle_role_change_info_data))
+#define message_insert_gbc_cartridge    ((message_list_t*)(&message_insert_gbc_cartridge_data))
+#define message_insert_gbc_link_cable   ((message_list_t*)(&message_insert_gbc_link_cable_data))
+#define message_waiting_for_leader      ((message_list_t*)(&message_waiting_for_leader_data))
+#define message_choose_action           ((message_list_t*)(&message_choose_action_data))
+#define message_restore_save            ((message_list_t*)(&message_restore_save_data))
+#define message_backing_up_save         ((message_list_t*)(&message_backing_up_save_data))
+#define message_progress_bar            ((message_list_t*)(&message_progress_bar_data))
+#define message_transfer_done           ((message_list_t*)(&message_transfer_done_data))
+#define message_transfer_error          ((message_list_t*)(&message_transfer_error_data))
 
 extern const uint8_t tiles[];
 
