@@ -2,6 +2,8 @@
 #include "graphics_init.h"
 #include "area_init.h"
 
+#include "bitmaps.h"
+
 void render_message_no_screen_flush_call_only_before_rasterize(message_list_t* messages) {
     uint8_t len = messages->len;
     messages++;

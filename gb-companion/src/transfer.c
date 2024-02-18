@@ -1,6 +1,7 @@
 #include "transfer.h"
 #include "hardware.h"
 #include "graphics.h"
+#include "bitmaps.h"
 #include "start.h"
 
 // This will ensure code is executable from RAM
@@ -56,7 +57,7 @@ void ram_fn_transfer_header(void) {
 #define PROGRESS_BAR_TILE_INDEX get_position_tile_index(3, 6)
 void try_update_progress_bar(uint8_t progress){
     uint8_t* dst = _SCRN1 + PROGRESS_BAR_TILE_INDEX + progress / 8;
-    uint8_t tile = tiles[pb_1_tile_index + (progress & 7)];
+    uint8_t tile = tiles[(pb_start_tile_index + 1) + (progress & 7) * 2];
     if (tile) {
         *dst = tile;
     }

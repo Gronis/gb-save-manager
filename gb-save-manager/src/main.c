@@ -2,7 +2,7 @@
 #include "types.h"
 #include "hardware.h"
 
-#define INCLUDE_BIN_DATA
+#define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
 #include "gb-companion_gbc.h"
 
 void execute_vram_code(void);

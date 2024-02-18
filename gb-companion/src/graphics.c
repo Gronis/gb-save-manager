@@ -2,91 +2,6 @@
 #include "bitmaps.h"
 #include "hardware.h"
 
-
-#define       empty_length                  (8)
-#define       empty_offset                  (0)
-#define       text_a_offset                 ((empty_offset)                     + (empty_length)                / 8)
-#define       text_b_offset                 ((text_a_offset)                    + (text_a_length)               / 8)
-#define       text_backing_up_offset        ((text_b_offset)                    + (text_b_length)               / 8)
-#define       text_backup_offset            ((text_backing_up_offset)           + (text_backing_up_length)      / 8)
-#define       text_cartridge_offset         ((text_backup_offset)               + (text_backup_length)          / 8)
-#define       text_connect_gbc_offset       ((text_cartridge_offset)            + (text_cartridge_length)       / 8)
-#define       text_false_offset             ((text_connect_gbc_offset)          + (text_connect_gbc_length)     / 8)
-#define       text_fast_offset              ((text_false_offset)                + (text_false_length)           / 8)
-#define       text_insert_gbc_offset        ((text_fast_offset)                 + (text_fast_length)            / 8)
-#define       text_leader_offset            ((text_insert_gbc_offset)           + (text_insert_gbc_length)      / 8)
-#define       text_link_cable_offset        ((text_leader_offset)               + (text_leader_length)          / 8)
-#define       text_mode_offset              ((text_link_cable_offset)           + (text_link_cable_length)      / 8)
-#define       text_or_remove_the_offset     ((text_mode_offset)                 + (text_mode_length)            / 8)
-#define       text_press_button_to_offset   ((text_or_remove_the_offset)        + (text_or_remove_the_length)   / 8)
-#define       text_restore_offset           ((text_press_button_to_offset)      + (text_press_button_to_length) / 8)
-#define       text_role_offset              ((text_restore_offset)              + (text_restore_length)         / 8)
-#define       text_rom_offset               ((text_role_offset)                 + (text_role_length)            / 8)
-#define       text_save_offset              ((text_rom_offset)                  + (text_rom_length)             / 8)
-#define       text_slow_offset              ((text_save_offset)                 + (text_save_length)            / 8)
-#define       text_start_offset             ((text_slow_offset)                 + (text_slow_length)            / 8)
-#define       text_state_offset             ((text_start_offset)                + (text_start_length)           / 8)
-#define       text_to_change_role_offset    ((text_state_offset)                + (text_state_length)           / 8)
-#define       text_true_offset              ((text_to_change_role_offset)       + (text_to_change_role_length)  / 8)
-#define       text_waiting_for_offset       ((text_true_offset)                 + (text_true_length)            / 8)
-#define       text_worker_offset            ((text_waiting_for_offset)          + (text_waiting_for_length)     / 8)
-
-#define       pb_end_offset                 ((text_worker_offset)               + (text_worker_length)          / 8)
-#define       pb_0_offset                   ((pb_end_offset)                    + (1))
-#define       pb_start_offset               ((pb_0_offset)                      + (1))
-#define       pb_1_offset                   ((pb_0_offset)                      + (1))
-#define       pb_2_offset                   ((pb_1_offset)                      + (1))
-#define       pb_3_offset                   ((pb_2_offset)                      + (1))
-#define       pb_4_offset                   ((pb_3_offset)                      + (1))
-#define       pb_5_offset                   ((pb_4_offset)                      + (1))
-#define       pb_6_offset                   ((pb_5_offset)                      + (1))
-#define       pb_7_offset                   ((pb_6_offset)                      + (1))
-#define       pb_8_offset                   ((pb_7_offset)                      + (1))
-
-#define       tiles_end                     ((pb_8_offset)                      + (1))
-
-const uint8_t tiles[] = {
-    empty_offset,
-    text_a_offset,
-    text_b_offset,
-    text_backing_up_offset,
-    text_backup_offset,
-    text_cartridge_offset,
-    text_connect_gbc_offset,
-    text_false_offset,
-    text_fast_offset,
-    text_insert_gbc_offset,
-    text_leader_offset,
-    text_link_cable_offset,
-    text_mode_offset,
-    text_or_remove_the_offset,
-    text_press_button_to_offset,
-    text_restore_offset,
-    text_role_offset,
-    text_rom_offset,
-    text_save_offset,
-    text_slow_offset,
-    text_start_offset,
-    text_state_offset,
-    text_to_change_role_offset,
-    text_true_offset,
-    text_waiting_for_offset,
-    text_worker_offset,
-
-    pb_end_offset,
-    pb_0_offset,
-    pb_1_offset,
-    pb_2_offset,
-    pb_3_offset,
-    pb_4_offset,
-    pb_5_offset,
-    pb_6_offset,
-    pb_7_offset,
-    pb_8_offset,
-
-    tiles_end
-};
-
 // This function is overwritten when executing rasterize_progress_bar_tiles,
 // which fills some of this function code area with progress bar tiles
 void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void) {
@@ -121,7 +36,7 @@ void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void) {
 void rasterize_progress_bar_tiles(void) {
     uint8_t row = 0x80;
     uint8_t pattern = 0x80;
-    for (uint8_t i = 0; i < 10; ++i){
+    for (uint8_t i = 0; i < 20; i+=2){
         tile_bitmap_t bitmap = { {
             row, pattern, pattern, pattern,
             pattern, pattern, pattern, row,
@@ -168,16 +83,29 @@ void set_tiles_row_repeat(uint8_t x, uint8_t y, range_t tiles, uint8_t width) {
 }
 
 void render_message(message_list_t* messages) {
+// void render_message_impl(message_list_t* messages, bool do_flush_screen) {
     uint8_t len = messages->len;
     messages++;
     for(uint8_t i = 0; i < len; ++i){
         message_t* m = (message_t*)(messages) + i;
         range_t* range = ((range_t*)(&tiles + m->message_tile_index));
-        flush_screen();
+        // if(do_flush_screen){
+            flush_screen();
+        // }
         set_tiles_row(m->x, m->y, *range);
-        flush_screen();
+        // if(do_flush_screen){
+            flush_screen();
+        // }
     }
 }
+
+// void render_message_no_screen_flush(message_list_t* messages) {
+//     render_message_impl(messages, false);
+// }
+
+// void render_message(message_list_t* messages) {
+//     render_message_impl(messages, true);
+// }
 
 #define CLEAR_MESSAGE_TILE_INDEX get_position_tile_index(1, 4) 
 const uint8_t clear_arr[] = {

@@ -12,7 +12,7 @@
 // TODO: Move this to its own source file
 ////////////////////////////////////////////////////////////////////
 #ifdef VRAM_VERSION
-#define INCLUDE_BIN_DATA
+#define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
 #include "ram_code_gbc.h"
 void copy_ram_functions_to_ram(void) { 
     uint8_t* src = ram_code;
@@ -56,12 +56,8 @@ bool send_detect_link_cable_packet(bool use_internal_clock) {
 
 void main(void) {
     render_message_no_screen_flush_call_only_before_rasterize(message_header);
+    // render_message_no_screen_flush(message_header);
     rasterize_all_bitmap_tiles_to_VRAM_call_only_once();
-    // render_message(message_progress_bar);
-    // for(uint8_t i = 1; i < 72; ++i){
-    //     update_progress_bar(i);
-    //     flush_screen();
-    // }
     {
         bool did_write_to_ram = false;
         bool state_changed = true;

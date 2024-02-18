@@ -1,8 +1,6 @@
 #ifndef BITMAPS_H
 #define BITMAPS_H
 
-#include "types.h"
-
 #include "text_a_bin.h"
 #include "text_b_bin.h"
 #include "text_backing_up_bin.h"
@@ -29,6 +27,47 @@
 #include "text_waiting_for_bin.h"
 #include "text_worker_bin.h"
 
+#include "types.h"
+
+#define empty_tile_index                (0)
+#define text_a_tile_index               ((empty_tile_index) + 2)
+#define text_b_tile_index               ((text_a_tile_index) + 2)
+#define text_backing_up_tile_index      ((text_b_tile_index) + 2)
+#define text_backup_tile_index          ((text_backing_up_tile_index) + 2)
+#define text_cartridge_tile_index       ((text_backup_tile_index) + 2)
+#define text_connect_gbc_tile_index     ((text_cartridge_tile_index) + 2)
+#define text_false_tile_index           ((text_connect_gbc_tile_index) + 2)
+#define text_fast_tile_index            ((text_false_tile_index) + 2)
+#define text_insert_gbc_tile_index      ((text_fast_tile_index) + 2)
+#define text_leader_tile_index          ((text_insert_gbc_tile_index) + 2)
+#define text_link_cable_tile_index      ((text_leader_tile_index) + 2)
+#define text_mode_tile_index            ((text_link_cable_tile_index) + 2)
+#define text_or_remove_the_tile_index   ((text_mode_tile_index) + 2)
+#define text_press_button_to_tile_index ((text_or_remove_the_tile_index) + 2)
+#define text_restore_tile_index         ((text_press_button_to_tile_index) + 2)
+#define text_role_tile_index            ((text_restore_tile_index) + 2)
+#define text_rom_tile_index             ((text_role_tile_index) + 2)
+#define text_save_tile_index            ((text_rom_tile_index) + 2)
+#define text_slow_tile_index            ((text_save_tile_index) + 2)
+#define text_start_tile_index           ((text_slow_tile_index) + 2)
+#define text_state_tile_index           ((text_start_tile_index) + 2)
+#define text_to_change_role_tile_index  ((text_state_tile_index) + 2)
+#define text_true_tile_index            ((text_to_change_role_tile_index) + 2)
+#define text_waiting_for_tile_index     ((text_true_tile_index) + 2)
+#define text_worker_tile_index          ((text_waiting_for_tile_index) + 2)
+
+#define pb_end_tile_index               ((text_worker_tile_index) + 2)
+#define pb_0_tile_index                 ((pb_end_tile_index) + 2)
+#define pb_start_tile_index             ((pb_0_tile_index) + 2)
+#define pb_1_tile_index                 ((pb_0_tile_index) + 2)
+#define pb_2_tile_index                 ((pb_1_tile_index) + 2)
+#define pb_3_tile_index                 ((pb_2_tile_index) + 2)
+#define pb_4_tile_index                 ((pb_3_tile_index) + 2)
+#define pb_5_tile_index                 ((pb_4_tile_index) + 2)
+#define pb_6_tile_index                 ((pb_5_tile_index) + 2)
+#define pb_7_tile_index                 ((pb_6_tile_index) + 2)
+#define pb_8_tile_index                 ((pb_7_tile_index) + 2)
+
 #define message_header                      ((message_list_t*)(&message_header_data))
 #define message_role_worker                 ((message_list_t*)(&message_role_worker_data))
 #define message_role_leader                 ((message_list_t*)(&message_role_leader_data))
@@ -45,6 +84,8 @@
 #define message_backing_up_save             ((message_list_t*)(&message_backing_up_save_data))
 #define message_progress_bar                ((message_list_t*)(&message_progress_bar_data))
 #define message_transfer_done               ((message_list_t*)(&message_transfer_done_data))
+
+extern const uint8_t tiles[];
 
 extern const uint8_t message_header_data[];
 extern const uint8_t message_role_worker_data[];

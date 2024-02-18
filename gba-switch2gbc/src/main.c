@@ -25,7 +25,7 @@
 
 #define SWI_CPUSET_FILL                 0x1000000
 
-#define INCLUDE_BIN_DATA
+#define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
 #include PAYLOAD_HEADER
 
 // #include "payload_gbc.h"
