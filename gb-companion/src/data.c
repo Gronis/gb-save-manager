@@ -6,21 +6,21 @@
 // stored. This way, we can have useable data in between tiles.
 
 const uint8_t cartridge_mbc_3_ram_data[] = {
-    // bank_enable_addr_msb             (address, 8 msb)
+    // bank_enable_addr                 (address, 8 msb)
     0xFF,   0x00,
     // bank_enable_value      
     0xFF,   0x0A,
     // bank_disable_value      
     0xFF,   0x00,
-    // bank_selector_addr_msb           (address, 8 msb)
+    // bank_selector_addr               (address, 8 msb)
     0xFF,   0x40,
     // bank_number_value_start          (inclusive)
     0xFF,   0x00,
     // bank_number_value_end            (exclusive)
     0xFF,   0x04,
-    // bank_data_addr_msb_start         (inclusive, address, 8 msb)
+    // bank_data_addr_start             (inclusive, address, 8 msb)
     0xFF,   0xA0,
-    // bank_data_addr_msb_end           (exclusive, address, 8 msb)
+    // bank_data_addr_end               (exclusive, address, 8 msb)
     0xFF,   0xC0,
 };
 
@@ -153,15 +153,14 @@ const uint8_t message_backing_up_save_data[] = {
 };
 
 const uint8_t message_progress_bar_data[] = {
-    0xFF, 10,
-    0xFF, 3, 0xFF, 6, 0xFF,  pb_start_tile_index,
-    0xFF, 4, 0xFF, 6, 0xFF,  pb_0_tile_index,
+    0xFF, 9,
+    0xFF, 4, 0xFF, 6, 0xFF,  pb_start_tile_index,
     0xFF, 5, 0xFF, 6, 0xFF,  pb_0_tile_index,
     0xFF, 6, 0xFF, 6, 0xFF,  pb_0_tile_index,
     0xFF, 7, 0xFF, 6, 0xFF,  pb_0_tile_index,
     0xFF, 8, 0xFF, 6, 0xFF,  pb_0_tile_index,
     0xFF, 9, 0xFF, 6, 0xFF,  pb_0_tile_index,
-    0xFF, 10, 0xFF, 6, 0xFF, pb_0_tile_index,
+    0xFF, 10, 0xFF, 6, 0xFF,  pb_0_tile_index,
     0xFF, 11, 0xFF, 6, 0xFF, pb_0_tile_index,
     0xFF, 12, 0xFF, 6, 0xFF, pb_end_tile_index,
 };

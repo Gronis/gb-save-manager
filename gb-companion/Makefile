@@ -50,6 +50,14 @@ DATA_OFFSET		:=  0x1000
 OUTPUT			:=	.
 
 ###############################################################################
+#	Cartridge Header data
+#	https://gbdev.io/pandocs/The_Cartridge_Header.html#0147--cartridge-type
+###############################################################################
+TITLE			:=	GBSMCOMPANI
+MBC				:=  0x03	# MBC1 + RAM + BATTERY
+RAM_SIZE		:=	3		# 32kB
+
+###############################################################################
 #	Options/flags for tools
 ###############################################################################
 CFLAGS			:=	--verbose --std-c99 -msm83 --opt-code-size --peep-asm \
@@ -72,7 +80,8 @@ LDFLAGS			:=	-mjwx -m \
 					-b _ENTRYPOINT=$(CODE_LOC)+0x100 \
 					-g _STACK_PTR=$(STACK_PTR)
 
-FXFLAGS			:=	-C -p 0 -r 0 -t GBSMCOMPANI -v -O
+FXFLAGS			:=	-C -p 0 -v -m $(MBC) -O -r $(RAM_SIZE) \
+					-t $(TITLE)
 
 ###############################################################################
 #	 Files used to build

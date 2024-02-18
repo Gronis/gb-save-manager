@@ -8,7 +8,7 @@
 #include "area_ram.h"
 
 void try_update_progress_bar(uint8_t progress){
-    uint8_t* dst = _SCRN1 + get_position_tile_index(3, 6) + progress / 8;
+    uint8_t* dst = _SCRN1 + get_position_tile_index(4, 6) + progress / 8;
     uint8_t tile = pb_start_offset + (progress & 7);
     if (*rLY <= 144) {
         *dst = tile;
@@ -67,7 +67,7 @@ void ram_fn_transfer_header(void) {
 // #define JUGGLE_SPI_MASTER
 void ram_fn_perform_transfer(void) {
 
-    uint8_t timeout = 0x40;
+    uint8_t timeout = 0x80;
     uint8_t transfer_mode = *rTransfer_mode | *rTransfer_mode_remote;
     bool backup_save  = (0 != (transfer_mode & TRANSFER_MODE_BACKUP_SAVE));
     bool restore_save = (0 != (transfer_mode & TRANSFER_MODE_RESTORE_SAVE));
@@ -80,7 +80,13 @@ void ram_fn_perform_transfer(void) {
     bool use_internal_clock = is_receiving_data;
 
     // TODO: grab this from MBC data
-    uint8_t* data_ptr = (uint8_t*)(is_receiving_data? 0xD000 : 0xC000);
+    // uint8_t* data_ptr = (uint8_t*)(is_receiving_data? 0xD000 : 0xC000);
+    // bank_number_value_end
+    cartridge_mode_t* cartridge_mode = cartridge_mbc_3_ram;
+    *as_addr(cartridge_mbc_3_ram->bank_enable_addr) = cartridge_mbc_3_ram->bank_enable_value;
+    uint8_t* data_ptr = as_addr(cartridge_mode->bank_data_addr_end);
+    uint8_t* data_ptr_end = as_addr(cartridge_mode->bank_data_addr_end);
+    uint8_t  next_bank_number = cartridge_mbc_3_ram->bank_number_value_start;
 
     uint8_t visual_tile_index = 0;
     *rTransferError = false;
@@ -91,7 +97,7 @@ void ram_fn_perform_transfer(void) {
         wait_n_cycles(0x4000);
     }
 
-    for (uint16_t packet_num = 0; packet_num < 32 && !(*rTransferError); ++packet_num) {
+    for (uint16_t packet_num = 0; packet_num < 256 && !(*rTransferError); ++packet_num) {
         uint8_t checksum = 0;
 
         // Send packet number
@@ -108,6 +114,14 @@ void ram_fn_perform_transfer(void) {
         }
 
         for (uint8_t i = 0; i < PACKET_SIZE && !(*rTransferError); ++i, ++data_ptr){
+
+            // Progress ROM/RAM Bank if necessary
+            if (data_ptr == data_ptr_end) {
+                data_ptr = as_addr(cartridge_mode->bank_data_addr_start);
+                *as_addr(cartridge_mode->bank_selector_addr) = next_bank_number++;
+            }
+
+            // Send byte and update UI progress bar
             if(!is_receiving_data){
                 uint8_t msg = *data_ptr;
                 checksum = checksum ^ msg;
@@ -115,7 +129,7 @@ void ram_fn_perform_transfer(void) {
             } else {
                 send_last_byte(use_internal_clock);
             }
-            try_update_progress_bar(packet_num);
+            try_update_progress_bar(packet_num / 4);
 
 #ifndef JUGGLE_SPI_MASTER
             // If we are not juggling spi clock leader role back and forth,
@@ -124,17 +138,18 @@ void ram_fn_perform_transfer(void) {
                 wait_n_cycles(0x0110);
             }
 #endif
-            uint8_t received_byte = recv_byte(timeout);
-            // TODO: On timeout, break from loop and attempt error recovery (checksum + packet nr logic)
 
+            // Receive byte and compute checksum
+            uint8_t received_byte = recv_byte(timeout);
             if (is_receiving_data){
                 checksum = checksum ^ received_byte;
             }
 
-            // Visualize transfered bytes
+            // Visualize transfered bytes as a tile
             *(_VRAM + tiles_end * 16 + ((visual_tile_index += 2) & 15)) = received_byte;
             *(_SCRN1 + get_position_tile_index(12, 4)) = tiles_end;
 
+            // Write byte to ROM/RAM Bank
             if (is_receiving_data){
                 *data_ptr = received_byte;
             }
@@ -156,4 +171,6 @@ void ram_fn_perform_transfer(void) {
             }
         }
     }
+
+    *as_addr(cartridge_mbc_3_ram->bank_enable_addr) = cartridge_mbc_3_ram->bank_disable_value;
 }
