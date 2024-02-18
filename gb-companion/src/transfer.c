@@ -54,9 +54,8 @@ void ram_fn_transfer_header(void) {
     show_ram_is_working();
 }
 
-#define PROGRESS_BAR_TILE_INDEX get_position_tile_index(3, 6)
 void try_update_progress_bar(uint8_t progress){
-    uint8_t* dst = _SCRN1 + PROGRESS_BAR_TILE_INDEX + progress / 8;
+    uint8_t* dst = _SCRN1 + get_position_tile_index(3, 6) + progress / 8;
     uint8_t tile = tiles[(pb_start_tile_index + 1) + (progress & 7) * 2];
     if (tile) {
         *dst = tile;
