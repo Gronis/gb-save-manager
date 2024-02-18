@@ -167,7 +167,9 @@ void main(void) {
 #ifdef VRAM_VERSION
                 *rDevice_mode = DEVICE_MODE_AGB;
 #else 
-                *rDevice_mode = DEVICE_MODE_GB; // Check GB/CGB mode here
+                *rDevice_mode = (*rDeviceModeBootup & BOOTUP_A_CGB) != 0? 
+                    DEVICE_MODE_CGB :
+                    DEVICE_MODE_GB;
 #endif
                 *rRole = is_leader? ROLE_LEADER : ROLE_WORKER;
                 *rTransfer_mode = TRANSFER_MODE_NO_ACTION;

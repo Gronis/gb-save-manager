@@ -39,4 +39,6 @@ volatile void flush_screen(void);
 // timing requirements).
 volatile void wait_n_cycles(uint16_t cycles);
 
+#define rDeviceModeBootup ((uint8_t*) 0xFFFC)
+
 #endif // START_H

@@ -5,7 +5,11 @@
 ;##############################################################################
 rAppSP              .equ 0xFFFD     ; This is where we save the main app stack pointer
                                     ; while executing HRAM code
-_HRAM_STACK_PTR     .equ 0xFFFC     ; This is the start of HRAM stack pointer used
+
+.globl              rDeviceModeBootup
+rDeviceModeBootup   .equ 0xFFFC     ; This register holds if we are in AGB, CGB, GB, etc mode
+
+_HRAM_STACK_PTR     .equ 0xFFFB     ; This is the start of HRAM stack pointer used
                                     ; each time the app moves control flow to HRAM
 
 ;##############################################################################
@@ -117,7 +121,7 @@ copy_program_to_hram_loop:
     inc de
     ld  (hl+), a
     ld  a, l
-    cp  a, #0xFE                    ; End of HRAM
+    cp  a, #0xFB                    ; End of HRAM - some variables
     jr  nz, copy_program_to_hram_loop
     jp  _HRAM                       ; This moves execution from VRAM to HRAM
 
@@ -173,23 +177,6 @@ hram_reset_sp:
     ld sp, hl
     ret
 
-; Define math function just to make the code compile.
-.globl __divuint
-.globl __mulint
-.globl __muluchar
-.globl __mullong
-.globl __modsint
-.globl __moduint
-.globl __divsint
-
-__divuint:
-__mulint:
-__muluchar:
-__mullong:
-__modsint:
-__moduint:
-__divsint:
-    ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This is where we start execution when loading the ROM in a gb/gbc, has to be 4 bytes
