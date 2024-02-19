@@ -22,6 +22,10 @@ const uint8_t cartridge_mbc_3_ram_data[] = {
     0xFF,   0xA0,
     // bank_data_addr_end               (exclusive, address, 8 msb)
     0xFF,   0xC0,
+    // bank_enable_advanced_addr
+    0xFF,   0x60,
+    // bank_enable_advanced_value
+    0xFF,   0x01,
 };
 
 const uint8_t tiles[] = {

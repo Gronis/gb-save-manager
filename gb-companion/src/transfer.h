@@ -53,6 +53,10 @@ typedef struct {
     uint8_t bank_data_addr_start;
     uint8_t FILLER8;
     uint8_t bank_data_addr_end;
+    uint8_t FILLER9;
+    uint8_t bank_enable_advanced_addr;
+    uint8_t FILLER10;
+    uint8_t bank_enable_advanced_value;
 } cartridge_mode_t;
 
 #define as_addr(addr) ((uint8_t*)(((uint16_t)(addr)) << 8))

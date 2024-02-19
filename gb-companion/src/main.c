@@ -56,7 +56,6 @@ bool send_detect_link_cable_packet(bool use_internal_clock) {
 
 void main(void) {
     render_message_no_screen_flush_call_only_before_rasterize(message_header);
-    // render_message_no_screen_flush(message_header);
     rasterize_all_bitmap_tiles_to_VRAM_call_only_once();
     {
         bool did_write_to_ram = false;
@@ -205,6 +204,9 @@ void main(void) {
                 } else {
                     render_message(message_transfer_done);
                 }
+
+                cartridge_mode_t* cartridge_mode = cartridge_mbc_3_ram;
+                *as_addr(cartridge_mode->bank_enable_addr) = cartridge_mode->bank_disable_value;
 
                 // Busy wait at the end. User has to turn off console here
                 while(1) {

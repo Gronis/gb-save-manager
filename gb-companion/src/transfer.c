@@ -79,14 +79,25 @@ void ram_fn_perform_transfer(void) {
 
     bool use_internal_clock = is_receiving_data;
 
-    // TODO: grab this from MBC data
-    // uint8_t* data_ptr = (uint8_t*)(is_receiving_data? 0xD000 : 0xC000);
-    // bank_number_value_end
+    // Since cartridge mode data is in VRAM, copy it before proceeding.
     cartridge_mode_t* cartridge_mode = cartridge_mbc_3_ram;
-    *as_addr(cartridge_mbc_3_ram->bank_enable_addr) = cartridge_mbc_3_ram->bank_enable_value;
-    uint8_t* data_ptr = as_addr(cartridge_mode->bank_data_addr_end);
-    uint8_t* data_ptr_end = as_addr(cartridge_mode->bank_data_addr_end);
-    uint8_t  next_bank_number = cartridge_mbc_3_ram->bank_number_value_start;
+    // TODO use bank_number_value_end to determine length of data
+    uint8_t bank_enable_addr            = cartridge_mode->bank_enable_addr;
+    uint8_t bank_enable_value           = cartridge_mode->bank_enable_value;
+    uint8_t bank_selector_addr          = cartridge_mode->bank_selector_addr;
+    uint8_t bank_number_value_start     = cartridge_mode->bank_number_value_start;
+    uint8_t bank_number_value_end       = cartridge_mode->bank_number_value_end;
+    uint8_t bank_data_addr_start        = cartridge_mode->bank_data_addr_start;
+    uint8_t bank_data_addr_end          = cartridge_mode->bank_data_addr_end;
+    uint8_t bank_enable_advanced_addr   = cartridge_mode->bank_enable_advanced_addr;
+    uint8_t bank_enable_advanced_value  = cartridge_mode->bank_enable_advanced_value;
+
+    *as_addr(bank_enable_addr)          = bank_enable_value;
+    *as_addr(bank_enable_advanced_addr) = bank_enable_advanced_value;
+
+    uint8_t* data_ptr =         as_addr(bank_data_addr_end);
+    uint8_t* data_ptr_end =     as_addr(bank_data_addr_end);
+    uint8_t  next_bank_number = bank_number_value_start;
 
     uint8_t visual_tile_index = 0;
     *rTransferError = false;
@@ -117,8 +128,8 @@ void ram_fn_perform_transfer(void) {
 
             // Progress ROM/RAM Bank if necessary
             if (data_ptr == data_ptr_end) {
-                data_ptr = as_addr(cartridge_mode->bank_data_addr_start);
-                *as_addr(cartridge_mode->bank_selector_addr) = next_bank_number++;
+                data_ptr = as_addr(bank_data_addr_start);
+                *as_addr(bank_selector_addr) = next_bank_number++;
             }
 
             // Send byte and update UI progress bar
@@ -171,6 +182,4 @@ void ram_fn_perform_transfer(void) {
             }
         }
     }
-
-    *as_addr(cartridge_mbc_3_ram->bank_enable_addr) = cartridge_mbc_3_ram->bank_disable_value;
 }
