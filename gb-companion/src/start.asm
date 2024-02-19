@@ -18,33 +18,17 @@ _HRAM_STACK_PTR     .equ 0xFFFB     ; This is the start of HRAM stack pointer us
 .globl _main
 
 ;##############################################################################
-; CODE_LOC is address of program while executing on target (VRAM+HRAM)
+; CODE_LOC is address of program while executing on target (VRAM or RAM)
 ;##############################################################################
 .area _CODE_LOC                     ; Address: 0x0 while in ROM, or CODE_LOC after copy
 CODE_LOC:
+
 start_from_vram:                    ; Start of code execution when switching from GBA -> GB
     xor a
     ld  (rLCDC), a                  ; Turn off screen so that we can interact with VRAM properly
-    jr  start
-
-start_from_rom:                     ; Start of code execution when executing directly from ROM
-    xor a
-    ld  (rLCDC), a                  ; Initialize LCD control register
-
-    ld  de, #0                      ; This is the ROM start location to copy from
-copy_program_and_run:
-    ld  hl, #CODE_LOC
-copy_program_and_run_loop:
-    ld  a, (de)
-    inc de
-    ld  (hl+), a
-    ld  a, d
-    cp  a, #0x12                    ; Code in RAM (max 4kB, half the size of VRAM)
-    jr  nz, copy_program_and_run_loop
-    jp  CODE_LOC
+    ld  sp, #_STACK_PTR-1           ; Off by one, we don't want to overwrite first code instruction 
 
 start:
-    ld  sp, #_STACK_PTR-1           ; Off by one, we don't want to overwrite first code instruction 
     xor a
     ld  (rSCX),a
     ld  (rSCY),a
@@ -53,7 +37,7 @@ start:
     ld  a,#0x80
     ld  (#0xFF4C),a                 ; set as GBC+DMG
 
-init_palette:                       ; load gbc palette colors (0: black, 1: white, 2: black, 3: white)
+init_tile_palette:                  ; load gbc palette colors (0: black, 1: white, 2: black, 3: white)
     ld a, #0xCC                     ; DMG palette (%11001100 => 3: opaque 2: transparent, 1: opaque, 0: transparent)
     ld (rBGP), a
     
@@ -78,55 +62,65 @@ init_palette:                       ; load gbc palette colors (0: black, 1: whit
     ld  (rBGPD),a                   ; color 3 p1: black 
     ld  (rBGPD),a                   ; color 3 p2: black 
 
-init_arrangements:
+init_tile_arrangements:
     ld  a, #0 -160 + 4              ; Move window x-axis to the far right     
     ld  (rSCX), a
     ld  a, #0 -144 + (160-144)*2 -4 ; Move window y-axis to bottom but compensate for affine reg zoom
     ld  (rSCY), a
-    ; ld  de,#0x240
-    ; ld  hl, #_SCRN1                 ; Use tiles at the start (for now)
     ld  b, #0
     ld  de, #32*11                  ; (32 tiles per line * 11 lines)
     ld  hl, #_SCRN1 +0x400 -#32*11  ; Use tiles at the end of VRAM (leave the rest for code)
-init_arrangements_loop:
+init_tile_arrangements_loop:
     ld  a,b
-    ; inc b                           ; Set each tile to a new one
     ld (hl+),a
     dec de
     ld  a,d
     or  a,e
-    jr  nz,init_arrangements_loop
+    jr  nz,init_tile_arrangements_loop
 
-; skip_clear_tiles_if_addr_inaccessible:
-;     ld  hl, #_RAM
-;     ld  (hl), #0x67
-;     ld  a, (hl)
-;     cp  a, #0x67
-;     jr  z, copy_program_to_hram ; If we can read and write to addr, skip clear tile 0
-
-clear_tile_zero:
+rasterize_tile_zero:
     ld  hl, #_VRAM
     ld  a, #0x00
     ld  b, #16
-clear_tile_zero_loop:
+rasterize_tile_zero_loop:
     ld  (hl+), a
     dec b
-    jr  nz, clear_tile_zero_loop
+    jr  nz, rasterize_tile_zero_loop
 
 copy_program_to_hram:
-    ld  de, #hram_code              ; hram_code is already vram offset
-    ld  hl, #_HRAM
-copy_program_to_hram_loop:
+    ld  de, #hram_code              ; src
+    ld  hl, #_HRAM                  ; dst_start
+    ld  bc, #0xFFFB - #_HRAM        ; len, end of HRAM - some variables
+    call mem_copy
+
+start_program:
+    jp  _main                       ; This moves execution from VRAM to HRAM
+
+start_from_rom:                     ; Start of code execution when executing directly from ROM
+    xor a
+    ld  (rLCDC), a                  ; Initialize LCD control register
+    ld  sp, #_STACK_PTR-1           ; Off by one, we don't want to overwrite first code instruction
+
+    ld  de, #0                      ; src
+    ld  hl, #CODE_LOC               ; dst_start
+    ld  bc, #0x1000                 ; len
+    push hl                         ; hl (VRAM) is where we want to start execution so push it to the stack.
+
+mem_copy:
     ld  a, (de)
     inc de
     ld  (hl+), a
-    ld  a, l
-    cp  a, #0xFB                    ; End of HRAM - some variables
-    jr  nz, copy_program_to_hram_loop
-    jp  _HRAM                       ; This moves execution from VRAM to HRAM
+    dec bc
+    ld  a, b
+    or  a, c
+    jr  nz, mem_copy
+    ret
+
+;##########################################################################
+;  HRAM CODE
+;##########################################################################
 
 hram_code:
-    jp _main
 
 hram_wait_for_VBLANK:
     ld  hl, #rLY
