@@ -167,6 +167,6 @@ $(BUILD_DIR)/%.png: assets/%.png
 #	Specific dependencies for certain files
 ###############################################################################
 
-$(BUILD_DIR)/binaries.rel:				\
+$(BUILD_DIR)/data.rel:				\
 	$(BUILD_DIR)/vram1_code_gbc.h 		\
 	$(BUILD_DIR)/ram_code_gbc.h

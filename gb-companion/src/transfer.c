@@ -1,7 +1,8 @@
 #include "transfer.h"
 #include "hardware.h"
 #include "graphics.h"
-#include "data.h"
+#include "bitmaps.h"
+#include "cartridges.h"
 #include "start.h"
 
 // This will ensure code is executable from RAM

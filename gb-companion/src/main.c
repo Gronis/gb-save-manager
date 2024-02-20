@@ -5,9 +5,10 @@
 #include "transfer.h"
 #include "start.h"
 #include "graphics.h"
-#include "data.h"
+#include "bitmaps.h"
+#include "cartridges.h"
 #include "input.h"
-#include "binaries.h"
+#include "data.h"
 
 // TODO: Move this to its own source file
 //////////////////////////////////////////////////////////////////

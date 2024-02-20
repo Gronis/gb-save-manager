@@ -1,5 +1,5 @@
 #include "graphics.h"
-#include "data.h"
+#include "bitmaps.h"
 #include "hardware.h"
 
 #define BITS_PER_PIXEL 2
