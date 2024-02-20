@@ -46,7 +46,7 @@ PROJECTNAME		:=	gb-companion
 CODE_LOC		:=	$(VRAM0)
 RAM_LOC			:=  $(RAM0)
 VRAM1_LOC		:=  $(VRAM1)
-C_CODE_OFFSET	:=	0x01B0  # Leave space for gfx, expand if more gxf is needed
+C_CODE_OFFSET	:=	0x0150
 STACK_PTR		:=  0x9D80
 OUTPUT			:=	.
 
@@ -75,7 +75,6 @@ ASFLAGS			:=	-l -plosgffw -Isrc -I$(OUTPUT)/$(PROJECTNAME)
 LDFLAGS			:=	-mjwx -m \
 					-b _ENTRYPOINT=$(CODE_LOC)+0x100		\
 					-b _CODE_LOC=$(CODE_LOC)				\
-					-b _INIT_LOC=$(CODE_LOC)+0x150			\
 					-b _RAM_LOC=$(RAM_LOC)					\
 					-b _VRAM1_LOC=$(VRAM1_LOC)				\
 					-g VRAM1_LOC=$(VRAM1_LOC)				\

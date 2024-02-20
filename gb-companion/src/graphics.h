@@ -44,9 +44,9 @@ void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void);
 //
 void set_tiles_row(uint8_t x, uint8_t y, const range_t tiles);
 
-// // Render all messages in list without flushing the screen in between messages.
-// // Note: messages should be placed consecutivly in memory
-// void render_message_no_screen_flush(message_list_t* messages);
+// Render all messages in list without flushing the screen in between messages.
+// Note: messages should be placed consecutivly in memory
+void render_message_no_screen_flush(message_list_t* messages);
 
 // Render all messages in list.
 // Note: messages should be placed consecutivly in memory

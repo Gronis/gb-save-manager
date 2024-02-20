@@ -5,7 +5,6 @@
 #include "transfer.h"
 #include "start.h"
 #include "graphics.h"
-#include "graphics_init.h"
 #include "data.h"
 #include "input.h"
 #include "binaries.h"
@@ -54,7 +53,7 @@ bool send_detect_link_cable_packet(bool use_internal_clock) {
 }
 
 void main(void) {
-    render_message_no_screen_flush_call_only_before_rasterize(message_header);
+    render_message_no_screen_flush(message_header);
     rasterize_all_bitmap_tiles_to_VRAM_call_only_once();
     {
         bool did_write_to_ram = false;

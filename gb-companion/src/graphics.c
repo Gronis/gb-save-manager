@@ -28,30 +28,29 @@ void set_tiles_row(uint8_t x, uint8_t y, const range_t tiles) {
     }
 }
 
-void render_message(message_list_t* messages) {
-// void render_message_impl(message_list_t* messages, bool do_flush_screen) {
+void render_message_impl(message_list_t* messages, bool do_flush_screen) {
     uint8_t len = messages->len;
     messages++;
     for(uint8_t i = 0; i < len; ++i){
         message_t* m = (message_t*)(messages) + i;
         range_t* range = ((range_t*)(&tiles + m->message_tile_index));
-        // if(do_flush_screen){
+        if(do_flush_screen){
             flush_screen();
-        // }
+        }
         set_tiles_row(m->x, m->y, *range);
-        // if(do_flush_screen){
+        if(do_flush_screen){
             flush_screen();
-        // }
+        }
     }
 }
 
-// void render_message_no_screen_flush(message_list_t* messages) {
-//     render_message_impl(messages, false);
-// }
+void render_message_no_screen_flush(message_list_t* messages) {
+    render_message_impl(messages, false);
+}
 
-// void render_message(message_list_t* messages) {
-//     render_message_impl(messages, true);
-// }
+void render_message(message_list_t* messages) {
+    render_message_impl(messages, true);
+}
 
 #define CLEAR_MESSAGE_TILE_INDEX get_position_tile_index(1, 4) 
 const uint8_t clear_arr[] = {
