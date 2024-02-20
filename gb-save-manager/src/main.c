@@ -38,8 +38,10 @@ void copy_ram_code(void) {
 void main(void) {
     // Must disable screen in order to write to VRAM
     *rLCDC = 0;
-    // bool is_device_agb = true;
+
     bool is_device_agb = (rDeviceModeBootup & (BOOTUP_B_AGB << 1)) != 0;
+    // bool is_device_agb = true; // For debugging
+
     // Use vram version for AGB device because it cannot interact with WRAM
     // without a game cartridge
     if (is_device_agb){

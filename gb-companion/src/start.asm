@@ -217,29 +217,6 @@ _run_in_parallel_to_screen:    ; function to call in reg de
     ld	h, d    ; move de to hl
     jp hram_run_in_parallel_to_screen-hram_code+_HRAM
 
-
-; .globl _ram_code
-; .globl _vram1_code
-; .globl _copy_ram_functions_to_ram_impl
-; _copy_ram_functions_to_ram_impl:
-;     ; ld  de, #_ram_code - #CODE + #0x9000             ; src
-;     ; ld  de, #_ram_code - #_vram1_code + #0x9000             ; src
-;     ; ld  de, #_ram_code - #0x81B0 + #VRAM1_LOC            ; src
-;     ld  de, #VRAM1_LOC - #0x81B0 + #_ram_code            ; src
-;     ; ld  de, #_ram_code - #0x81B0 + #0x9000             ; src
-;     ld  hl, #RAM_LOC                ; dst
-;     ld  bc, #0x0800                 ; len
-
-; _copy_ram_functions_to_ram_impl_loop:
-;     ld  a, (de)
-;     inc de
-;     ld  (hl+), a
-;     dec bc
-;     ld  a, b
-;     or  a, c
-;     jr  nz, _copy_ram_functions_to_ram_impl_loop
-;     ret
-
 end_code:; Important to have a non 0xFF in the end because bin2c strips away trailing data
     .db 0x99
 

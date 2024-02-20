@@ -36,19 +36,6 @@
 
 #define PACKET_SIZE                     128
 
-typedef struct {
-    uint8_t bank_enable_addr;
-    uint8_t bank_enable_value;
-    uint8_t bank_disable_value;
-    uint8_t bank_selector_addr;
-    uint8_t bank_number_value_start;
-    uint8_t bank_number_value_end;
-    uint8_t bank_data_addr_start;
-    uint8_t bank_data_addr_end;
-    uint8_t bank_enable_advanced_addr;
-    uint8_t bank_enable_advanced_value;
-} cartridge_mode_t;
-
 #define as_addr(addr) ((uint8_t*)(((uint16_t)(addr)) << 8))
 
 void ram_fn_transfer_header(void);

@@ -8,6 +8,34 @@
 // This will ensure code is executable from RAM
 #include "area_ram.h"
 
+const uint8_t cartridge_sram_table[] = {
+    0,  // 2: 8kB    1 bank
+    2,  // 3: 32kB   4 banks
+    4,  // 4: 128kB 16 banks
+    3,  // 5: 64kB   8 banks
+};
+
+const cartridge_mode_t cartridge_mbc_3_ram_data = {
+    // bank_enable_addr                 (address, 8 msb)
+    0x00,
+    // bank_enable_value      
+    0x0A,
+    // bank_disable_value      
+    0x00,
+    // bank_selector_addr               (address, 8 msb)
+    0x40,
+    // bank_number_base: 4 rom banks
+    2,
+    // bank_data_addr_start             (inclusive, address, 8 msb)
+    0xA0,
+    // bank_data_addr_end               (exclusive, address, 8 msb)
+    0xC0,
+    // bank_enable_advanced_addr
+    0x60,
+    // bank_enable_advanced_value
+    0x01,
+};
+
 void try_update_progress_bar(uint8_t progress){
     uint8_t* dst = _SCRN1 + get_position_tile_index(4, 6) + progress / 8;
     uint8_t tile = pb_start_offset + (progress & 7);
@@ -78,30 +106,39 @@ void ram_fn_perform_transfer(void) {
         (is_leader  && backup_save) ||
         (!is_leader && restore_save);
 
-    bool use_internal_clock = is_receiving_data;
+    uint8_t cartridge_sram_bank_size = 
+        is_leader? 
+            *rCartridgeSRAM_size_remote :
+            *rCartridgeSRAM_size;
+
+    // This means game does not have SRAM
+    if (cartridge_sram_bank_size < 2){
+        return;
+    }
+
+    // Emu don't like player 2 generating signals, so leader (p1) has to.
+    bool use_internal_clock = is_leader;
+    // bool use_internal_clock = is_receiving_data;
 
     // Since cartridge mode data is in VRAM, copy it before proceeding.
-    cartridge_mode_t* cartridge_mode = cartridge_mbc_3_ram;
-    // TODO use bank_number_value_end to determine length of data
+    cartridge_mode_t* cartridge_mode    = &cartridge_mbc_3_ram_data;
     uint8_t bank_enable_addr            = cartridge_mode->bank_enable_addr;
     uint8_t bank_enable_value           = cartridge_mode->bank_enable_value;
     uint8_t bank_selector_addr          = cartridge_mode->bank_selector_addr;
-    uint8_t bank_number_value_start     = cartridge_mode->bank_number_value_start;
-    uint8_t bank_number_value_end       = cartridge_mode->bank_number_value_end;
     uint8_t bank_data_addr_start        = cartridge_mode->bank_data_addr_start;
     uint8_t bank_data_addr_end          = cartridge_mode->bank_data_addr_end;
     uint8_t bank_enable_advanced_addr   = cartridge_mode->bank_enable_advanced_addr;
     uint8_t bank_enable_advanced_value  = cartridge_mode->bank_enable_advanced_value;
+    uint8_t bank_number_base            = cartridge_sram_table[cartridge_sram_bank_size - 2];
 
     *as_addr(bank_enable_addr)          = bank_enable_value;
     *as_addr(bank_enable_advanced_addr) = bank_enable_advanced_value;
 
-    uint8_t* data_ptr =         as_addr(bank_data_addr_end);
-    uint8_t* data_ptr_end =     as_addr(bank_data_addr_end);
-    uint8_t  next_bank_number = bank_number_value_start;
-
-    uint8_t visual_tile_row_index = 0;
-    *rTransferError = false;
+    uint8_t* data_ptr                   = as_addr(bank_data_addr_end);
+    uint8_t* data_ptr_end               = data_ptr;
+    uint8_t  next_bank_number           = 0;
+    uint8_t visual_tile_row_index       = 0;
+    *rTransferError                     = false;
 
     // If we control the message flow, Wait some time before starting actual transfer
     // So that we know that the other end is ready for us when transfer starts.
@@ -109,7 +146,8 @@ void ram_fn_perform_transfer(void) {
         wait_n_cycles(0x4000);
     }
 
-    for (uint16_t packet_num = 0; packet_num < 256 && !(*rTransferError); ++packet_num) {
+    // 64 packets fits 8kB of space (1 RAM bank).
+    for (uint16_t packet_num = 0; packet_num < (64 << bank_number_base) && !(*rTransferError); ++packet_num) {
         uint8_t checksum = 0;
 
         // Send packet number
@@ -128,9 +166,13 @@ void ram_fn_perform_transfer(void) {
         for (uint8_t i = 0; i < PACKET_SIZE && !(*rTransferError); ++i, ++data_ptr){
 
             // Progress ROM/RAM Bank if necessary
-            if (data_ptr == data_ptr_end) {
+            if (data_ptr >= data_ptr_end) {
                 data_ptr = as_addr(bank_data_addr_start);
-                *as_addr(bank_selector_addr) = next_bank_number++;
+                *as_addr(bank_selector_addr) = next_bank_number;
+                *as_addr(bank_selector_addr) = next_bank_number;
+                *as_addr(bank_selector_addr) = next_bank_number;
+                *as_addr(bank_selector_addr) = next_bank_number;
+                next_bank_number++;
             }
 
             // Send byte and update UI progress bar
@@ -141,7 +183,7 @@ void ram_fn_perform_transfer(void) {
             } else {
                 send_last_byte(use_internal_clock);
             }
-            try_update_progress_bar(packet_num / 4);
+            try_update_progress_bar(packet_num >> bank_number_base);
 
 #ifndef JUGGLE_SPI_MASTER
             // If we are not juggling spi clock leader role back and forth,
@@ -164,6 +206,12 @@ void ram_fn_perform_transfer(void) {
             // Write byte to ROM/RAM Bank
             if (is_receiving_data){
                 *data_ptr = received_byte;
+                *data_ptr = received_byte;
+                *data_ptr = received_byte;
+                *data_ptr = received_byte;
+                if (*data_ptr != received_byte){
+                    *rTransferError = true;
+                }
             }
 
             // This does not work in emu because of random turbo mode bug
