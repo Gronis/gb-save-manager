@@ -35,7 +35,7 @@ gb-companion_mb:
 	@(cd gba-switch2gbc && make GBC_ROM=gb-companion.gbc OUTPUT=${OUTPUT})
 
 gb-save-manager:
-	@(cd gb-save-manager && make OUTPUT=${OUTPUT} ROM_VRAM=gb-companion.gbc ROM_RAM=gb-companion_ram.gbc)
+	@(cd gb-save-manager && make OUTPUT=${OUTPUT} VRAM_ROM=gb-companion.gbc WRAM_ROM=gb-companion_ram.gbc)
 
 ###############################################################################
 # Build using docker (on host machine)

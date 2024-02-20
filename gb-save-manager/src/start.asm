@@ -3,7 +3,8 @@
 .globl _main
 .globl _STACK_PTR
 
-rDeviceModeBootup       .equ 0xFFFC     ; This register holds if we are in AGB, CGB, GB, etc mode
+.globl _rDeviceModeBootup
+_rDeviceModeBootup       .equ 0xFFFC    ; This register holds if we are in AGB, CGB, GB, etc mode
 
 .area _ENTRYPOINT
 entrypoint:
@@ -12,13 +13,18 @@ entrypoint:
 
 .area _CODE
 
-start:                                  ; Detect AGB, CGB and GB mode before doing anything else.
-    ld  hl, #rDeviceModeBootup
-    rlc b
-    or  b
+start:
+    and #0xFD                           ; reg a hold GB/CGB/GB Pocket. Reset bit 2 for AGB mode.
+    rlc b                               ; reg b hold if we are in AGB mode, move it to bit 2.
+    or  b                               ; and join with reg a which holds if we are in GB/CGB mode
+    ld  hl, #_rDeviceModeBootup
     ld  (hl), a
     jp _main
 
 .globl _execute_vram_code
 _execute_vram_code:
     jp _VRAM
+
+.globl _execute_ram_code
+_execute_ram_code:
+    jp _RAM
