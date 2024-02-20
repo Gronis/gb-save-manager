@@ -37,18 +37,12 @@ typedef struct {
     uint8_t message_tile_index;
 } message_t;
 
-// Rasterize tiles to VRAM which can later be used by set_tiles_row
-void rasterize_tiles(range_t* tile_index, tile_bitmap_t* tile_bitmap);
-
 // Rasterize all tiles in data.h to VRAM. This is placed in memory so that it
 // overwrites the old locations to reuse memory that is no longer needed.
 void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void);
 
 //
 void set_tiles_row(uint8_t x, uint8_t y, const range_t tiles);
-
-// Renders tiles to a single row only, repeats if end is reached
-void set_tiles_row_repeat(uint8_t x, uint8_t y, const range_t tiles, uint8_t width);
 
 // // Render all messages in list without flushing the screen in between messages.
 // // Note: messages should be placed consecutivly in memory

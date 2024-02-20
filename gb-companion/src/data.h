@@ -26,6 +26,16 @@
 #include "text_true_bin.h"
 #include "text_waiting_for_bin.h"
 #include "text_worker_bin.h"
+#include "tile_pb_end_bin.h"
+#include "tile_pb_0_bin.h"
+#include "tile_pb_1_bin.h"
+#include "tile_pb_2_bin.h"
+#include "tile_pb_3_bin.h"
+#include "tile_pb_4_bin.h"
+#include "tile_pb_5_bin.h"
+#include "tile_pb_6_bin.h"
+#include "tile_pb_7_bin.h"
+#include "tile_pb_8_bin.h"
 
 #include "types.h"
 
@@ -61,17 +71,17 @@ extern const uint8_t cartridge_mbc_3_ram_data[];
 #define text_waiting_for_offset         ((text_true_offset)                 + (text_true_length)            / 8)
 #define text_worker_offset              ((text_waiting_for_offset)          + (text_waiting_for_length)     / 8)
 #define pb_end_offset                   ((text_worker_offset)               + (text_worker_length)          / 8)
-#define pb_0_offset                     ((pb_end_offset)                    + (1))
-#define pb_start_offset                 ((pb_0_offset)                      + (1))
-#define pb_1_offset                     ((pb_0_offset)                      + (1))
-#define pb_2_offset                     ((pb_1_offset)                      + (1))
-#define pb_3_offset                     ((pb_2_offset)                      + (1))
-#define pb_4_offset                     ((pb_3_offset)                      + (1))
-#define pb_5_offset                     ((pb_4_offset)                      + (1))
-#define pb_6_offset                     ((pb_5_offset)                      + (1))
-#define pb_7_offset                     ((pb_6_offset)                      + (1))
-#define pb_8_offset                     ((pb_7_offset)                      + (1))
-#define tiles_end                       ((pb_8_offset)                      + (1))
+#define pb_0_offset                     ((pb_end_offset)                    + (tile_pb_end_length)          / 8)
+#define pb_start_offset                 ((pb_0_offset)                      + (tile_pb_0_length)            / 8)
+#define pb_1_offset                     ((pb_0_offset)                      + (tile_pb_0_length)            / 8)
+#define pb_2_offset                     ((pb_1_offset)                      + (tile_pb_1_length)            / 8)
+#define pb_3_offset                     ((pb_2_offset)                      + (tile_pb_2_length)            / 8)
+#define pb_4_offset                     ((pb_3_offset)                      + (tile_pb_3_length)            / 8)
+#define pb_5_offset                     ((pb_4_offset)                      + (tile_pb_4_length)            / 8)
+#define pb_6_offset                     ((pb_5_offset)                      + (tile_pb_5_length)            / 8)
+#define pb_7_offset                     ((pb_6_offset)                      + (tile_pb_6_length)            / 8)
+#define pb_8_offset                     ((pb_7_offset)                      + (tile_pb_7_length)            / 8)
+#define tiles_end                       ((pb_8_offset)                      + (tile_pb_8_length)            / 8)
 
 #define empty_tile_index                (0)
 #define text_a_tile_index               ((empty_tile_index) + 2)
@@ -175,5 +185,15 @@ extern const uint8_t text_to_change_role[];
 extern const uint8_t text_true[];
 extern const uint8_t text_waiting_for[];
 extern const uint8_t text_worker[];
+extern const uint8_t tile_pb_end[];
+extern const uint8_t tile_pb_0[];
+extern const uint8_t tile_pb_1[];
+extern const uint8_t tile_pb_2[];
+extern const uint8_t tile_pb_3[];
+extern const uint8_t tile_pb_4[];
+extern const uint8_t tile_pb_5[];
+extern const uint8_t tile_pb_6[];
+extern const uint8_t tile_pb_7[];
+extern const uint8_t tile_pb_8[];
 
 #endif // BITMAPS_H
