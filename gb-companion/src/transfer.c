@@ -99,7 +99,7 @@ void ram_fn_perform_transfer(void) {
     uint8_t* data_ptr_end =     as_addr(bank_data_addr_end);
     uint8_t  next_bank_number = bank_number_value_start;
 
-    uint8_t visual_tile_index = 0;
+    uint8_t visual_tile_row_index = 0;
     *rTransferError = false;
 
     // If we control the message flow, Wait some time before starting actual transfer
@@ -157,8 +157,8 @@ void ram_fn_perform_transfer(void) {
             }
 
             // Visualize transfered bytes as a tile
-            *(_VRAM + tiles_end * 16 + ((visual_tile_index += 2) & 15)) = ~received_byte;
-            *(_SCRN1 + get_position_tile_index(12, 4)) = tiles_end;
+            *(_VRAM + n_tiles_total * 16 + ((visual_tile_row_index += 2) & 15)) = ~received_byte;
+            *(_SCRN1 + get_position_tile_index(12, 4)) = n_tiles_total;
 
             // Write byte to ROM/RAM Bank
             if (is_receiving_data){

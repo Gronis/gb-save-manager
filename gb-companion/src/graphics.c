@@ -10,7 +10,7 @@
 void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void) {
     uint8_t* dst = _VRAM + text_a_offset * LINES_PER_TILE * BITS_PER_PIXEL;
     uint8_t* src = (uint8_t*)&text_a;
-    uint8_t* end = src + tiles_end * LINES_PER_TILE;
+    uint8_t* end = src + n_tiles_total * LINES_PER_TILE;
     while (src <= end){
         *(dst) = *(src);
         dst += BITS_PER_PIXEL;
@@ -18,12 +18,12 @@ void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void) {
     }
 }
 
-void set_tiles_row(uint8_t x, uint8_t y, const range_t tiles) {
+void set_tiles_row(uint8_t x, uint8_t y, range_t* tile_range) {
     x += SCREEN_COORDINATE_TILE_X;
     y += SCREEN_COORDINATE_TILE_Y;
-    uint8_t tile_index = tiles.start;
-    uint8_t* dst = _SCRN1 + y * 32 + x;
-    while (tile_index < tiles.end) {
+    uint8_t tile_index = tile_range->start;
+    uint8_t* dst = _SCRN1 + ((uint16_t)y) * 32 + x;
+    while (tile_index < tile_range->end) {
         *(dst++) = tile_index++;
     }
 }
@@ -37,7 +37,7 @@ void render_message_impl(message_list_t* messages, bool do_flush_screen) {
         if(do_flush_screen){
             flush_screen();
         }
-        set_tiles_row(m->x, m->y, *range);
+        set_tiles_row(m->x, m->y, range);
         if(do_flush_screen){
             flush_screen();
         }

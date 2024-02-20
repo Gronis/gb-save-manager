@@ -137,10 +137,6 @@ void main(void) {
                     did_write_to_ram = true;
                 }
 
-                /// TODO: Testing only Remove these functions
-                // clear_message();
-                // run_in_parallel_to_screen(ram_fn_transfer_header);
-
                 if(!link_cable_state){
                     if(is_leader){
                         render_message(message_idle_role_change_info);
