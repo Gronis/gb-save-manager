@@ -2,6 +2,8 @@
 #include "graphics.h"
 #include "data.h"
 
+#include "area_vram1.h"
+
 // Data is put in every other byte in the same location as tile data is
 // stored. This way, we can have useable data in between tiles.
 

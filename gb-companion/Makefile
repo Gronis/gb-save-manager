@@ -34,7 +34,7 @@ FX				:=	rgbfix
 #	Static Addresses
 ###############################################################################
 VRAM0			:=	0x8000
-VRAM1			:=	0x8800
+VRAM1			:=	0x9000
 RAM0			:=	0xC000
 RAM1			:=	0xD000
 
@@ -42,11 +42,12 @@ RAM1			:=	0xD000
 #	Project Constants
 ###############################################################################
 PROJECTNAME		:=	gb-companion
+# rename to ROM_MEM_LOC
 CODE_LOC		:=	$(VRAM0)
 RAM_LOC			:=  $(RAM0)
-CODE_OFFSET		:=	0x01E0  # Leave space for gfx, expand if more gxf is needed
-STACK_PTR		:=  0x9800
-DATA_OFFSET		:=  0x1000
+VRAM1_LOC		:=  $(VRAM1)
+C_CODE_OFFSET	:=	0x01B0  # Leave space for gfx, expand if more gxf is needed
+STACK_PTR		:=  0x9D80
 OUTPUT			:=	.
 
 ###############################################################################
@@ -60,24 +61,26 @@ RAM_SIZE		:=	3		# 32kB
 ###############################################################################
 #	Options/flags for tools
 ###############################################################################
-CFLAGS			:=	--verbose --std-c99 -msm83 --opt-code-size --peep-asm \
-					-Isrc -I$(OUTPUT)/$(PROJECTNAME) \
-					--peep-return -Wa-l -Wl-m \
-					-DRAM_LOC=$(RAM_LOC) \
-					-DCODE_LOC=$(CODE_LOC) \
-					-DLOCK_VERSION=13 \
-					-DNO_NUMERIC \
-					-DNO_ALPHANUMERIC
+CFLAGS			:=	--verbose --std-c99 -msm83				\
+					--opt-code-size --peep-asm				\
+					-Isrc -I$(OUTPUT)/$(PROJECTNAME)		\
+					--peep-return -Wa-l -Wl-m				\
+					-DCODE_LOC=$(CODE_LOC)					\
+					-DCODE=$(CODE_LOC)+$(C_CODE_OFFSET)		\
+					-DRAM_LOC=$(RAM_LOC)					\
+					-DVRAM1_LOC=$(VRAM1_LOC)
 
 ASFLAGS			:=	-l -plosgffw -Isrc -I$(OUTPUT)/$(PROJECTNAME)
 
 LDFLAGS			:=	-mjwx -m \
-					-b _CODE_LOC=$(CODE_LOC) \
-					-b _RAM_LOC=$(RAM_LOC) \
-					-b _INIT_LOC=$(CODE_LOC)+0x150 \
-					-b _CODE=$(CODE_LOC)+$(CODE_OFFSET) \
-					-b _DATA=$(CODE_LOC)+$(DATA_OFFSET) \
-					-b _ENTRYPOINT=$(CODE_LOC)+0x100 \
+					-b _ENTRYPOINT=$(CODE_LOC)+0x100		\
+					-b _CODE_LOC=$(CODE_LOC)				\
+					-b _INIT_LOC=$(CODE_LOC)+0x150			\
+					-b _RAM_LOC=$(RAM_LOC)					\
+					-b _VRAM1_LOC=$(VRAM1_LOC)				\
+					-g VRAM1_LOC=$(VRAM1_LOC)				\
+					-b _CODE=$(CODE_LOC)+$(C_CODE_OFFSET)	\
+					-g CODE=$(CODE_LOC)+$(C_CODE_OFFSET)	\
 					-g _STACK_PTR=$(STACK_PTR)
 
 FXFLAGS			:=	-C -p 0 -v -m $(MBC) -O -r $(RAM_SIZE) \
@@ -101,7 +104,7 @@ BITMAPS			:=	$(wildcard assets/*.png)
 BUILD_DIR		:=	$(OUTPUT)/$(PROJECTNAME)
 OBJS			:=	$(SOURCES:.c=.rel) $(ASSEMBLY:.asm=.rel)
 OBJS			:=	$(foreach file,$(OBJS), $(BUILD_DIR)/$(notdir $(file)))
-IHX				:=	$(BIN:.gbc=.ihx)
+OBJS			:=  $(filter-out %/main.rel, $(OBJS))
 BITMAPS			:=  $(foreach file,$(BITMAPS), $(BUILD_DIR)/$(notdir $(file)))
 ASSETS			:=	$(BITMAPS:.png=_bin.h)
 
@@ -109,34 +112,45 @@ ASSETS			:=	$(BITMAPS:.png=_bin.h)
 #	Build rules
 ###############################################################################
 
-all: $(BUILD_DIR) $(BUILD_DIR)/$(BIN:.gbc=.fixed.gbc) $(ASSETS)
+all: $(BUILD_DIR) $(BUILD_DIR)/$(PROJECTNAME).fixed.gbc $(ASSETS)
 
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
 
-$(BUILD_DIR)/$(BIN): $(BUILD_DIR)/$(IHX)
-	$(BN) -Z -s 0xFFFF -o $(CODE_LOC) $< $@
-	@dd if=$@ of=$@.cut bs=16k count=1 2> /dev/null
+# main build target
+$(BUILD_DIR)/$(PROJECTNAME).gbc: $(BUILD_DIR)/$(PROJECTNAME).ihx
+	$(BN) -Z -o $(CODE_LOC) -s 0xFFFF $< $@
+	@dd if=$@ of=$@.cut bs=4k count=1 2> /dev/null
 	@mv $@.cut $@
 
-$(BUILD_DIR)/ram_code.gbc: $(BUILD_DIR)/ram_code.ihx
-	$(BN) -Z -s $(RAM1) -o $(RAM0) $< $@
-
-$(BUILD_DIR)/$(IHX): $(OBJS)
+$(BUILD_DIR)/$(PROJECTNAME).ihx: $(OBJS) $(BUILD_DIR)/main.rel
 	$(LD) $(LDFLAGS) -i $@ $^ -e
 
-$(BUILD_DIR)/ram_code.ihx: $(OBJS)
+# code targets for specific code locations:
+$(BUILD_DIR)/prebuild.ihx: $(OBJS)
 	$(LD) $(LDFLAGS) -g _main=0x0100 -i $@ $^ -e
 
+$(BUILD_DIR)/prebuild.gbc: $(BUILD_DIR)/prebuild.ihx
+	$(BN) -Z -s 0xFFFF $< $@
+
+$(BUILD_DIR)/ram_code.gbc:	$(BUILD_DIR)/prebuild.gbc
+	@dd if=$< of=$@ skip=$(shell printf "%d" $(RAM0)) bs=1 count=4k seek=0 2> /dev/null
+
+$(BUILD_DIR)/vram1_code.gbc: $(BUILD_DIR)/prebuild.gbc
+	@dd if=$< of=$@ skip=$(shell printf "%d" $(VRAM1)) bs=1 count=4k seek=0 2> /dev/null
+
+# source code rules
 $(BUILD_DIR)/%.rel: src/%.c $(HEADERS) $(ASSETS) Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.rel: src/%.asm $(ASSETS) Makefile
 	$(AS) $(ASFLAGS) $@ $<
 
+# asset rules
 $(BUILD_DIR)/%.png: assets/%.png
 	@cp $< $@
 
+# general rules for different file types
 %_gbc.h: %.gbc
 	bin2c $< $(notdir $(basename $<)) > $(basename $@).h
 
@@ -154,5 +168,6 @@ $(BUILD_DIR)/%.png: assets/%.png
 #	Specific dependencies for certain files
 ###############################################################################
 
-$(BUILD_DIR)/main.rel: \
+$(BUILD_DIR)/binaries.rel:				\
+	$(BUILD_DIR)/vram1_code_gbc.h 		\
 	$(BUILD_DIR)/ram_code_gbc.h

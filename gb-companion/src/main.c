@@ -8,14 +8,13 @@
 #include "graphics_init.h"
 #include "data.h"
 #include "input.h"
+#include "binaries.h"
 
 // TODO: Move this to its own source file
-////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
 #ifdef VRAM_VERSION
-#define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
-#include "ram_code_gbc.h"
 void copy_ram_functions_to_ram(void) { 
-    uint8_t* src = ram_code;
+    uint8_t* src = (uint8_t*)(VRAM1_LOC + vram1_code_length);
     volatile uint8_t* dst = (uint8_t*)RAM_LOC;
     uint8_t* end = src + ram_code_length;
     bool success = true;
@@ -30,7 +29,7 @@ void copy_ram_functions_to_ram(void) {
 // This is the RAM version, so no copy is necessary
 void copy_ram_functions_to_ram(void) {}
 #endif 
-////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
 
 #define CARTRIDGE_TITLE ((char*)(0x0134))
 const char LEADER_CARTRIDGE_TITLE[] = "GBSAVEMANA";

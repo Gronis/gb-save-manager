@@ -5,7 +5,7 @@
 
 // Define tile coordinates for viewport
 #define SCREEN_COORDINATE_TILE_X ((uint8_t)(32 - 17))
-#define SCREEN_COORDINATE_TILE_Y ((uint8_t)(32 - 10))
+#define SCREEN_COORDINATE_TILE_Y ((uint8_t)(32 - 14))
 #define SCREEN_COORDINATE_TILE_WIDTH ((uint8_t)(14))
 #define SCREEN_COORDINATE_TILE_HEIGHT ((uint8_t)(8))
 

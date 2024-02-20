@@ -157,7 +157,7 @@ void ram_fn_perform_transfer(void) {
             }
 
             // Visualize transfered bytes as a tile
-            *(_VRAM + tiles_end * 16 + ((visual_tile_index += 2) & 15)) = received_byte;
+            *(_VRAM + tiles_end * 16 + ((visual_tile_index += 2) & 15)) = ~received_byte;
             *(_SCRN1 + get_position_tile_index(12, 4)) = tiles_end;
 
             // Write byte to ROM/RAM Bank

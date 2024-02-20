@@ -1,6 +1,8 @@
 #ifndef START_H
 #define START_H
 
+#include "version.h"
+
 // Use this function to call some other function while the screen
 // is running in parallel. Typically use this to call code in RAM
 //
@@ -38,6 +40,15 @@ volatile void flush_screen(void);
 // Function is located in HRAM so it can be used anytime (no
 // timing requirements).
 volatile void wait_n_cycles(uint16_t cycles);
+
+// If we run inside VRAM, some functions will need to be copied to ram
+// if not, then we are already running in vram and no copy is needed.
+// #ifdef VRAM_VERSION
+// #define copy_ram_functions_to_ram() copy_ram_functions_to_ram_impl()
+// #endif
+// #ifdef RAM_VERSION
+// #define copy_ram_functions_to_ram()
+// #endif
 
 #define rDeviceModeBootup ((uint8_t*) 0xFFFC)
 

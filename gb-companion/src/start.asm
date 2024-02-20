@@ -17,6 +17,10 @@ _HRAM_STACK_PTR     .equ 0xFFFB     ; This is the start of HRAM stack pointer us
 ;##############################################################################
 .globl _main
 
+; These are Makefile definitions
+.globl VRAM1_LOC
+.globl CODE
+
 ;##############################################################################
 ; CODE_LOC is address of program while executing on target (VRAM or RAM)
 ;##############################################################################
@@ -65,7 +69,7 @@ init_tile_palette:                  ; load gbc palette colors (0: black, 1: whit
 init_tile_arrangements:
     ld  a, #0 -160 + 4              ; Move window x-axis to the far right     
     ld  (rSCX), a
-    ld  a, #0 -144 + (160-144)*2 -4 ; Move window y-axis to bottom but compensate for affine reg zoom
+    ld  a, #0 -144 - 4 ; Move window y-axis to bottom but compensate for affine reg zoom
     ld  (rSCY), a
     ld  b, #0
     ld  de, #32*11                  ; (32 tiles per line * 11 lines)
@@ -89,9 +93,16 @@ rasterize_tile_zero_loop:
 
 copy_program_to_hram:
     ld  de, #hram_code              ; src
-    ld  hl, #_HRAM                  ; dst_start
+    ld  hl, #_HRAM                  ; dst
     ld  bc, #0xFFFB - #_HRAM        ; len, end of HRAM - some variables
     call mem_copy
+
+copy_data_to_vram1:
+    ; ld  de, #_vram1_code            ; src
+    ld  de, #CODE                   ; src
+    ld  hl, #VRAM1_LOC              ; dst
+    ld  bc, #0x0D00                 ; len,  This is how far we can go without overwriting tile arrangements for
+    call mem_copy                   ;       the screen. This also leaves some space (0x80) bytes for stack
 
 start_program:
     jp  _main                       ; This moves execution from VRAM to HRAM
@@ -102,9 +113,9 @@ start_from_rom:                     ; Start of code execution when executing dir
     ld  sp, #_STACK_PTR-1           ; Off by one, we don't want to overwrite first code instruction
 
     ld  de, #0                      ; src
-    ld  hl, #CODE_LOC               ; dst_start
+    ld  hl, #CODE_LOC               ; dst
     ld  bc, #0x1000                 ; len
-    push hl                         ; hl (VRAM) is where we want to start execution so push it to the stack.
+    push hl                         ; hl (CODE_LOC) is where we want to start execution so push it to the stack.
 
 mem_copy:
     ld  a, (de)
@@ -206,9 +217,33 @@ _run_in_parallel_to_screen:    ; function to call in reg de
     ld	h, d    ; move de to hl
     jp hram_run_in_parallel_to_screen-hram_code+_HRAM
 
+
+; .globl _ram_code
+; .globl _vram1_code
+; .globl _copy_ram_functions_to_ram_impl
+; _copy_ram_functions_to_ram_impl:
+;     ; ld  de, #_ram_code - #CODE + #0x9000             ; src
+;     ; ld  de, #_ram_code - #_vram1_code + #0x9000             ; src
+;     ; ld  de, #_ram_code - #0x81B0 + #VRAM1_LOC            ; src
+;     ld  de, #VRAM1_LOC - #0x81B0 + #_ram_code            ; src
+;     ; ld  de, #_ram_code - #0x81B0 + #0x9000             ; src
+;     ld  hl, #RAM_LOC                ; dst
+;     ld  bc, #0x0800                 ; len
+
+; _copy_ram_functions_to_ram_impl_loop:
+;     ld  a, (de)
+;     inc de
+;     ld  (hl+), a
+;     dec bc
+;     ld  a, b
+;     or  a, c
+;     jr  nz, _copy_ram_functions_to_ram_impl_loop
+;     ret
+
 end_code:; Important to have a non 0xFF in the end because bin2c strips away trailing data
     .db 0x99
 
-; Make linker happy
+; Define area labels
 .area _RAM_LOC
+.area _VRAM1_LOC
 .area _INIT_LOC
