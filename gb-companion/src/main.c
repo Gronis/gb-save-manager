@@ -190,7 +190,9 @@ void main(void) {
                     render_message(message_restore_save);
                 }
                 render_message(message_progress_bar);
+
                 
+                ram_fn_enable_cartridge_sram();
                 run_in_parallel_to_screen(ram_fn_perform_transfer);
 
                 clear_message_from_row(2);
@@ -199,9 +201,7 @@ void main(void) {
                 } else {
                     render_message(message_transfer_done);
                 }
-
-                cartridge_mode_t* cartridge_mode = cartridge_mbc_3_ram;
-                *as_addr(cartridge_mode->bank_enable_addr) = cartridge_mode->bank_disable_value;
+                ram_fn_disable_cartridge_sram();
 
                 // Busy wait at the end. User has to turn off console here
                 while(1) {

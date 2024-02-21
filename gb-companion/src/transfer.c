@@ -15,26 +15,76 @@ const uint8_t cartridge_sram_table[] = {
     3,  // 5: 64kB   8 banks
 };
 
-const cartridge_mode_t cartridge_mbc_3_ram_data = {
-    // bank_enable_addr                 (address, 8 msb)
-    0x00,
-    // bank_enable_value      
-    0x0A,
-    // bank_disable_value      
-    0x00,
-    // bank_selector_addr               (address, 8 msb)
-    0x40,
-    // bank_number_base: 4 rom banks
-    2,
-    // bank_data_addr_start             (inclusive, address, 8 msb)
-    0xA0,
-    // bank_data_addr_end               (exclusive, address, 8 msb)
-    0xC0,
-    // bank_enable_advanced_addr
-    0x60,
-    // bank_enable_advanced_value
-    0x01,
+// First gen cartridge types
+const cartridge_mode_t cartridge_mbc_1_ram_data = {
+    0x00,   // bank_enable_addr                 (address, 8 msb)
+    0x0A,   // bank_enable_value      
+    0x00,   // bank_disable_value      
+    0x40,   // bank_selector_addr               (address, 8 msb)
+    2,      // bank_number_base: 4 rom banks
+    0xA0,   // bank_data_addr_start             (inclusive, address, 8 msb)
+    0xC0,   // bank_data_addr_end               (exclusive, address, 8 msb)
+    0x60,   // bank_enable_advanced_addr
+    0x01,   // bank_enable_advanced_value
 };
+
+// Mostly the same as MBC_1 except no advanced mode, just send enable again
+const cartridge_mode_t cartridge_mbc_3_ram_data = {
+    0x00,   // bank_enable_addr                 (address, 8 msb)
+    0x0A,   // bank_enable_value      
+    0x00,   // bank_disable_value      
+    0x40,   // bank_selector_addr               (address, 8 msb)
+    2,      // bank_number_base: 4 rom banks
+    0xA0,   // bank_data_addr_start             (inclusive, address, 8 msb)
+    0xC0,   // bank_data_addr_end               (exclusive, address, 8 msb)
+    0x40,   // bank_enable_advanced_addr
+    0x0A,   // bank_enable_advanced_value
+};
+
+uint8_t get_mbc_type(uint8_t cartridge_mbc_value){
+    if (0x01 <= cartridge_mbc_value && cartridge_mbc_value <= 0x03 ) return MBC_1;
+    // if (0x05 <= cartridge_mbc_value && cartridge_mbc_value <= 0x06 ) return MBC_2;
+    if (0x0F <= cartridge_mbc_value && cartridge_mbc_value <= 0x13 ) return MBC_3;
+    // if (0x19 <= cartridge_mbc_value && cartridge_mbc_value <= 0x1E ) return MBC_5;
+    return MBC_UNSUPPORTED;
+}
+
+cartridge_mode_t* get_cartridge_mode_ptr (uint8_t mbc_type) {
+    return
+        mbc_type == MBC_1? &cartridge_mbc_1_ram_data :
+        mbc_type == MBC_2? &cartridge_mbc_1_ram_data :  // TODO
+        mbc_type == MBC_3? &cartridge_mbc_3_ram_data :
+        mbc_type == MBC_5? &cartridge_mbc_1_ram_data :  // TODO
+        (cartridge_mode_t*)0x0000; // null, should never happen
+}
+
+void ram_fn_enable_cartridge_sram (void) {
+    uint8_t mbc_type                    = get_mbc_type(*rCartridgeType_mode);
+    cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
+    uint8_t* enable_addr                = as_addr(cartridge_mode->bank_enable_addr);
+    uint8_t* enable_advanced_addr       = as_addr(enable_advanced_addr);
+    uint8_t enable_value                = cartridge_mode->bank_enable_value;
+    uint8_t enable_advanced_value       = cartridge_mode->bank_enable_advanced_value;
+    *enable_addr                        = enable_value;
+    *enable_addr                        = enable_value;
+    *enable_addr                        = enable_value;
+    *enable_addr                        = enable_value;
+    *enable_advanced_addr               = enable_advanced_value;
+    *enable_advanced_addr               = enable_advanced_value;
+    *enable_advanced_addr               = enable_advanced_value;
+    *enable_advanced_addr               = enable_advanced_value;
+}
+
+void ram_fn_disable_cartridge_sram (void) {
+    uint8_t mbc_type                    = get_mbc_type(*rCartridgeType_mode);
+    cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
+    uint8_t* disable_addr               = as_addr(cartridge_mode->bank_enable_addr);
+    uint8_t disable_value               = cartridge_mode->bank_disable_value;
+    *disable_addr                       = disable_value;
+    *disable_addr                       = disable_value;
+    *disable_addr                       = disable_value;
+    *disable_addr                       = disable_value;
+}
 
 void try_update_progress_bar(uint8_t progress){
     uint8_t* dst = _SCRN1 + get_position_tile_index(4, 6) + progress / 8;
@@ -106,6 +156,10 @@ void ram_fn_perform_transfer(void) {
         (is_leader  && backup_save) ||
         (!is_leader && restore_save);
 
+    // Emu don't like player 2 generating signals, so leader (p1) has to.
+    bool use_internal_clock = is_leader;
+    // bool use_internal_clock = is_receiving_data;
+
     uint8_t cartridge_sram_bank_size = 
         is_leader? 
             *rCartridgeSRAM_size_remote :
@@ -116,12 +170,19 @@ void ram_fn_perform_transfer(void) {
         return;
     }
 
-    // Emu don't like player 2 generating signals, so leader (p1) has to.
-    bool use_internal_clock = is_leader;
-    // bool use_internal_clock = is_receiving_data;
+    uint8_t remote_cartridge_mbc_value = 
+        is_leader? 
+            *rCartridgeType_mode_remote :
+            *rCartridgeType_mode;
 
-    // Since cartridge mode data is in VRAM, copy it before proceeding.
-    cartridge_mode_t* cartridge_mode    = &cartridge_mbc_3_ram_data;
+    if (get_mbc_type(remote_cartridge_mbc_value) == MBC_UNSUPPORTED) {
+        return;
+    }
+
+    uint8_t cartridge_mbc_value         = *rCartridgeType_mode;
+    uint8_t mbc_type                    = get_mbc_type(cartridge_mbc_value);
+
+    cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
     uint8_t bank_enable_addr            = cartridge_mode->bank_enable_addr;
     uint8_t bank_enable_value           = cartridge_mode->bank_enable_value;
     uint8_t bank_selector_addr          = cartridge_mode->bank_selector_addr;
@@ -131,12 +192,9 @@ void ram_fn_perform_transfer(void) {
     uint8_t bank_enable_advanced_value  = cartridge_mode->bank_enable_advanced_value;
     uint8_t bank_number_base            = cartridge_sram_table[cartridge_sram_bank_size - 2];
 
-    *as_addr(bank_enable_addr)          = bank_enable_value;
-    *as_addr(bank_enable_advanced_addr) = bank_enable_advanced_value;
-
     uint8_t* data_ptr                   = as_addr(bank_data_addr_end);
     uint8_t* data_ptr_end               = data_ptr;
-    uint8_t  next_bank_number           = 0;
+    uint8_t next_bank_number            = 0;
     uint8_t visual_tile_row_index       = 0;
     *rTransferError                     = false;
 
@@ -168,10 +226,11 @@ void ram_fn_perform_transfer(void) {
             // Progress ROM/RAM Bank if necessary
             if (data_ptr >= data_ptr_end) {
                 data_ptr = as_addr(bank_data_addr_start);
-                *as_addr(bank_selector_addr) = next_bank_number;
-                *as_addr(bank_selector_addr) = next_bank_number;
-                *as_addr(bank_selector_addr) = next_bank_number;
-                *as_addr(bank_selector_addr) = next_bank_number;
+                uint8_t* bank_selector = as_addr(bank_selector_addr);
+                *bank_selector = next_bank_number;
+                *bank_selector = next_bank_number;
+                *bank_selector = next_bank_number;
+                *bank_selector = next_bank_number;
                 next_bank_number++;
             }
 

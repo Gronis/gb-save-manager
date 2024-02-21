@@ -3,6 +3,7 @@
 
 #include "version.h"
 #include "types.h"
+#include "cartridges.h"
 
 #define ROLE_WORKER                     0
 #define ROLE_LEADER                     1
@@ -36,7 +37,12 @@
 
 #define PACKET_SIZE                     128
 
+extern const cartridge_mode_t           cartridge_mbc_1_ram_data;
+
 #define as_addr(addr) ((uint8_t*)(((uint16_t)(addr)) << 8))
+
+void ram_fn_enable_cartridge_sram (void);
+void ram_fn_disable_cartridge_sram (void);
 
 void ram_fn_transfer_header(void);
 void ram_fn_perform_transfer(void);

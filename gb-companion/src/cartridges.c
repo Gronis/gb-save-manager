@@ -5,7 +5,7 @@
 
 #include "area_ram.h"
 
-// const cartridge_mode_t cartridge_mbc_3_ram_data = {
+// const cartridge_mode_t cartridge_mbc_1_ram_data = {
 //     // bank_enable_addr                 (address, 8 msb)
 //     0x00,
 //     // bank_enable_value      

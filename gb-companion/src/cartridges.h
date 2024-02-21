@@ -15,7 +15,10 @@ typedef struct {
     uint8_t bank_enable_advanced_value;
 } cartridge_mode_t;
 
-#define cartridge_mbc_3_ram             (&cartridge_mbc_3_ram_data)
-extern const cartridge_mode_t           cartridge_mbc_3_ram_data;
+#define MBC_UNSUPPORTED 0
+#define MBC_1           1
+#define MBC_2           2
+#define MBC_3           3
+#define MBC_5           5
 
 #endif // CARTRIDGES_H
