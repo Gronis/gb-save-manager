@@ -1,10 +1,9 @@
 # Game Boy Save Manager (gb-save-manager.gb)
 A custom Gameboy ROM for backing up and restoring your SAVE files on your old school Gameboy game cartridges using a Link-Cable and two Gameboys!
 
-<img src="screenshots/connect_cable.png" alt="isolated" height="200"/>
-<img src="screenshots/press_btn.png" alt="isolated" height="200"/>
-<img src="screenshots/progress.png" alt="isolated" height="200"/>
-<img src="screenshots/done.png" alt="isolated" height="200"/>
+Connect | Choose | Send | Done
+:---:|:---:|:---:|:---:
+<img src="screenshots/connect_cable.png" alt="isolated" height="128"/>  | <img src="screenshots/press_btn.png" alt="isolated" height="128"/> | <img src="screenshots/progress.png" alt="isolated" height="128"/> | <img src="screenshots/done.png" alt="isolated" height="128"/>
 
 ## Use cases
 * You want to store your Gameboy cartridge saves in a safe place to be prepared for when the battery life eventually runs out (and the save is lost).
