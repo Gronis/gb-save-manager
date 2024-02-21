@@ -75,34 +75,6 @@ cartridge_mode_t* get_cartridge_mode_ptr (uint8_t mbc_type) {
         (cartridge_mode_t*)0x0000; // null, should never happen
 }
 
-void ram_fn_enable_cartridge_sram (void) {
-    uint8_t mbc_type                    = get_mbc_type(*rCartridgeType_mode);
-    cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
-    uint8_t* enable_addr                = as_addr(cartridge_mode->bank_enable_addr);
-    uint8_t* enable_advanced_addr       = as_addr(cartridge_mode->bank_enable_advanced_addr);
-    uint8_t enable_value                = cartridge_mode->bank_enable_value;
-    uint8_t enable_advanced_value       = cartridge_mode->bank_enable_advanced_value;
-    *enable_addr                        = enable_value;
-    *enable_addr                        = enable_value;
-    *enable_addr                        = enable_value;
-    *enable_addr                        = enable_value;
-    *enable_advanced_addr               = enable_advanced_value;
-    *enable_advanced_addr               = enable_advanced_value;
-    *enable_advanced_addr               = enable_advanced_value;
-    *enable_advanced_addr               = enable_advanced_value;
-}
-
-void ram_fn_disable_cartridge_sram (void) {
-    uint8_t mbc_type                    = get_mbc_type(*rCartridgeType_mode);
-    cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
-    uint8_t* disable_addr               = as_addr(cartridge_mode->bank_enable_addr);
-    uint8_t disable_value               = cartridge_mode->bank_disable_value;
-    *disable_addr                       = disable_value;
-    *disable_addr                       = disable_value;
-    *disable_addr                       = disable_value;
-    *disable_addr                       = disable_value;
-}
-
 void try_update_progress_bar(uint8_t progress){
     uint8_t* dst = _SCRN1 + get_position_tile_index(4, 6) + progress / 8;
     uint8_t tile = pb_start_offset + (progress & 7);
@@ -158,6 +130,34 @@ void ram_fn_transfer_header(void) {
     bool use_internal_clock = *rRole == ROLE_LEADER;
     wait_for_other_device(use_internal_clock);
     send_recv_header(use_internal_clock);
+}
+
+void ram_fn_enable_cartridge_sram (void) {
+    uint8_t mbc_type                    = get_mbc_type(*rCartridgeType_mode);
+    cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
+    uint8_t* enable_addr                = as_addr(cartridge_mode->bank_enable_addr);
+    uint8_t* enable_advanced_addr       = as_addr(cartridge_mode->bank_enable_advanced_addr);
+    uint8_t enable_value                = cartridge_mode->bank_enable_value;
+    uint8_t enable_advanced_value       = cartridge_mode->bank_enable_advanced_value;
+    *enable_addr                        = enable_value;
+    *enable_addr                        = enable_value;
+    *enable_addr                        = enable_value;
+    *enable_addr                        = enable_value;
+    *enable_advanced_addr               = enable_advanced_value;
+    *enable_advanced_addr               = enable_advanced_value;
+    *enable_advanced_addr               = enable_advanced_value;
+    *enable_advanced_addr               = enable_advanced_value;
+}
+
+void ram_fn_disable_cartridge_sram (void) {
+    uint8_t mbc_type                    = get_mbc_type(*rCartridgeType_mode);
+    cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
+    uint8_t* disable_addr               = as_addr(cartridge_mode->bank_enable_addr);
+    uint8_t disable_value               = cartridge_mode->bank_disable_value;
+    *disable_addr                       = disable_value;
+    *disable_addr                       = disable_value;
+    *disable_addr                       = disable_value;
+    *disable_addr                       = disable_value;
 }
 
 // #define JUGGLE_SPI_MASTER
