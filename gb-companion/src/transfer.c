@@ -21,7 +21,6 @@ const cartridge_mode_t cartridge_mbc_1_ram_data = {
     0x0A,   // bank_enable_value      
     0x00,   // bank_disable_value      
     0x40,   // bank_selector_addr               (address, 8 msb)
-    2,      // bank_number_base: 4 rom banks
     0xA0,   // bank_data_addr_start             (inclusive, address, 8 msb)
     0xC0,   // bank_data_addr_end               (exclusive, address, 8 msb)
     0x60,   // bank_enable_advanced_addr
@@ -34,7 +33,6 @@ const cartridge_mode_t cartridge_mbc_3_ram_data = {
     0x0A,   // bank_enable_value      
     0x00,   // bank_disable_value      
     0x40,   // bank_selector_addr               (address, 8 msb)
-    2,      // bank_number_base: 4 rom banks
     0xA0,   // bank_data_addr_start             (inclusive, address, 8 msb)
     0xC0,   // bank_data_addr_end               (exclusive, address, 8 msb)
     0x40,   // bank_enable_advanced_addr
@@ -45,7 +43,7 @@ uint8_t get_mbc_type(uint8_t cartridge_mbc_value){
     if (0x01 <= cartridge_mbc_value && cartridge_mbc_value <= 0x03 ) return MBC_1;
     // if (0x05 <= cartridge_mbc_value && cartridge_mbc_value <= 0x06 ) return MBC_2;
     if (0x0F <= cartridge_mbc_value && cartridge_mbc_value <= 0x13 ) return MBC_3;
-    // if (0x19 <= cartridge_mbc_value && cartridge_mbc_value <= 0x1E ) return MBC_5;
+    if (0x19 <= cartridge_mbc_value && cartridge_mbc_value <= 0x1E ) return MBC_5;
     return MBC_UNSUPPORTED;
 }
 
@@ -54,7 +52,7 @@ cartridge_mode_t* get_cartridge_mode_ptr (uint8_t mbc_type) {
         mbc_type == MBC_1? &cartridge_mbc_1_ram_data :
         mbc_type == MBC_2? &cartridge_mbc_1_ram_data :  // TODO
         mbc_type == MBC_3? &cartridge_mbc_3_ram_data :
-        mbc_type == MBC_5? &cartridge_mbc_1_ram_data :  // TODO
+        mbc_type == MBC_5? &cartridge_mbc_3_ram_data :  // TODO
         (cartridge_mode_t*)0x0000; // null, should never happen
 }
 

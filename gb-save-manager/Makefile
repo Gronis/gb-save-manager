@@ -52,7 +52,7 @@ ASSEMBLY		:=	$(wildcard src/*.asm)
 #	https://gbdev.io/pandocs/The_Cartridge_Header.html#0147--cartridge-type
 ###############################################################################
 TITLE			:=	GBSAVEMANAG
-MBC				:=  0x03	# MBC1 + RAM + BATTERY
+MBC				:=  0x10	# MBC3 + RAM + BATTERY + TIMER
 RAM_SIZE		:=	3		# 32kB
 
 ###############################################################################

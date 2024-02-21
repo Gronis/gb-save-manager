@@ -8,7 +8,6 @@ typedef struct {
     uint8_t bank_enable_value;
     uint8_t bank_disable_value;
     uint8_t bank_selector_addr;
-    uint8_t bank_number_base;
     uint8_t bank_data_addr_start;
     uint8_t bank_data_addr_end;
     uint8_t bank_enable_advanced_addr;
