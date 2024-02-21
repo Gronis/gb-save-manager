@@ -1,191 +1,69 @@
-## 2-system Menu (GB and GBA works the same or very similar)
+# Game Boy Save Manager (gb-save-manager.gb)
+A custom Gameboy ROM for backing up and restoring your SAVE files on your old school Gameboy game cartridges using a Link-Cable and two Gameboys!
 
-### Screens:
+## Use cases
+* You want to store your Gameboy cartridge saves in a safe place to be prepared for when the battery life eventually runs out (and the save is lost).
+* You have a SAVE file you want to move from a game cartridge onto a micro SD like flash cartridge or emulator device (or vise versa).
 
-#### Boot Screen: Choose Cartridge Mode (GBA only)
-The user have to choose between GB and GBA mode:
+## Why
+There are certain hardware products you can buy to backup and restore SAVE files from and to your Gameboy cartridges. However, many of us probably have all the necessary hardware at home to do this already, so buying another piece of hardware for 35-50$ just to do this seems unecessary.
+
+## Required hardware
+What you need is:
+* 2x Gameboys, of any of these models: 
+  * Gameboy (DMG)*
+  * Gameboy Pocket (GBP)
+  * Gameboy Color (GBC)
+  * Gameboy Advance (GBA)
+  * Gameboy Advance SP (GBA SP)
+
+* Gameboy Color Link-Cable (DMG requires an adapter)
+* A Gameboy Flash Cartridge, for example:
+  * EVERDRIVE-GB X3/X5/X7
+  * EZ-FLASH Junior
+* A Gameboy or Gameboy Color game that you want to backup/restore the SAVE file to/from
+
+\* Since DMG locks down the cartridge slot, maximum 1 of this device can be used unless you modify the power switch.
+
+## Supported Cartridge Types
+Gameboy Cartridges has different chips which works slightly differently. Here is a list of supported Cartridge Types:
+
+* MBC1
+* MBC3
+* MBC5 (Rumble cartridges should work but is untested since I don't a game to test)
+
+Cartridges of this type is unsupported as of now, but planned:
+* MBC2 (Again, don't own any game with this type)
+
+A few games uses MBC2, most of them are using MBC 1, 3 or 5, so most official game cartridges should be supported.
+
+There are also a bunch of multi-rom cartridge and unofficial cartridges. These are most likely unsupported.
+
+## How to use it
+
+The ROM explains what you need to do, but here is a crash-course:
+1. Boot up gb-save-manager.gb from your flash cartridge
+2. Unplug the flash cartridge
+3. Insert your game to backup/restore
+4. Boot up gb-save-manager.gb from your flash cartridge on a 2nd Gameboy
+5. Connect a Gameboy Color Link-Cable to both devices
+6. Press button to start the backup/restore process
+
+If you choose `Backup`, the save data should be stored on your flash cartridge (typically named `gb-save-manager.sav` or similar).
+
+If you choose `Restore`, the save data on the flash cartridge for `gb-save-manager` (typically named `gb-save-manager.sav` or similar) is now on the game cartridge.
+
+## Tips and Tricks
+Sometimes the Gameboy can reset when inserting or ejecting a Cartridge. A good technique to avoid this is to nudge the cartridge from side-to-side, little-by-little slowly. This works good on a Gameboy Pocket and Gameboy Color. On Gameboy Advance SP, it's usually best to slightly rotate the cartridge to either right or left, so that the cartridge comes in at a slight angle rather than strait on.
+
+The general idea is to avoid that all pins connect/disconnect at the same time. This can cause an in-rush of current to the cartridge from the Gameboy which is the reason the Gameboy resets.
+
+Some cartridges are better or worse than others. You typically want a cartridge with as low power consumption as possible. Through testing, I have found out that this issue is much less of a problem on the EVERDRIVE compared to the EZ-FLASH.
+
+## How to build
+
+You need `docker` and `make` installed. Then just run `make` to build it. Result should be in `build/gb-save-manager/gb-save-manager.fixed.gbc`
+
+```bash
+make
 ```
-┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃   Role: Leader                 ┃
-┃   Link Cable Status:     ✖️     ┃
-┃   Cartridge  Status:     ✔     ┃
-┃                                ┃
-┃   Press Button to use:         ┃
-┃                                ┃
-┃   A: Enter GBA Mode            ┃
-┃   B: Enter GB/GBC Mode         ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-```
-#### Waiting for Link or role change (GBA only)
-Help text will be specific on GBA since GBA will send Worker app with Multiboot:
-```
-┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃   Role: Leader                 ┃
-┃   Link Cable Status:     ✖️     ┃
-┃   Cartridge  Status:     ✔     ┃
-┃                                ┃
-┃   Connect GBC Link Cable       ┃
-┃                                ┃
-┃                                ┃
-┃                                ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-```
-
-#### Boot Screen: Waiting for Link or role change (GB/GBC only)
-Flash Cartridge still inserted. Help text will be specific for GB/GBC:
-```
-┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓
-┃                                        ┃
-┃                                        ┃
-┃       Role: Leader                     ┃
-┃       Link Cable Status:     ✖️         ┃
-┃       Cartridge  Status:     ✔         ┃
-┃                                        ┃
-┃       Connect GBC Link Cable           ┃
-┃       or remove the Cartridge          ┃
-┃       to change role                   ┃
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-```
-
-#### Worker Role:
-Flash Cartridage removed or multiboot startup: (role switched: Leader -> Worker):
-```
-┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓
-┃                                        ┃┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃                                        ┃┃   Role: Worker                 ┃
-┃       Role: Worker                     ┃┃   Link Cable Status:     ✖️     ┃
-┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✖️     ┃
-┃       Cartridge  Status:     ✔         ┃┃                                ┃
-┃                                        ┃┃   Insert GB/GBC Cartridge      ┃
-┃       Insert GB/GBC Cartridge          ┃┃                                ┃
-┃                                        ┃┃                                ┃
-┃                                        ┃┃                                ┃
-┃                                        ┃┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-```
-
-Cartridge inserted and Link Cable connection established:
-```
-┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓
-┃                                        ┃┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃                                        ┃┃   Role: Worker                 ┃
-┃       Role: Worker                     ┃┃   Link Cable Status:     ✔     ┃
-┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✔     ┃
-┃       Cartridge  Status:     ✔         ┃┃                                ┃
-┃                                        ┃┃      Waiting for Leader        ┃
-┃          Waiting for Leader            ┃┃                                ┃
-┃                                        ┃┃                                ┃
-┃                                        ┃┃                                ┃
-┃                                        ┃┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-```
-#### Leader Role:
-Flash Cartridge is never removed, Link Cable established connection to device with Worker role established:
-```
-┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓
-┃                                        ┃┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃                                        ┃┃   Role: Leader                 ┃
-┃       Role: Leader                     ┃┃   Link Cable Status:     ✔     ┃
-┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✔     ┃
-┃       Cartridge  Status:     ✔         ┃┃                                ┃
-┃                                        ┃┃     Press Button to:           ┃
-┃          Press Button to:              ┃┃        A: Backup SAVE          ┃
-┃             A: Backup SAVE             ┃┃        B: Restore SAVE         ┃
-┃             B: Restore SAVE            ┃┃    Start: Backup ROM           ┃
-┃                                        ┃┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-```
-
-After choosing mode, show progress:
-```
-┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓
-┃                                        ┃┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
-┃                                        ┃┃   Role: Leader                 ┃
-┃       Role: Leader                     ┃┃   Link Cable Status:     ✔     ┃
-┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✔     ┃
-┃       Cartridge  Status:     ✔         ┃┃                                ┃
-┃                                        ┃┃       Backing up SAVE:         ┃
-┃           Backing up SAVE:             ┃┃   ┏━━━━━━━━━━━━━━━━━━━━━━━━┓   ┃
-┃   ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓    ┃┃   ┃ █████                  ┃   ┃
-┃   ┃ ███████                       ┃    ┃┃   ┗━━━━━━━━━━━━━━━━━━━━━━━━┛   ┃
-┃   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛    ┃┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┃                                        ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-
-```
-
-save-manager.gb
-=================
-~~Single GB/GBC/GBA:~~
-- ~~(GB) QR SAVE Backup~~
-- ~~(GB) Audio Cable SAVE Backup~~
-
-Link Cable (2x GB/GBC/GBAs):
-- (GB) SAVE Backup/Restore *
-
-save-manager.gba
-=================
-~~Single GBA:~~
-- ~~(GBA) QR SAVE Backup~~
-- ~~(GBA) Audio Cable SAVE Backup~~
-
-Link Cable (2x GBAs):
-- (GB)  SAVE Backup/Restore *
-- (GBA) SAVE Backup/Restore
-
-#### ROMs included in others ROMs:
-- gb-companion.gb
-- gb-companion_mb.gba
-- gba-companion_mb.gba
-
-#### ROM inclusion structure:
-- save-manager.gb
-  - gb-companion.gb
-- save-manager.gba
-  - gb-companion_mb.gba
-    - gb-companion.gb
-  - gba-companion_mb.gba
-
-Findings and solutions:
-========
-
-- GBA (while in gbc mode), cannot hold data in RAM if cartridge is disconnected (saftey feature?)
-  - Solved by putting code in VRAM instead of RAM
-- VRAM can only be accessed at certain times in GBC mode
-  - Solved by turing the screen off and on rapidly and put main logic in VRAM while HRAM code can be used to render the screen.
-- GB screen is too slow to toggle on and off fast
-  - Solved by putting code in RAM instead of VRAM
-- GBA data written to RAM while cartridge is inserted is retained if a cartridge is ejected and then injected again.
-  Seems to be controlled by the hardware switch used for detecting GBC games in cartridge slot. This means that we can
-  execute code from RAM if cartridge is inserted and we know cartridge will not be ejected.
-
-#### save-manager.gb codeflow:
-- Init steps:
-  - Put gb-companion in VRAM and gb-companion_ram in RAM
-  - If started from GBA, switch execution to gb-companion (VRAM)
-  - If started from GB/GBC switch execution to  gb-companion_ram (RAM)
-- Code runs as normal from RAM/VRAM until data transfer should start:
-  - Switch execution to RAM which handles data transfer for both 
-    leader and worker
-  <!-- - If leader, switch back execution to (gb-save-manager) ROM
-  - If worker, continue to send data while executing gb-companion in RAM/VRAM -->
