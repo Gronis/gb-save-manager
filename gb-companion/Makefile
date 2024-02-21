@@ -55,7 +55,7 @@ OUTPUT			:=	.
 #	https://gbdev.io/pandocs/The_Cartridge_Header.html#0147--cartridge-type
 ###############################################################################
 TITLE			:=	GBSMCOMPANI
-MBC				:=  0x10	# MBC1 + RAM + BATTERY
+MBC				:=  0x13	# MBC3 + RAM + BATTERY
 RAM_SIZE		:=	3		# 32kB
 
 ###############################################################################

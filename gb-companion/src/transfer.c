@@ -52,7 +52,7 @@ cartridge_mode_t* get_cartridge_mode_ptr (uint8_t mbc_type) {
         mbc_type == MBC_1? &cartridge_mbc_1_ram_data :
         mbc_type == MBC_2? &cartridge_mbc_1_ram_data :  // TODO
         mbc_type == MBC_3? &cartridge_mbc_3_ram_data :
-        mbc_type == MBC_5? &cartridge_mbc_3_ram_data :  // TODO
+        mbc_type == MBC_5? &cartridge_mbc_3_ram_data :
         (cartridge_mode_t*)0x0000; // null, should never happen
 }
 
@@ -60,7 +60,7 @@ void ram_fn_enable_cartridge_sram (void) {
     uint8_t mbc_type                    = get_mbc_type(*rCartridgeType_mode);
     cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
     uint8_t* enable_addr                = as_addr(cartridge_mode->bank_enable_addr);
-    uint8_t* enable_advanced_addr       = as_addr(enable_advanced_addr);
+    uint8_t* enable_advanced_addr       = as_addr(cartridge_mode->bank_enable_advanced_addr);
     uint8_t enable_value                = cartridge_mode->bank_enable_value;
     uint8_t enable_advanced_value       = cartridge_mode->bank_enable_advanced_value;
     *enable_addr                        = enable_value;
@@ -144,6 +144,7 @@ void ram_fn_transfer_header(void) {
 // #define JUGGLE_SPI_MASTER
 void ram_fn_perform_transfer(void) {
 
+    *rTransferError = false;
     uint8_t timeout = 0x80;
     uint8_t transfer_mode = *rTransfer_mode | *rTransfer_mode_remote;
     bool backup_save  = (0 != (transfer_mode & TRANSFER_MODE_BACKUP_SAVE));
@@ -168,12 +169,12 @@ void ram_fn_perform_transfer(void) {
         return;
     }
 
-    uint8_t remote_cartridge_mbc_value = 
+    uint8_t worker_cartridge_mbc_value = 
         is_leader? 
             *rCartridgeType_mode_remote :
             *rCartridgeType_mode;
 
-    if (get_mbc_type(remote_cartridge_mbc_value) == MBC_UNSUPPORTED) {
+    if (get_mbc_type(worker_cartridge_mbc_value) == MBC_UNSUPPORTED) {
         return;
     }
 
@@ -194,7 +195,6 @@ void ram_fn_perform_transfer(void) {
     uint8_t* data_ptr_end               = data_ptr;
     uint8_t next_bank_number            = 0;
     uint8_t visual_tile_row_index       = 0;
-    *rTransferError                     = false;
 
     // If we control the message flow, Wait some time before starting actual transfer
     // So that we know that the other end is ready for us when transfer starts.
@@ -233,10 +233,11 @@ void ram_fn_perform_transfer(void) {
             }
 
             // Send byte and update UI progress bar
+            uint8_t msg_byte;
             if(!is_receiving_data){
-                uint8_t msg = *data_ptr;
-                checksum = checksum ^ msg;
-                send_byte(msg, use_internal_clock);
+                msg_byte = *data_ptr;
+                checksum = checksum ^ msg_byte;
+                send_byte(msg_byte, use_internal_clock);
             } else {
                 send_last_byte(use_internal_clock);
             }
@@ -253,23 +254,22 @@ void ram_fn_perform_transfer(void) {
             // Receive byte and compute checksum
             uint8_t received_byte = recv_byte(timeout);
             if (is_receiving_data){
-                checksum = checksum ^ received_byte;
-            }
+                msg_byte = received_byte;
+                checksum = checksum ^ msg_byte;
 
-            // Visualize transfered bytes as a tile
-            *(_VRAM + n_tiles_total * 16 + ((visual_tile_row_index += 2) & 15)) = ~received_byte;
-            *(_SCRN1 + get_position_tile_index(12, 4)) = n_tiles_total;
-
-            // Write byte to ROM/RAM Bank
-            if (is_receiving_data){
-                *data_ptr = received_byte;
-                *data_ptr = received_byte;
-                *data_ptr = received_byte;
-                *data_ptr = received_byte;
-                if (*data_ptr != received_byte){
+                // Write byte to ROM/RAM Bank
+                *data_ptr = msg_byte;
+                *data_ptr = msg_byte;
+                *data_ptr = msg_byte;
+                *data_ptr = msg_byte;
+                if (*data_ptr != msg_byte){
                     *rTransferError = true;
                 }
             }
+
+            // Visualize transfered bytes as a tile
+            *(_VRAM + n_tiles_total * 16 + ((visual_tile_row_index += 2) & 15)) = msg_byte;
+            *(_SCRN1 + get_position_tile_index(12, 4)) = n_tiles_total;
 
             // This does not work in emu because of random turbo mode bug
 #ifdef JUGGLE_SPI_MASTER
