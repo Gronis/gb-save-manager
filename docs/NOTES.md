@@ -40,3 +40,15 @@ Zelda Ages
 
 Super Mario Bros Delux
     0x1B    MBC5+RAM+BATTERY
+
+
+links:
+
+Gameboy SRAM Copier:
+https://forums.nesdev.org/viewtopic.php?t=10841&sid=39ec75a082d8540ffdc0bb55e527d5e7
+
+Dwedit, enter GBC mode on GBA:
+https://www.dwedit.org/dwedit_board/viewtopic.php?id=339
+
+QR code lib:
+https://github.com/ricmoo/QRCode/tree/master
