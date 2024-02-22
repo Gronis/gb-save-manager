@@ -4,12 +4,12 @@
 
 #include "text_a_bin.h"
 #include "text_b_bin.h"
-#include "text_backing_up_bin.h"
-#include "text_backup_bin.h"
+#include "text_back_bin.h"
 #include "text_cartridge_bin.h"
 #include "text_connect_gbc_bin.h"
 #include "text_false_bin.h"
 #include "text_fast_bin.h"
+#include "text_ing_bin.h"
 #include "text_insert_gbc_bin.h"
 #include "text_leader_bin.h"
 #include "text_link_cable_bin.h"
@@ -25,6 +25,7 @@
 #include "text_state_bin.h"
 #include "text_to_change_role_bin.h"
 #include "text_true_bin.h"
+#include "text_up_bin.h"
 #include "text_waiting_for_bin.h"
 #include "text_worker_bin.h"
 #include "tile_pb_end_bin.h"
@@ -44,13 +45,13 @@
 #define empty_offset                    (0)
 #define text_a_offset                   ((empty_offset)                     + (empty_length)                / 8)
 #define text_b_offset                   ((text_a_offset)                    + (text_a_length)               / 8)
-#define text_backing_up_offset          ((text_b_offset)                    + (text_b_length)               / 8)
-#define text_backup_offset              ((text_backing_up_offset)           + (text_backing_up_length)      / 8)
-#define text_cartridge_offset           ((text_backup_offset)               + (text_backup_length)          / 8)
+#define text_back_offset                ((text_b_offset)                    + (text_b_length)               / 8)
+#define text_cartridge_offset           ((text_back_offset)                 + (text_back_length)            / 8)
 #define text_connect_gbc_offset         ((text_cartridge_offset)            + (text_cartridge_length)       / 8)
 #define text_false_offset               ((text_connect_gbc_offset)          + (text_connect_gbc_length)     / 8)
 #define text_fast_offset                ((text_false_offset)                + (text_false_length)           / 8)
-#define text_insert_gbc_offset          ((text_fast_offset)                 + (text_fast_length)            / 8)
+#define text_ing_offset                 ((text_fast_offset)                 + (text_fast_length)            / 8)
+#define text_insert_gbc_offset          ((text_ing_offset)                  + (text_ing_length)             / 8)
 #define text_leader_offset              ((text_insert_gbc_offset)           + (text_insert_gbc_length)      / 8)
 #define text_link_cable_offset          ((text_leader_offset)               + (text_leader_length)          / 8)
 #define text_mode_offset                ((text_link_cable_offset)           + (text_link_cable_length)      / 8)
@@ -65,7 +66,8 @@
 #define text_state_offset               ((text_start_plus_offset)           + (text_start_plus_length)      / 8)
 #define text_to_change_role_offset      ((text_state_offset)                + (text_state_length)           / 8)
 #define text_true_offset                ((text_to_change_role_offset)       + (text_to_change_role_length)  / 8)
-#define text_waiting_for_offset         ((text_true_offset)                 + (text_true_length)            / 8)
+#define text_up_offset                  ((text_true_offset)                 + (text_true_length)            / 8)
+#define text_waiting_for_offset         ((text_up_offset)                   + (text_up_length)              / 8)
 #define text_worker_offset              ((text_waiting_for_offset)          + (text_waiting_for_length)     / 8)
 #define pb_end_offset                   ((text_worker_offset)               + (text_worker_length)          / 8)
 #define pb_0_offset                     ((pb_end_offset)                    + (tile_pb_end_length)          / 8)
@@ -83,13 +85,13 @@
 #define empty_tile_index                (0)
 #define text_a_tile_index               ((empty_tile_index)                 + 1)
 #define text_b_tile_index               ((text_a_tile_index)                + 1)
-#define text_backing_up_tile_index      ((text_b_tile_index)                + 1)
-#define text_backup_tile_index          ((text_backing_up_tile_index)       + 1)
-#define text_cartridge_tile_index       ((text_backup_tile_index)           + 1)
+#define text_back_tile_index            ((text_b_tile_index)                + 1)
+#define text_cartridge_tile_index       ((text_back_tile_index)             + 1)
 #define text_connect_gbc_tile_index     ((text_cartridge_tile_index)        + 1)
 #define text_false_tile_index           ((text_connect_gbc_tile_index)      + 1)
 #define text_fast_tile_index            ((text_false_tile_index)            + 1)
-#define text_insert_gbc_tile_index      ((text_fast_tile_index)             + 1)
+#define text_ing_tile_index             ((text_fast_tile_index)             + 1)
+#define text_insert_gbc_tile_index      ((text_ing_tile_index)              + 1)
 #define text_leader_tile_index          ((text_insert_gbc_tile_index)       + 1)
 #define text_link_cable_tile_index      ((text_leader_tile_index)           + 1)
 #define text_mode_tile_index            ((text_link_cable_tile_index)       + 1)
@@ -104,7 +106,8 @@
 #define text_state_tile_index           ((text_start_plus_tile_index)       + 1)
 #define text_to_change_role_tile_index  ((text_state_tile_index)            + 1)
 #define text_true_tile_index            ((text_to_change_role_tile_index)   + 1)
-#define text_waiting_for_tile_index     ((text_true_tile_index)             + 1)
+#define text_up_tile_index              ((text_true_tile_index)             + 1)
+#define text_waiting_for_tile_index     ((text_up_tile_index)               + 1)
 #define text_worker_tile_index          ((text_waiting_for_tile_index)      + 1)
 #define pb_end_tile_index               ((text_worker_tile_index)           + 1)
 #define pb_0_tile_index                 ((pb_end_tile_index)                + 1)
@@ -122,12 +125,12 @@ extern const uint8_t                    tiles[];
 
 extern const uint8_t                    text_a[];
 extern const uint8_t                    text_b[];
-extern const uint8_t                    text_backing_up[];
-extern const uint8_t                    text_backup[];
+extern const uint8_t                    text_back[];
 extern const uint8_t                    text_cartridge[];
 extern const uint8_t                    text_connect_gbc[];
 extern const uint8_t                    text_false[];
 extern const uint8_t                    text_fast[];
+extern const uint8_t                    text_ing[];
 extern const uint8_t                    text_insert_gbc[];
 extern const uint8_t                    text_leader[];
 extern const uint8_t                    text_link_cable[];
@@ -143,6 +146,7 @@ extern const uint8_t                    text_start_plus[];
 extern const uint8_t                    text_state[];
 extern const uint8_t                    text_to_change_role[];
 extern const uint8_t                    text_true[];
+extern const uint8_t                    text_up[];
 extern const uint8_t                    text_waiting_for[];
 extern const uint8_t                    text_worker[];
 extern const uint8_t                    tile_pb_end[];

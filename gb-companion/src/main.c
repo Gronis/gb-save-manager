@@ -187,7 +187,7 @@ void main(void) {
                 if(backup_save){
                     render_message(message_backing_up_save);
                 } else if(restore_save){
-                    render_message(message_restore_save);
+                    render_message(message_restoring_save);
                 }
                 render_message(message_progress_bar);
 

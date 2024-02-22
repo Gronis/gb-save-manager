@@ -13,7 +13,7 @@
 #define message_insert_gbc_link_cable   ((message_list_t*)(&message_insert_gbc_link_cable_data))
 #define message_waiting_for_leader      ((message_list_t*)(&message_waiting_for_leader_data))
 #define message_choose_action           ((message_list_t*)(&message_choose_action_data))
-#define message_restore_save            ((message_list_t*)(&message_restore_save_data))
+#define message_restoring_save          ((message_list_t*)(&message_restoring_save_data))
 #define message_backing_up_save         ((message_list_t*)(&message_backing_up_save_data))
 #define message_progress_bar            ((message_list_t*)(&message_progress_bar_data))
 #define message_transfer_done           ((message_list_t*)(&message_transfer_done_data))
@@ -31,7 +31,7 @@ extern const uint8_t                    message_insert_gbc_cartridge_data[];
 extern const uint8_t                    message_insert_gbc_link_cable_data[];
 extern const uint8_t                    message_waiting_for_leader_data[];
 extern const uint8_t                    message_choose_action_data[];
-extern const uint8_t                    message_restore_save_data[];
+extern const uint8_t                    message_restoring_save_data[];
 extern const uint8_t                    message_backing_up_save_data[];
 extern const uint8_t                    message_progress_bar_data[];
 extern const uint8_t                    message_transfer_done_data[];
