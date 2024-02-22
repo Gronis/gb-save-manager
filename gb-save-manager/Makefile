@@ -65,34 +65,37 @@ OBJS			:=	$(SOURCES:.c=.rel) $(ASSEMBLY:.asm=.rel)
 OBJS			:=	$(foreach file,$(OBJS), $(BUILD_DIR)/$(notdir $(file)))
 IHX				:=	$(BIN:.gbc=.ihx)
 HEADERS			:=	$(HEADERS) \
-					$(OUTPUT)/$(VRAM_PROJ)/$(VRAM_ROM_HEADER) \
+					$(OUTPUT)/$(VRAM_PROJ)/$(VRAM_ROM_HEADER)				\
 					$(OUTPUT)/$(WRAM_PROJ)/$(WRAM_ROM_HEADER)
 
 ###############################################################################
 #	Options/flags for tools
 ###############################################################################
-CFLAGS			:=	--verbose --std-c99 -msm83 --opt-code-size --peep-asm \
-					-Isrc -I$(OUTPUT)/$(PROJECTNAME) \
-					-I$(OUTPUT)/$(VRAM_PROJ) \
-					-I$(OUTPUT)/$(WRAM_PROJ) \
+CFLAGS			:=	--verbose --std-c99 -msm83 								\
+					--opt-code-size --peep-asm 								\
+					-Isrc -I../gb-common									\
+					-I$(OUTPUT)/$(PROJECTNAME)								\
+					-I$(OUTPUT)/$(VRAM_PROJ) 								\
+					-I$(OUTPUT)/$(WRAM_PROJ) 								\
 					--peep-return -Wa-l -Wl-m
 
-ASFLAGS			:=	-l -plosgffw -Isrc -I$(OUTPUT)/$(PROJECTNAME)
+ASFLAGS			:=	-l -plosgffw -Isrc -I../gb-common						\
+					-I$(OUTPUT)/$(PROJECTNAME)
 
-LDFLAGS			:=	-mjwx -m \
-					-b _ENTRYPOINT=0x100 \
-					-b _CODE=0x150 \
+LDFLAGS			:=	-mjwx -m 												\
+					-b _ENTRYPOINT=0x100 									\
+					-b _CODE=0x150 											\
 					-g _STACK_PTR=$(STACK_PTR)
 
-FXFLAGS			:=	-C -p 0 -v -m $(MBC) -O -r $(RAM_SIZE) \
+FXFLAGS			:=	-C -p 0 -v -m $(MBC) -O -r $(RAM_SIZE) 					\
 					-t $(TITLE)
 
 ###############################################################################
 #	Build rules
 ###############################################################################
 
-all: $(BUILD_DIR) $(BUILD_DIR)/$(BIN:.gbc=.fixed.gbc) \
-	 $(OUTPUT)/$(VRAM_PROJ)/$(VRAM_ROM_HEADER) \
+all: $(BUILD_DIR) $(BUILD_DIR)/$(BIN:.gbc=.fixed.gbc) 						\
+	 $(OUTPUT)/$(VRAM_PROJ)/$(VRAM_ROM_HEADER) 								\
 	 $(OUTPUT)/$(WRAM_PROJ)/$(WRAM_ROM_HEADER)
 
 $(BUILD_DIR):

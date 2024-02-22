@@ -59,25 +59,27 @@ RAM_SIZE		:=	3		# 32kB
 ###############################################################################
 #	Options/flags for tools
 ###############################################################################
-CFLAGS			:=	--verbose --std-c99 -msm83				\
-					--opt-code-size --peep-asm				\
-					-Isrc -I$(OUTPUT)/$(PROJECTNAME)		\
-					--peep-return -Wa-l -Wl-m				\
-					-DCODE_LOC=$(CODE_LOC)					\
-					-DCODE=$(CODE_LOC)+$(C_CODE_OFFSET)		\
+CFLAGS			:=	--verbose --std-c99 -msm83								\
+					--opt-code-size --peep-asm								\
+					-Isrc -I../gb-common									\
+					-I$(OUTPUT)/$(PROJECTNAME)								\
+					--peep-return -Wa-l -Wl-m								\
+					-DCODE_LOC=$(CODE_LOC)									\
+					-DCODE=$(CODE_LOC)+$(C_CODE_OFFSET)						\
 					-DRAM_LOC=$(RAM_LOC)
 
-ASFLAGS			:=	-l -plosgffw -Isrc -I$(OUTPUT)/$(PROJECTNAME)
+ASFLAGS			:=	-l -plosgffw -Isrc -I../gb-common						\
+					-I$(OUTPUT)/$(PROJECTNAME)
 
 LDFLAGS			:=	-mjwx -m \
-					-b _ENTRYPOINT=$(CODE_LOC)+0x100		\
-					-b _CODE_LOC=$(CODE_LOC)				\
-					-b _RAM_LOC=$(RAM_LOC)					\
-					-b _CODE=$(CODE_LOC)+$(C_CODE_OFFSET)	\
-					-g CODE=$(CODE_LOC)+$(C_CODE_OFFSET)	\
+					-b _ENTRYPOINT=$(CODE_LOC)+0x100						\
+					-b _CODE_LOC=$(CODE_LOC)								\
+					-b _RAM_LOC=$(RAM_LOC)									\
+					-b _CODE=$(CODE_LOC)+$(C_CODE_OFFSET)					\
+					-g CODE=$(CODE_LOC)+$(C_CODE_OFFSET)					\
 					-g _STACK_PTR=$(STACK_PTR)
 
-FXFLAGS			:=	-C -p 0 -v -m $(MBC) -O -r $(RAM_SIZE) \
+FXFLAGS			:=	-C -p 0 -v -m $(MBC) -O -r $(RAM_SIZE) 					\
 					-t $(TITLE)
 
 ###############################################################################
