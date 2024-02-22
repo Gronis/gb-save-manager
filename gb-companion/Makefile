@@ -42,12 +42,10 @@ RAM1			:=	0xD000
 #	Project Constants
 ###############################################################################
 PROJECTNAME		:=	gb-companion
-# rename to ROM_MEM_LOC
-CODE_LOC		:=	$(VRAM0)
+CODE_LOC		:=	$(VRAM1)
 RAM_LOC			:=  $(RAM0)
-VRAM1_LOC		:=  $(VRAM1)
 C_CODE_OFFSET	:=	0x0150
-STACK_PTR		:=  0x9D80
+STACK_PTR		:=  0x8FFF
 OUTPUT			:=	.
 
 ###############################################################################
@@ -67,8 +65,7 @@ CFLAGS			:=	--verbose --std-c99 -msm83				\
 					--peep-return -Wa-l -Wl-m				\
 					-DCODE_LOC=$(CODE_LOC)					\
 					-DCODE=$(CODE_LOC)+$(C_CODE_OFFSET)		\
-					-DRAM_LOC=$(RAM_LOC)					\
-					-DVRAM1_LOC=$(VRAM1_LOC)
+					-DRAM_LOC=$(RAM_LOC)
 
 ASFLAGS			:=	-l -plosgffw -Isrc -I$(OUTPUT)/$(PROJECTNAME)
 
@@ -76,8 +73,6 @@ LDFLAGS			:=	-mjwx -m \
 					-b _ENTRYPOINT=$(CODE_LOC)+0x100		\
 					-b _CODE_LOC=$(CODE_LOC)				\
 					-b _RAM_LOC=$(RAM_LOC)					\
-					-b _VRAM1_LOC=$(VRAM1_LOC)				\
-					-g VRAM1_LOC=$(VRAM1_LOC)				\
 					-b _CODE=$(CODE_LOC)+$(C_CODE_OFFSET)	\
 					-g CODE=$(CODE_LOC)+$(C_CODE_OFFSET)	\
 					-g _STACK_PTR=$(STACK_PTR)
@@ -135,9 +130,6 @@ $(BUILD_DIR)/prebuild.gbc: $(BUILD_DIR)/prebuild.ihx
 $(BUILD_DIR)/ram_code.gbc:	$(BUILD_DIR)/prebuild.gbc
 	@dd if=$< of=$@ skip=$(shell printf "%d" $(RAM0)) bs=1 count=4k seek=0 2> /dev/null
 
-$(BUILD_DIR)/vram1_code.gbc: $(BUILD_DIR)/prebuild.gbc
-	@dd if=$< of=$@ skip=$(shell printf "%d" $(VRAM1)) bs=1 count=4k seek=0 2> /dev/null
-
 # source code rules
 $(BUILD_DIR)/%.rel: src/%.c $(HEADERS) $(ASSETS) Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -167,6 +159,4 @@ $(BUILD_DIR)/%.png: assets/%.png
 #	Specific dependencies for certain files
 ###############################################################################
 
-$(BUILD_DIR)/data.rel:				\
-	$(BUILD_DIR)/vram1_code_gbc.h 		\
-	$(BUILD_DIR)/ram_code_gbc.h
+$(BUILD_DIR)/main.rel:	$(BUILD_DIR)/ram_code_gbc.h

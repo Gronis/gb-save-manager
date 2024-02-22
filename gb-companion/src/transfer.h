@@ -4,6 +4,7 @@
 #include "version.h"
 #include "types.h"
 #include "cartridges.h"
+#include "tiles.h"
 
 #define ROLE_WORKER                     0
 #define ROLE_LEADER                     1

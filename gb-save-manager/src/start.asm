@@ -21,10 +21,7 @@ start:
     ld  (hl), a
     jp _main
 
-.globl _execute_vram_code
-_execute_vram_code:
+.globl _execute_code
+_execute_code:
     jp _VRAM
 
-.globl _execute_ram_code
-_execute_ram_code:
-    jp _RAM

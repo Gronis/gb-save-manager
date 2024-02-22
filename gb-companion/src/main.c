@@ -5,18 +5,27 @@
 #include "transfer.h"
 #include "start.h"
 #include "graphics.h"
-#include "bitmaps.h"
+#include "messages.h"
 #include "cartridges.h"
 #include "input.h"
-#include "data.h"
 
-// TODO: Move this to its own source file
-//////////////////////////////////////////////////////////////////
+#define CARTRIDGE_TITLE ((char*)(0x0134))
+const char LEADER_CARTRIDGE_TITLE[] = "GBSAVEMANA";
+
+#define CARTRIDGE_LOGO ((char*)(0x0104))
+const uint8_t CORPORATE_LOGO[] = {
+    0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73
+};
+
 #ifdef VRAM_VERSION
-void copy_ram_functions_to_ram(void) { 
-    uint8_t* src = (uint8_t*)(VRAM1_LOC + vram1_code_length);
-    volatile uint8_t* dst = (uint8_t*)RAM_LOC;
+extern const uint8_t ram_code[];
+#include "ram_code_gbc.h"
+
+void copy_ram_functions_to_ram(void) {
+    // Copy the code from the original location in VRAM0 (0x8000-0x9000)
+    uint8_t* src = (uint8_t*)(&ram_code - CODE_LOC + (uint16_t)_VRAM);
     uint8_t* end = src + ram_code_length;
+    uint8_t* dst = (uint8_t*)_RAM;
     bool success = true;
     // If RAM becomes inaccessable during copy process, stall
     for (; src != end; dst+=success, src+=success){
@@ -28,16 +37,7 @@ void copy_ram_functions_to_ram(void) {
 #else
 // This is the RAM version, so no copy is necessary
 void copy_ram_functions_to_ram(void) {}
-#endif 
-//////////////////////////////////////////////////////////////////
-
-#define CARTRIDGE_TITLE ((char*)(0x0134))
-const char LEADER_CARTRIDGE_TITLE[] = "GBSAVEMANA";
-
-#define CARTRIDGE_LOGO ((char*)(0x0104))
-const uint8_t CORPORATE_LOGO[] = {
-    0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73
-};
+#endif // VRAM_VERSION
 
 bool send_detect_link_cable_packet(bool use_internal_clock) {
     uint8_t serial_data = *rSB;
@@ -54,8 +54,8 @@ bool send_detect_link_cable_packet(bool use_internal_clock) {
 }
 
 void main(void) {
+    copy_tiles_to_vram();
     render_message_no_screen_flush(message_header);
-    rasterize_all_bitmap_tiles_to_VRAM_call_only_once();
     {
         bool did_write_to_ram = false;
         bool state_changed = true;
@@ -211,3 +211,13 @@ void main(void) {
         }
     }
 }
+
+// Has to be last in order to be last in binary
+#ifdef VRAM_VERSION
+#define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
+#include "ram_code_gbc.h"
+#endif // VRAM_VERSION
+
+// Important to have a non 0xFF in the end because bin2c strips away trailing data
+// and main is hardcoded to be included last in the program
+uint8_t end = 0x14;

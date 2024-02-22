@@ -1,13 +1,12 @@
 #include "graphics.h"
-#include "bitmaps.h"
+#include "messages.h"
+#include "tiles.h"
 #include "hardware.h"
 
 #define BITS_PER_PIXEL 2
 #define LINES_PER_TILE 8
 
-// This function is overwritten when executing rasterize_progress_bar_tiles,
-// which fills some of this function code area with progress bar tiles
-void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void) {
+void copy_tiles_to_vram(void) {
     uint8_t* dst = _VRAM + text_a_offset * LINES_PER_TILE * BITS_PER_PIXEL;
     uint8_t* src = (uint8_t*)&text_a;
     uint8_t* end = src + n_tiles_total * LINES_PER_TILE;
@@ -15,6 +14,10 @@ void rasterize_all_bitmap_tiles_to_VRAM_call_only_once(void) {
         *(dst) = *(src);
         dst += BITS_PER_PIXEL;
         src += 1;
+    }
+    // Clear out tile arrangment from row 9 since that is where we show our UI
+    for (uint8_t* it = (uint8_t*)(_SCRN1 + 9 * 32); it < (uint8_t*)_RAM; ++it){
+        *it = 0;
     }
 }
 

@@ -1,0 +1,45 @@
+
+#include "graphics.h"
+
+#define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
+#include "tiles.h"
+
+const uint8_t tiles[] = {
+    empty_offset,
+    text_a_offset,
+    text_b_offset,
+    text_backing_up_offset,
+    text_backup_offset,
+    text_cartridge_offset,
+    text_connect_gbc_offset,
+    text_false_offset,
+    text_fast_offset,
+    text_insert_gbc_offset,
+    text_leader_offset,
+    text_link_cable_offset,
+    text_mode_offset,
+    text_or_remove_the_offset,
+    text_press_button_to_offset,
+    text_restore_offset,
+    text_role_offset,
+    text_rom_offset,
+    text_save_offset,
+    text_slow_offset,
+    text_start_plus_offset,
+    text_state_offset,
+    text_to_change_role_offset,
+    text_true_offset,
+    text_waiting_for_offset,
+    text_worker_offset,
+    pb_end_offset,
+    pb_0_offset,
+    pb_1_offset,
+    pb_2_offset,
+    pb_3_offset,
+    pb_4_offset,
+    pb_5_offset,
+    pb_6_offset,
+    pb_7_offset,
+    pb_8_offset,
+    n_tiles_total,
+};

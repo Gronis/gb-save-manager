@@ -1,7 +1,7 @@
 #include "transfer.h"
 #include "hardware.h"
 #include "graphics.h"
-#include "bitmaps.h"
+#include "messages.h"
 #include "cartridges.h"
 #include "start.h"
 
