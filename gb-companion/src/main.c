@@ -220,4 +220,4 @@ void main(void) {
 
 // Important to have a non 0xFF in the end because bin2c strips away trailing data
 // and main is hardcoded to be included last in the program
-uint8_t end = 0x14;
+uint8_t end = 0xED;
