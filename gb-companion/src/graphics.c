@@ -21,13 +21,10 @@ void copy_tiles_to_vram(void) {
     }
 }
 
-void set_tiles_row(uint8_t x, uint8_t y, range_t* tile_range) {
-    x += SCREEN_COORDINATE_TILE_X;
-    y += SCREEN_COORDINATE_TILE_Y;
+void set_tiles_row(uint8_t* tile_position, range_t* tile_range) {
     uint8_t tile_index = tile_range->start;
-    uint8_t* dst = _SCRN1 + ((uint16_t)y) * 32 + x;
     while (tile_index < tile_range->end) {
-        *(dst++) = tile_index++;
+        *(tile_position++) = tile_index++;
     }
 }
 
@@ -40,7 +37,7 @@ void render_message_impl(message_list_t* messages, bool do_flush_screen) {
         if(do_flush_screen){
             flush_screen();
         }
-        set_tiles_row(m->x, m->y, range);
+        set_tiles_row(m->tile_position, range);
         if(do_flush_screen){
             flush_screen();
         }
@@ -55,16 +52,16 @@ void render_message(message_list_t* messages) {
     render_message_impl(messages, true);
 }
 
-#define CLEAR_MESSAGE_TILE_INDEX get_position_tile_index(1, 4) 
+#define CLEAR_MESSAGE_TILE_INDEX get_tile_position(1, 4) 
 const uint8_t clear_arr[] = {
-    (uint8_t)(get_position_tile_index(1,  4) - CLEAR_MESSAGE_TILE_INDEX),
-    (uint8_t)(get_position_tile_index(15, 4) - CLEAR_MESSAGE_TILE_INDEX),
-    (uint8_t)(get_position_tile_index(1,  5) - CLEAR_MESSAGE_TILE_INDEX),
-    (uint8_t)(get_position_tile_index(15, 5) - CLEAR_MESSAGE_TILE_INDEX),
-    (uint8_t)(get_position_tile_index(1,  6) - CLEAR_MESSAGE_TILE_INDEX),
-    (uint8_t)(get_position_tile_index(15, 6) - CLEAR_MESSAGE_TILE_INDEX),
-    (uint8_t)(get_position_tile_index(1,  7) - CLEAR_MESSAGE_TILE_INDEX),
-    (uint8_t)(get_position_tile_index(15, 7) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_tile_position(1,  4) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_tile_position(15, 4) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_tile_position(1,  5) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_tile_position(15, 5) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_tile_position(1,  6) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_tile_position(15, 6) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_tile_position(1,  7) - CLEAR_MESSAGE_TILE_INDEX),
+    (uint8_t)(get_tile_position(15, 7) - CLEAR_MESSAGE_TILE_INDEX),
 };
 
 void clear_message() {
@@ -74,7 +71,7 @@ void clear_message() {
 void clear_message_from_row(uint8_t row) {
     for (uint8_t r = row; r < LINES_PER_TILE; r+= 2){
         for (uint8_t s = clear_arr[r], e = clear_arr[r + 1]; s != e; ++s) {
-            *(_SCRN1 + s + CLEAR_MESSAGE_TILE_INDEX) = 0;
+            *as_u8_ptr(s + CLEAR_MESSAGE_TILE_INDEX) = 0;
         }
         flush_screen();
     }

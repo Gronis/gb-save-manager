@@ -9,7 +9,11 @@
 #define SCREEN_COORDINATE_TILE_WIDTH ((uint8_t)(14))
 #define SCREEN_COORDINATE_TILE_HEIGHT ((uint8_t)(8))
 
-#define get_position_tile_index(x, y) ((uint16_t)(SCREEN_COORDINATE_TILE_X) + (x) + (uint16_t)(SCREEN_COORDINATE_TILE_Y + (y)) * 32)
+#define get_tile_position(x, y) (                       \
+    (uint16_t)(_SCRN1) +                                \
+    (uint16_t)(SCREEN_COORDINATE_TILE_X) + (x) +        \
+    (uint16_t)(SCREEN_COORDINATE_TILE_Y  + (y)) * 32    \
+)
 // BG has y-axis offsest 1/2 of a tile so 1 tile goes missing for some top+bottom margin
 
 typedef struct {
@@ -26,8 +30,7 @@ typedef struct {
 } message_list_t;
 
 typedef struct {
-    uint8_t x;
-    uint8_t y;
+    uint8_t* tile_position;
     uint8_t message_tile_index;
 } message_t;
 
@@ -36,7 +39,7 @@ typedef struct {
 void copy_tiles_to_vram(void);
 
 //
-void set_tiles_row(uint8_t x, uint8_t y, range_t* tile_range);
+void set_tiles_row(uint8_t* tile_position, range_t* tile_range);
 
 // Render all messages in list without flushing the screen in between messages.
 // Note: messages should be placed consecutivly in memory

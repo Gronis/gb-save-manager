@@ -15,6 +15,6 @@ typedef short int16_t;
 typedef long int32_t;
 typedef int size_t;
 
-#define INT32_MAX ((int32_t)0x7FFFFFFF)
+#define as_u8_ptr(v) ((uint8_t*)(v))
 
 #endif // TYPES_H

@@ -9,7 +9,7 @@
 #include "area_ram.h"
 
 void try_update_progress_bar(uint8_t progress){
-    uint8_t* dst = _SCRN1 + get_position_tile_index(4, 6) + progress / 8;
+    uint8_t* dst = get_tile_position(4, 6) + progress / 8;
     uint8_t tile = pb_start_offset + (progress & 7);
     if (*rLY <= 144) {
         *dst = tile;
@@ -228,8 +228,8 @@ void ram_fn_perform_transfer(void) {
             }
 
             // Visualize transfered bytes as a tile
-            *(_VRAM + n_tiles_total * 16 + ((visual_tile_row_index += 2) & 15)) = msg_byte;
-            *(_SCRN1 + get_position_tile_index(12, 4)) = n_tiles_total;
+            *(_VRAM + n_tiles_total * 16 + ((visual_tile_row_index += 2) & 0x0F)) = msg_byte;
+            *as_u8_ptr(get_tile_position(12, 4)) = n_tiles_total;
         }
 
         // Exchange checksum to verify that packet was transfered correctly
