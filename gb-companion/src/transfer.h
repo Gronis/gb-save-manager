@@ -24,21 +24,19 @@
 #define rTransfer_mode                  ((uint8_t*) (_RAMBANK - 4))
 #define rTransfer_mode_remote           ((uint8_t*) (_RAMBANK - 5))
 
-#define rCartridgeType_mode             ((uint8_t*) (0x0147))
-#define rCartridgeType_mode_remote      ((uint8_t*) (_RAMBANK - 6))
-#define rCartridgeROM_size              ((uint8_t*) (0x0148))
-#define rCartridgeROM_size_remote       ((uint8_t*) (_RAMBANK - 7))
-#define rCartridgeSRAM_size             ((uint8_t*) (0x0149))
-#define rCartridgeSRAM_size_remote      ((uint8_t*) (_RAMBANK - 8))
+#define rMBC_mode                       ((uint8_t*) (0x0147))
+#define rMBC_mode_remote                ((uint8_t*) (_RAMBANK - 6))
+#define rROM_size                       ((uint8_t*) (0x0148))
+#define rROM_size_remote                ((uint8_t*) (_RAMBANK - 7))
+#define rSRAM_size                      ((uint8_t*) (0x0149))
+#define rSRAM_size_remote               ((uint8_t*) (_RAMBANK - 8))
 
 #define rTransferError                  ((uint8_t*) (_RAMBANK - 9))
 
 #define LINK_CABLE_ENABLE               0x80
 #define LINK_CABLE_MAGIC_BYTE_SYNC      0xAA
 
-#define PACKET_SIZE                     128
-
-extern const cartridge_mode_t           cartridge_mbc_1_ram_data;
+#define PACKET_SIZE                     64
 
 #define as_addr(addr) ((uint8_t*)(((uint16_t)(addr)) << 8))
 

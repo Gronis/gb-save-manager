@@ -51,12 +51,12 @@ void send_recv_header(bool use_internal_clock){
     *rDevice_mode_remote = recv_byte(0);
     send_byte(*rTransfer_mode, use_internal_clock);
     *rTransfer_mode_remote = recv_byte(0);
-    send_byte(*rCartridgeType_mode, use_internal_clock);
-    *rCartridgeType_mode_remote = recv_byte(0);
-    send_byte(*rCartridgeROM_size, use_internal_clock);
-    *rCartridgeROM_size_remote = recv_byte(0);
-    send_byte(*rCartridgeSRAM_size, use_internal_clock);
-    *rCartridgeSRAM_size_remote = recv_byte(0);
+    send_byte(*rMBC_mode, use_internal_clock);
+    *rMBC_mode_remote = recv_byte(0);
+    send_byte(*rROM_size, use_internal_clock);
+    *rROM_size_remote = recv_byte(0);
+    send_byte(*rSRAM_size, use_internal_clock);
+    *rSRAM_size_remote = recv_byte(0);
 }
 
 void ram_fn_transfer_header(void) {
@@ -66,34 +66,27 @@ void ram_fn_transfer_header(void) {
 }
 
 void ram_fn_enable_cartridge_sram (void) {
-    uint8_t mbc_type                    = get_mbc_type(*rCartridgeType_mode);
-    cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
-    uint8_t* enable_addr                = as_addr(cartridge_mode->bank_enable_addr);
-    uint8_t* enable_advanced_addr       = as_addr(cartridge_mode->bank_enable_advanced_addr);
-    uint8_t enable_value                = cartridge_mode->bank_enable_value;
-    uint8_t enable_advanced_value       = cartridge_mode->bank_enable_advanced_value;
+    uint8_t mbc_type                    = get_mbc_type(*rMBC_mode);
+    cartridge_mode_t* cartridge         = get_cartridge_mode_ptr(mbc_type);
+    uint8_t* enable_addr                = as_addr(cartridge->bank_enable_addr);
+    uint8_t* enable_advanced_addr       = as_addr(cartridge->bank_enable_advanced_addr);
+    uint8_t enable_value                = cartridge->bank_enable_value;
+    uint8_t enable_advanced_value       = cartridge->bank_enable_advanced_value;
     *enable_addr                        = enable_value;
     *enable_addr                        = enable_value;
-    *enable_addr                        = enable_value;
-    *enable_addr                        = enable_value;
-    *enable_advanced_addr               = enable_advanced_value;
-    *enable_advanced_addr               = enable_advanced_value;
     *enable_advanced_addr               = enable_advanced_value;
     *enable_advanced_addr               = enable_advanced_value;
 }
 
 void ram_fn_disable_cartridge_sram (void) {
-    uint8_t mbc_type                    = get_mbc_type(*rCartridgeType_mode);
-    cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
-    uint8_t* disable_addr               = as_addr(cartridge_mode->bank_enable_addr);
-    uint8_t disable_value               = cartridge_mode->bank_disable_value;
-    *disable_addr                       = disable_value;
-    *disable_addr                       = disable_value;
+    uint8_t mbc_type                    = get_mbc_type(*rMBC_mode);
+    cartridge_mode_t* cartridge         = get_cartridge_mode_ptr(mbc_type);
+    uint8_t* disable_addr               = as_addr(cartridge->bank_enable_addr);
+    uint8_t disable_value               = cartridge->bank_disable_value;
     *disable_addr                       = disable_value;
     *disable_addr                       = disable_value;
 }
 
-// #define JUGGLE_SPI_MASTER
 void ram_fn_perform_transfer(void) {
 
     *rTransferError = false;
@@ -103,41 +96,46 @@ void ram_fn_perform_transfer(void) {
     bool restore_save = (0 != (transfer_mode & TRANSFER_MODE_RESTORE_SAVE));
 
     bool is_leader = *rRole == ROLE_LEADER;
+    bool use_internal_clock = is_leader;
     bool is_receiving_data = 
         (is_leader  && backup_save) ||
         (!is_leader && restore_save);
 
-    // Emu don't like player 2 generating signals, so leader (p1) has to.
-    bool use_internal_clock = is_leader;
-    // bool use_internal_clock = is_receiving_data;
-
-    uint8_t cartridge_sram_bank_size = 
-        is_leader? 
-            *rCartridgeSRAM_size_remote :
-            *rCartridgeSRAM_size;
+    uint8_t worker_sram_size;
+    uint8_t worker_mbc_mode;
+    if (is_leader){
+        worker_sram_size                = *rSRAM_size_remote;
+        worker_mbc_mode                 = *rMBC_mode_remote;
+    } else {
+        worker_sram_size                = *rSRAM_size;
+        worker_mbc_mode                 = *rMBC_mode;
+    }
 
     // This means game does not have SRAM
-    if (cartridge_sram_bank_size < 2){
-        return;
+    if (worker_sram_size < 2) return;
+
+    uint8_t worker_mbc_type             = get_mbc_type(worker_mbc_mode);
+    if (worker_mbc_type == MBC_UNSUPPORTED) return;
+
+    uint8_t sram_size_base              = cartridge_sram_table[worker_sram_size - 2];
+    uint16_t max_num_of_pkts            = 64 << sram_size_base;
+
+    // Some MBC types override the bank size found in the cartridge header
+    cartridge_mode_t* worker_cartridge  = get_cartridge_mode_ptr(worker_mbc_type);
+    if (worker_cartridge->bank_size_override != 0){
+        max_num_of_pkts                 = 1 << worker_cartridge->bank_size_override;
     }
 
-    uint8_t worker_cartridge_mbc_value = 
-        is_leader? 
-            *rCartridgeType_mode_remote :
-            *rCartridgeType_mode;
-
-    if (get_mbc_type(worker_cartridge_mbc_value) == MBC_UNSUPPORTED) {
-        return;
-    }
-
-    uint8_t cartridge_mbc_value         = *rCartridgeType_mode;
-    uint8_t mbc_type                    = get_mbc_type(cartridge_mbc_value);
-    cartridge_mode_t* cartridge_mode    = get_cartridge_mode_ptr(mbc_type);
-    uint8_t bank_number_base            = cartridge_sram_table[cartridge_sram_bank_size - 2];
-    uint8_t* data_ptr                   = as_addr(cartridge_mode->bank_data_addr_end);
-    uint8_t* data_ptr_end               = data_ptr;
+    uint16_t progress_bytes_per_inc     = max_num_of_pkts;
+    uint16_t progress_bytes_counter     = 0;
+    uint8_t progress                    = 0;
     uint8_t next_bank_number            = 0;
     uint8_t visual_tile_row_index       = 0;
+
+    cartridge_mode_t* cartridge         = get_cartridge_mode_ptr(get_mbc_type(*rMBC_mode));
+    uint8_t* data_ptr                   = as_addr(cartridge->bank_data_addr_end);
+    uint8_t* data_ptr_end               = data_ptr;
+    bool inc_data_ptr                   = true;
 
     // If we control the message flow, Wait some time before starting actual transfer
     // So that we know that the other end is ready for us when transfer starts.
@@ -146,34 +144,32 @@ void ram_fn_perform_transfer(void) {
     }
 
     // 64 packets fits 8kB of space (1 RAM bank).
-    for (uint16_t packet_num = 0; packet_num < (64 << bank_number_base) && !(*rTransferError); ++packet_num) {
+    for (uint16_t pkt_num = 0; pkt_num < max_num_of_pkts && !(*rTransferError); ++pkt_num) {
         uint8_t checksum = 0;
 
         // Send packet number
         {
-            send_byte(packet_num, use_internal_clock);
-            uint16_t received_packet_num = recv_byte(timeout);
-            send_byte(packet_num >> 8, use_internal_clock);
-            received_packet_num |= recv_byte(timeout) << 8;
+            send_byte(pkt_num, use_internal_clock);
+            uint16_t received_pkt_num = recv_byte(timeout);
+            send_byte(pkt_num >> 8, use_internal_clock);
+            received_pkt_num |= recv_byte(timeout) << 8;
 
             // Remote wants to resend previous packet
-            if (is_receiving_data && packet_num != received_packet_num){
+            if (is_receiving_data && pkt_num != received_pkt_num){
                 *rTransferError = true;
             }
         }
 
-        for (uint8_t i = 0; i < PACKET_SIZE && !(*rTransferError); ++i, ++data_ptr){
+        for (uint8_t i = 0; i < PACKET_SIZE && !(*rTransferError); ++i, data_ptr+=inc_data_ptr){
 
             // Progress ROM/RAM Bank if necessary
             if (data_ptr >= data_ptr_end) {
-                data_ptr = as_addr(cartridge_mode->bank_data_addr_start);
-                uint8_t* bank_selector = as_addr(cartridge_mode->bank_selector_addr);
-                *bank_selector = next_bank_number;
-                *bank_selector = next_bank_number;
+                data_ptr = as_addr(cartridge->bank_data_addr_start);
+                uint8_t* bank_selector = as_addr(cartridge->bank_selector_addr);
                 *bank_selector = next_bank_number;
                 *bank_selector = next_bank_number;
                 next_bank_number++;
-                if(next_bank_number == cartridge_mode->bank_selector_bit_skip){
+                if(next_bank_number == cartridge->bank_selector_bit_skip){
                     next_bank_number *= 2;
                 }
             }
@@ -181,31 +177,48 @@ void ram_fn_perform_transfer(void) {
             // Send byte and update UI progress bar
             uint8_t msg_byte;
             if(!is_receiving_data){
-                msg_byte = *data_ptr;
+                if (is_nibble_mode(max_num_of_pkts)){
+                    if (backup_save) {
+                        // Join two nibbles into one byte
+                        msg_byte = *data_ptr & 0x0F;
+                        data_ptr++;
+                        msg_byte |= *data_ptr << 4;
+                    } else {
+                        // Send a nibble, swapping between upper and lower bits
+                        inc_data_ptr = !inc_data_ptr;
+                        if (inc_data_ptr) {
+                            msg_byte = *data_ptr >> 4;
+                        } else {
+                            goto write_msg_byte;
+                        }
+                    }
+                } else {
+                    write_msg_byte:
+                    msg_byte = *data_ptr;
+                }
                 checksum = checksum ^ msg_byte;
                 send_byte(msg_byte, use_internal_clock);
             } else {
                 send_last_byte(use_internal_clock);
             }
-            try_update_progress_bar(packet_num >> bank_number_base);
 
-#ifndef JUGGLE_SPI_MASTER
+            if (progress_bytes_counter++ >= progress_bytes_per_inc) {
+                progress_bytes_counter = 0;
+                progress++;
+            }
+            try_update_progress_bar(progress);
+
             // If we are not juggling spi clock leader role back and forth,
             // wait to make sure worker is not behind and is missing packets.
             if (use_internal_clock){
                 wait_n_cycles(0x0110);
             }
-#endif
 
             // Receive byte and compute checksum
             uint8_t received_byte = recv_byte(timeout);
             if (is_receiving_data){
                 msg_byte = received_byte;
                 checksum = checksum ^ msg_byte;
-
-                // Write byte to ROM/RAM Bank
-                *data_ptr = msg_byte;
-                *data_ptr = msg_byte;
                 *data_ptr = msg_byte;
                 *data_ptr = msg_byte;
                 if (*data_ptr != msg_byte){
@@ -216,11 +229,6 @@ void ram_fn_perform_transfer(void) {
             // Visualize transfered bytes as a tile
             *(_VRAM + n_tiles_total * 16 + ((visual_tile_row_index += 2) & 15)) = msg_byte;
             *(_SCRN1 + get_position_tile_index(12, 4)) = n_tiles_total;
-
-            // This does not work in emu because of random turbo mode bug
-#ifdef JUGGLE_SPI_MASTER
-            use_internal_clock = !use_internal_clock;
-#endif
         }
 
         // Exchange checksum to verify that packet was transfered correctly
