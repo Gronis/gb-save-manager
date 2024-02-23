@@ -52,3 +52,6 @@ https://www.dwedit.org/dwedit_board/viewtopic.php?id=339
 
 QR code lib:
 https://github.com/ricmoo/QRCode/tree/master
+
+gameboy-audio-dumper
+https://github.com/FIX94/gameboy-audio-dumper
