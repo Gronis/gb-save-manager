@@ -12,7 +12,7 @@
 #define CARTRIDGE_TITLE ((char*)(0x0134))
 const char LEADER_CARTRIDGE_TITLE[] = "GBSAVEMANA";
 
-#define CARTRIDGE_LOGO ((char*)(0x0104))
+#define CARTRIDGE_LOGO ((uint8_t*)(0x0104))
 const uint8_t CORPORATE_LOGO[] = {
     0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73
 };

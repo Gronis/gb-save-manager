@@ -33,6 +33,6 @@ extern const cartridge_mode_t cartridge_mbc_5_rumble_ram_data;
 uint8_t get_mbc_type(uint8_t cartridge_mbc_value);
 cartridge_mode_t* get_cartridge_mode_ptr (uint8_t mbc_type);
 
-#define is_nibble_mode(max_num_of_pkts) (((uint8_t)max_num_of_pkts) & 0x3F != 0)
+#define is_nibble_mode(max_num_of_pkts) ((((uint8_t)max_num_of_pkts) & 0x3F) != 0)
 
 #endif // CARTRIDGES_H

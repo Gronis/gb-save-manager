@@ -27,11 +27,12 @@ void send_byte(uint8_t byte, bool use_internal_clock){
 }
 
 uint8_t recv_byte(uint8_t timeout){
-    bool no_timeout_occured = true;
     timeout--;
-    for(uint16_t i = 0; (no_timeout_occured = i < (((uint16_t)timeout) << 8)) && ((*rSC) & 0x80) != 0; ++i);
-    if (!no_timeout_occured){
-        *rTransferError = true;
+    for(uint16_t i = 0; ((*rSC) & 0x80) != 0; ++i){
+        if(i >= (((uint16_t)timeout) << 8)) {
+            *rTransferError = true;
+            break;
+        }
     }
     return *rSB;
 }
@@ -69,11 +70,11 @@ void ram_fn_enable_cartridge_sram (void) {
     uint8_t mbc_type                    = get_mbc_type(*rMBC_mode);
     cartridge_mode_t* cartridge         = get_cartridge_mode_ptr(mbc_type);
     uint8_t* enable_addr                = as_addr(cartridge->bank_enable_addr);
-    uint8_t* enable_advanced_addr       = as_addr(cartridge->bank_enable_advanced_addr);
     uint8_t enable_value                = cartridge->bank_enable_value;
+    *enable_addr                        = enable_value;
+    *enable_addr                        = enable_value;
+    uint8_t* enable_advanced_addr       = as_addr(cartridge->bank_enable_advanced_addr);
     uint8_t enable_advanced_value       = cartridge->bank_enable_advanced_value;
-    *enable_addr                        = enable_value;
-    *enable_addr                        = enable_value;
     *enable_advanced_addr               = enable_advanced_value;
     *enable_advanced_addr               = enable_advanced_value;
 }
@@ -90,10 +91,9 @@ void ram_fn_disable_cartridge_sram (void) {
 void ram_fn_perform_transfer(void) {
 
     *rTransferError = false;
-    uint8_t timeout = 0x80;
     uint8_t transfer_mode = *rTransfer_mode | *rTransfer_mode_remote;
-    bool backup_save  = (0 != (transfer_mode & TRANSFER_MODE_BACKUP_SAVE));
-    bool restore_save = (0 != (transfer_mode & TRANSFER_MODE_RESTORE_SAVE));
+    bool backup_save  = (TRANSFER_MODE_BACKUP_SAVE  == (transfer_mode & TRANSFER_MODE_BACKUP_SAVE));
+    bool restore_save = (TRANSFER_MODE_RESTORE_SAVE == (transfer_mode & TRANSFER_MODE_RESTORE_SAVE));
 
     bool is_leader = *rRole == ROLE_LEADER;
     bool use_internal_clock = is_leader;
@@ -143,6 +143,7 @@ void ram_fn_perform_transfer(void) {
         wait_n_cycles(0x4000);
     }
 
+    uint8_t timeout = 0x80;
     // 64 packets fits 8kB of space (1 RAM bank).
     for (uint16_t pkt_num = 0; pkt_num < max_num_of_pkts && !(*rTransferError); ++pkt_num) {
         uint8_t checksum = 0;
