@@ -31,22 +31,21 @@ What you need is:
 \* Since DMG locks down the cartridge slot, maximum 1 of this device can be used unless you modify the power switch.
 
 ## Supported Cartridge Types
-Gameboy Cartridges has different chips which works slightly differently. Here is a list of supported Cartridge Types:
+Gameboy Cartridges has different chips which works slightly differently. Most if not all original Gameboy and Gameboy Color cartridges should be supported. Here is a list of supported Cartridge Mapper Types:
 
 * MBC1
+* MBC2** (From v1.1 and onwards)
 * MBC3
-* MBC5 (Rumble cartridges should work but is untested since I don't a game to test)
+* MBC5
+* MBC5 with rumble pack **
 
-Cartridges of this type is unsupported as of now, but planned:
-* MBC2 (Again, don't own any game with this type)
-
-A few games uses MBC2, most of them are using MBC 1, 3 or 5, so most official game cartridges should be supported.
+\*\* Only tested in emulator since I don't own any game of this kind.
 
 There are also a bunch of multi-rom cartridge and unofficial cartridges. These are most likely unsupported.
 
 ## How to use it
 
-The ROM explains what you need to do, but here is a crash-course:
+The ROM explains what you need to do, but here is an overview:
 1. Boot up gb-save-manager.gb from your flash cartridge
 2. Unplug the flash cartridge
 3. Insert your game to backup/restore
