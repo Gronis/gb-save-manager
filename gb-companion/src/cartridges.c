@@ -26,7 +26,7 @@ const cartridge_mode_t cartridge_mbc_1_ram_data = {
     0x60,   // bank_enable_advanced_addr
     0x01,   // bank_enable_advanced_value
     0xFF,   // bank_selector_bit_skip
-    0x00,   // bank_size_override
+    0x00,   // base_size_override
 };
 
 // Mostly the same as MBC_1 except no advanced mode, just set enable again
@@ -40,7 +40,7 @@ const cartridge_mode_t cartridge_mbc_2_ram_data = {
     0x00,   // bank_enable_advanced_addr    <- same as enable RAM mode
     0x0A,   // bank_enable_advanced_value
     0xFF,   // bank_selector_bit_skip
-    0x03,   // bank_size_override           <- 2^3 * PACKET_SIZE = 512 half bytes
+    0x03,   // base_size_override           <- 2^3 * PACKET_SIZE = 512 half bytes
 };
 
 // Mostly the same as MBC_1 except no advanced mode, just set enable again
@@ -54,7 +54,7 @@ const cartridge_mode_t cartridge_mbc_3_and_5_ram_data = {
     0x00,   // bank_enable_advanced_addr    <- same as enable RAM mode
     0x0A,   // bank_enable_advanced_value
     0xFF,   // bank_selector_bit_skip
-    0x00,   // bank_size_override
+    0x00,   // base_size_override
 };
 
 // MBC_5 with rumble data uses bank selector register bit 3 (%0000_1000)
@@ -70,7 +70,7 @@ const cartridge_mode_t cartridge_mbc_5_rumble_ram_data = {
     0x00,   // bank_enable_advanced_addr    <- same as enable RAM mode
     0x0A,   // bank_enable_advanced_value
     0x08,   // bank_selector_bit_skip       <- bit 3 (%0000_1000) controls motor
-    0x00,   // bank_size_override
+    0x00,   // base_size_override
 };
 
 uint8_t get_mbc_type(uint8_t cartridge_mbc_value){

@@ -122,13 +122,13 @@ void ram_fn_perform_transfer(void) {
 
     // Some MBC types override the bank size found in the cartridge header
     cartridge_mode_t* worker_cartridge  = get_cartridge_mode_ptr(worker_mbc_type);
-    if (worker_cartridge->bank_size_override != 0){
-        max_num_of_pkts                 = 1 << worker_cartridge->bank_size_override;
+    if (worker_cartridge->base_size_override != 0){
+        max_num_of_pkts                 = 1 << worker_cartridge->base_size_override;
     }
 
     uint16_t progress_bytes_per_inc     = max_num_of_pkts;
     uint16_t progress_bytes_counter     = 0;
-    uint8_t progress                    = 0;
+    uint8_t progress_ui                 = 0;
     uint8_t next_bank_number            = 0;
     uint8_t visual_tile_row_index       = 0;
 
@@ -205,9 +205,9 @@ void ram_fn_perform_transfer(void) {
 
             if (progress_bytes_counter++ >= progress_bytes_per_inc) {
                 progress_bytes_counter = 0;
-                progress++;
+                progress_ui++;
             }
-            try_update_progress_bar(progress);
+            try_update_progress_bar(progress_ui);
 
             // If we are not juggling spi clock leader role back and forth,
             // wait to make sure worker is not behind and is missing packets.

@@ -13,7 +13,7 @@ typedef struct {
     uint8_t bank_enable_advanced_addr;
     uint8_t bank_enable_advanced_value;
     uint8_t bank_selector_bit_skip;
-    uint8_t bank_size_override;
+    uint8_t base_size_override;
 } cartridge_mode_t;
 
 #define RUMBLE          0x10
