@@ -3,21 +3,28 @@
 # ===================================
 #
 # Code is expected to run either in VRAM or RAM on GB/GBC or GBA in GBC mode
-# For GB/GBC code lives in ROM at boot, it is then moved to RAM or VRAM
-# depending on the build. 
+#
+# For GB/GBC code lives in ROM at boot, it is then moved to VRAM 0x8000 and
+# started from there. It is then moved to either VRAM 0x9000 or RAM 0xC000
+# depending on the build. The reason for this setup is that The GBA version
+# can only pass data from GBA mode to GBC mode with data in 0x8000 to 0x9000.
+# This way, the same boot process happens for all 3 versions (GBC RAM,
+# GBC VRAM, GBA VRAM) so it's the least confusing way to to do it.
 #
 # For GBA, only VRAM version works, because RAM is inacessable while there
 # is no game cartridge inserted. For GB, VRAM version is unusable because
 # it turns the LCD on and off very fast in order to execute code on VRAM
 # while still show an image.
 #
-# At some point, when we know we have a cartridge inside, execution will
-# change to RAM only. Therefore, we need to build in two steps. Once for
-# ram_code, where the code is linked to execute in RAM. The second time we
-# include the ram_code but put it with the rest of the code. It is then 
-# moved during runtime to RAM. This is for VRAM build only. RAM build do
-# not need this, but the Makefile is the same so all the same build steps
-# still apply.
+# At some point, when we know we have a cartridge inside, so some code will
+# be moved and run from RAM for all 3 versions. This is necessary to run code
+# while the screen is on. Therefor this is the case for the transfer code.
+#
+# Because of this separation, we need to build in two steps. Once for the
+# RAM specific code, where the code is linked to execute in RAM. The second
+# time we include the RAM code but put it with the rest of the code. It is then
+# moved during runtime to RAM. This is only necessary for VRAM build, but the
+# codebase is the same so all the same build steps still apply.
 #
 
 
