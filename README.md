@@ -4,7 +4,7 @@ A custom Gameboy ROM for backing up and restoring your SAVE files on your old sc
   _  |  _  
 :---:|:---:
 <img src="screenshots/connect_cable.png" alt="isolated" height="200"/> | <img src="screenshots/press_btn.png" alt="isolated" height="200"/>
-<img src="screenshots/progress.png" alt="isolated" height="200"/> | <img src="screenshots/done.png" alt="isolated" height="200"/>
+<img src="screenshots/restore-progress.gif" alt="isolated" height="200"/> | <img src="screenshots/done.png" alt="isolated" height="200"/>
 
 ## Use cases
 * You want to store your Gameboy cartridge saves in a safe place to be prepared for when the battery life eventually runs out (and the save is lost).
@@ -53,9 +53,11 @@ The ROM explains what you need to do, but here is an overview:
 5. Connect a Gameboy Color Link-Cable to both devices
 6. Press button to start the backup/restore process
 
-If you choose `Backup`, the save data should be stored on your flash cartridge (typically named `gb-save-manager.sav` or similar).
+If you choose `Backup`, the save data should be stored on your flash cartridge (typically named `gb-save-manager.X.sav`\*\*\* or similar).
 
-If you choose `Restore`, the save data on the flash cartridge for `gb-save-manager` (typically named `gb-save-manager.sav` or similar) is now on the game cartridge.
+If you choose `Restore`, the save data on the flash cartridge for `gb-save-manager` (typically named `gb-save-manager.X.sav`\*\*\* or similar) is now on the game cartridge.
+
+\*\*\* In the name `gb-save-manager.X.sav`, `X` is the version release, e.g `1.0` or `1.1`. The file ending might also be different. For example the EVERDRIVE uses `.srm` instead of the more common `.sav`. When restoring the a save, Double-check the naming of your other save files to make sure you use the correct naming. Otherwise the flash cart won't recognize the save file, and the restore process will fail.
 
 ## Tips and Tricks
 Sometimes the Gameboy can reset when inserting or ejecting a Cartridge. A good technique to avoid this is to nudge the cartridge from side-to-side, little-by-little slowly. This works good on a Gameboy Pocket and Gameboy Color. On Gameboy Advance SP, it's usually best to slightly rotate the cartridge to either right or left, so that the cartridge comes in at a slight angle rather than strait on.
@@ -63,6 +65,17 @@ Sometimes the Gameboy can reset when inserting or ejecting a Cartridge. A good t
 The general idea is to avoid that all pins connect/disconnect at the same time. This can cause an in-rush of current to the cartridge from the Gameboy which is the reason the Gameboy resets.
 
 Some cartridges are better or worse than others. You typically want a cartridge with as low power consumption as possible. Through testing, I have found out that this issue is much less of a problem on the EVERDRIVE compared to the EZ-FLASH.
+
+## Troubleshooting
+
+### I tried to restore the save file to my game cartridge, but the result is a wiped/empty save file
+* When you restored the save, did the tile next to the "SAVE" text flicker similar to this image? If not, the flash cartridge could not read the save. Double check that the naming is the same as the name of the rom (`gb-save-manager.X.sav` or similar) but with correct file ending (`sav`/`srm` depending on the flash cartridge).
+
+<img src="screenshots/restore-progress.gif" alt="isolated" height="200"/>
+
+* If you did see the flicker but it still failed, Have you tried to load the save into an emulator or on the flash cartridge? It might be currupt.
+
+* If the save file seems to work elsewhere and the restore process shows a flickering tile as mentioned, but still yield a wiped/empty save file after a restore, please file an issue and describe what game are working with and each step you have tried.
 
 ## How to build
 
