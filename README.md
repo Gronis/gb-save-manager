@@ -60,6 +60,9 @@ If you choose `Restore`, the save data on the flash cartridge for `gb-save-manag
 \*\*\* In the name `gb-save-manager.X.sav`, `X` is the version release, e.g `1.0` or `1.1`. The file ending might also be different. For example the EVERDRIVE uses `.srm` instead of the more common `.sav`. When restoring the a save, Double-check the naming of your other save files to make sure you use the correct naming. Otherwise the flash cart won't recognize the save file, and the restore process will fail.
 
 ## Tips and Tricks
+After a backup, it's good to always boot another game from the flash cartridge before working with the save file (`gb-save-manager.X.sav`). This is because most flash cartridges doesn't copy over the save until it's necessary. So booting another game will force the flash cartridge to move the save from internal SRAM to the SD-card.
+
+### Hot-swapping Game Cartridges
 Sometimes the Gameboy can reset when inserting or ejecting a Cartridge. This is becuase of a voltage power drop. To mitigate this, turn off the volume and reduce screen brightness as much as possible so that the device uses as little power as possible.
 
 When injecting a cartridge, a good technique is to nudge the cartridge from side-to-side, little-by-little slowly. This works good on a Gameboy Pocket and Gameboy Color. On Gameboy Advance SP, it's usually best to slightly rotate the cartridge to either right or left, so that the cartridge comes in at a slight angle rather than strait on.
