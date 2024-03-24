@@ -89,3 +89,11 @@ You need `docker` and `make` installed. Then just run `make` to build it. Result
 ```bash
 make
 ```
+
+## Test in emulator
+
+You can use a standard build of mGBA to test it by using its built-in support for multiplayer. However, it becomes quite tedious to click "New Multiplayer Window" -> "Open ROM" every time you want to test. The best way to test fast (every build) is to grab a certain version of mGBA (https://github.com/Gronis/mgba) that has added support for cli to specify multiple roms in a single command like and opens both of them in multiplayer mode. Once built, you can use it to test an actual save transfer inside the emulator. Here is what it would look like on MacOS which I use:
+
+```bash
+make && ~/mgba/build/qt/mGBA.app/Contents/MacOS/mGBA build/gb-save-manager/gb-save-manager.fixed.gbc build/gb-companion/gb-companion.fixed.gbc
+```
