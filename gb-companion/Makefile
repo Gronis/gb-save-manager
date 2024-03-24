@@ -158,7 +158,7 @@ $(BUILD_DIR)/%.png: assets/%.png
 	bin2c $< $(notdir $(basename $<)) > $(basename $@).h
 
 %.bin: %.png
-	mkfont $<
+	png2bin $<
 
 %.fixed.gbc: %.gbc
 	@cp $< $@

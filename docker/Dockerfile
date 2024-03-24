@@ -50,15 +50,15 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive \
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 ###################################################################################
-### Install mkfont
+### Install png2bin
 ###################################################################################
-FROM rust-base as build-mkfont
+FROM rust-base as build-png2bin
 
-COPY ./mkfont mkfont
-WORKDIR mkfont
+COPY ./png2bin png2bin
+WORKDIR png2bin
 RUN . "$HOME/.cargo/env" && cargo build --release
-RUN mkdir -p /opt/mkfont/bin && \
-    cp target/release/mkfont /opt/mkfont/bin
+RUN mkdir -p /opt/png2bin/bin && \
+    cp target/release/png2bin /opt/png2bin/bin
 
 ###################################################################################
 ### Install sdcc
@@ -94,12 +94,12 @@ RUN apt-get update \
 COPY --from=build-sdcc      /opt  /opt
 COPY --from=build-rgbds     /opt  /opt
 COPY --from=build-bin2c     /opt  /opt
-COPY --from=build-mkfont    /opt  /opt
+COPY --from=build-png2bin    /opt  /opt
 
 ENV PATH /opt/sdcc/bin:$PATH
 ENV PATH /opt/rgbds/bin:$PATH
 ENV PATH /opt/bin2c/bin:$PATH
-ENV PATH /opt/mkfont/bin:$PATH
+ENV PATH /opt/png2bin/bin:$PATH
 ENV PATH /opt/devkitpro/devkitARM/bin:$PATH
 
 WORKDIR /workdir
