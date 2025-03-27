@@ -12,7 +12,7 @@ endif
 OUTPUT			:= $(shell pwd)/build
 
 # Build Targets
-all: gb-companion_mb gb-companion_ram gb-save-manager
+all: gb-companion_mb gb-companion_ram gb-save-manager gba-save-manager
 
 clean:
 	rm -r $(OUTPUT)
@@ -23,7 +23,7 @@ clean:
 ifeq ($(shell which docker),)
 ###############################################################################
 
-.PHONY: all clean gb-companion gb-companion_mb gb-companion_ram gb-save-manager
+.PHONY: all clean gb-companion gb-companion_mb gb-companion_ram gb-save-manager gba-save-manager
 
 gb-companion_ram:
 	@(cd gb-companion && make OUTPUT=${OUTPUT} PROJECTNAME=gb-companion_ram CODE_LOC=0xC000 STACK_PTR=0xDFF0)
@@ -36,6 +36,9 @@ gb-companion_mb:
 
 gb-save-manager:
 	@(cd gb-save-manager && make OUTPUT=${OUTPUT} VRAM_ROM=gb-companion.gbc WRAM_ROM=gb-companion_ram.gbc)
+
+gba-save-manager:
+	@(cd gba-save-manager && make OUTPUT=${OUTPUT} GB_ROM=gb-companion_mb.gba)
 
 ###############################################################################
 # Build using docker (on host machine)
