@@ -9,7 +9,7 @@
 #include "area_ram.h"
 
 void try_update_progress_bar(uint8_t progress){
-    uint8_t* dst = get_tile_position(4, 6) + progress / 8;
+    uint8_t* dst = (uint8_t*)(get_tile_position(4, 6) + progress / 8);
     uint8_t tile = pb_start_offset + (progress & 7);
     if (*rLY <= 144) {
         *dst = tile;
@@ -38,7 +38,7 @@ uint8_t recv_byte(uint8_t timeout){
 }
 
 void wait_for_other_device(bool use_internal_clock) {
-    uint8_t packet_to_send = use_internal_clock? ~LINK_CABLE_MAGIC_BYTE_SYNC : LINK_CABLE_MAGIC_BYTE_SYNC;
+    uint8_t packet_to_send = use_internal_clock? (uint8_t)~LINK_CABLE_MAGIC_BYTE_SYNC : LINK_CABLE_MAGIC_BYTE_SYNC;
     uint8_t packet_to_receive = ~packet_to_send;
     uint8_t received_packet;
     do {
@@ -99,7 +99,7 @@ void ram_fn_perform_transfer(void) {
 
     bool is_leader = *rRole == ROLE_LEADER;
     bool use_internal_clock = is_leader;
-    bool is_receiving_data = 
+    bool is_receiving_data =
         (is_leader  && backup_save) ||
         (!is_leader && restore_save);
 

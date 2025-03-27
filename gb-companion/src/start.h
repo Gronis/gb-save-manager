@@ -1,6 +1,7 @@
 #ifndef START_H
 #define START_H
 
+#include "types.h"
 #include "version.h"
 
 // Use this function to call some other function while the screen
@@ -8,7 +9,7 @@
 //
 // NOTE: Only call this function if RAM is available. This is not
 // always the case!
-// 
+//
 // This is needed to fully escape from the default locked down
 // environment where only video RAM (VRAM) and high RAM (HRAM)
 // is accessible. When running code in RAM, we can show the
@@ -32,7 +33,7 @@
 // Reset the stack pointer to what it was before
 volatile void run_in_parallel_to_screen(void (*function)(void));
 
-// This does the same as `run_in_parallel_to_screen` except it 
+// This does the same as `run_in_parallel_to_screen` except it
 // is hard-coded to just wait roughly 2 frames before returning.
 volatile void flush_screen(void);
 

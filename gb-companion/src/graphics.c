@@ -2,6 +2,7 @@
 #include "messages.h"
 #include "tiles.h"
 #include "hardware.h"
+#include "start.h"
 
 #define BITS_PER_PIXEL 2
 #define LINES_PER_TILE 8
@@ -33,7 +34,7 @@ void render_message_impl(message_list_t* messages, bool do_flush_screen) {
     messages++;
     for(uint8_t i = 0; i < len; ++i){
         message_t* m = (message_t*)(messages) + i;
-        range_t* range = ((range_t*)(&tiles + m->message_tile_index));
+        range_t* range = ((range_t*)(&tiles[m->message_tile_index]));
         if(do_flush_screen){
             flush_screen();
         }
@@ -52,7 +53,7 @@ void render_message(message_list_t* messages) {
     render_message_impl(messages, true);
 }
 
-#define CLEAR_MESSAGE_TILE_INDEX get_tile_position(1, 4) 
+#define CLEAR_MESSAGE_TILE_INDEX get_tile_position(1, 4)
 const uint8_t clear_arr[] = {
     (uint8_t)(get_tile_position(1,  4) - CLEAR_MESSAGE_TILE_INDEX),
     (uint8_t)(get_tile_position(15, 4) - CLEAR_MESSAGE_TILE_INDEX),

@@ -30,8 +30,8 @@ RAM1			:=	0xD000
 ###############################################################################
 PROJECTNAME		:=	gb-save-manager
 STACK_PTR		:=  0xFFFB
-VRAM_ROM		:=  "no VRAM_ROM defined, set using make VRAM_ROM=<project>"
-WRAM_ROM		:=	"no WRAM_ROM defined, set using make WRAM_ROM=<project>"
+VRAM_ROM		:=  gb-companion.gbc
+WRAM_ROM		:=	gb-companion_ram.gbc
 OUTPUT			:=	.
 
 ###############################################################################

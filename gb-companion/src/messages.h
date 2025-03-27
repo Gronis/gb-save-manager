@@ -1,6 +1,8 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
+#include "types.h"
+
 #define message_header                  ((message_list_t*)(&message_header_data))
 #define message_role_worker             ((message_list_t*)(&message_role_worker_data))
 #define message_role_leader             ((message_list_t*)(&message_role_leader_data))

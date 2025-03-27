@@ -21,20 +21,20 @@ void mem_copy_with_validation(uint8_t* src, uint8_t* end, uint8_t* dst){
 }
 
 void copy_vram_code(void) {
-    uint8_t* src = gb_companion;
+    uint8_t* src = (uint8_t*)gb_companion;
     uint8_t* end = src + gb_companion_length;
     uint8_t* dst = _VRAM;
     mem_copy_with_validation(src, end, dst);
 }
 
 void copy_ram_code(void) {
-    uint8_t* src = gb_companion_ram;
+    uint8_t* src = (uint8_t*)gb_companion_ram;
     uint8_t* end = src + gb_companion_ram_length;
     uint8_t* dst = _VRAM;
     mem_copy_with_validation(src, end, dst);
 }
 
-void main(void) {
+int main(void) {
     // Must disable screen in order to write to VRAM
     *rLCDC = 0;
 
@@ -49,5 +49,5 @@ void main(void) {
         copy_ram_code();
     }
     execute_code();
-
+    return 0;
 }

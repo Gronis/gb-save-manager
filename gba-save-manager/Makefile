@@ -9,8 +9,8 @@ LD 					:= $(CC)
 ###############################################################################
 # 	Project Constants
 ###############################################################################
-PROJECTNAME			:=  gba-save-manager
-GB_ROM   			:= "no GB_ROM project defined, set using make GB_ROM=<project>"
+PROJECTNAME			:= gba-save-manager
+GB_MB_ROM   		:= gb-companion_mb.gba
 OUTPUT 				:= .
 
 ###############################################################################
@@ -44,24 +44,21 @@ ASSEMBLY 			:= $(wildcard src/*.asm)
 ###############################################################################
 #	Derived variables
 ###############################################################################
-GB_PROJ				:=	$(basename $(GB_ROM))
 BIN 				:=	$(PROJECTNAME).gba
-GB_BUILD_DIR		:=	$(OUTPUT)/$(GB_PROJ)
 BUILD_DIR			:=	$(OUTPUT)/$(PROJECTNAME)
 
 OFILES				:=	$(SOURCES:.c=.o) $(ASSEMBLY:.asm=.o)
 OFILES				:=	$(foreach file,$(OFILES), $(BUILD_DIR)/$(notdir $(file)))
 
+GB_MB_PROJ			:=	$(basename $(GB_MB_ROM))
+GB_MB_BUILD_DIR		:=	$(OUTPUT)/$(GB_MB_PROJ)
+PAYLOAD_GB_HEADER	:=	$(GB_MB_PROJ)_gba.h
+
 INCLUDES			:=	$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-						-Isrc -I$(BUILD_DIR) -I$(GB_BUILD_DIR)
+						-Isrc -I$(BUILD_DIR) -I$(GB_MB_BUILD_DIR)
 
-PAYLOAD_GB 			:=	$(subst -,_,$(GB_PROJ))
-PAYLOAD_GB_HEADER	:=	$(GB_PROJ)_gba.h
-PAYLOAD_GB_LENGTH	:=	$(PAYLOAD_GB)_length
 
-DEFINES				:= 	-DPAYLOAD_GB_HEADER=\"$(PAYLOAD_GB_HEADER)\" \
-						-DPAYLOAD_GB=$(PAYLOAD_GB) \
-						-DPAYLOAD_GB_LENGTH=$(PAYLOAD_GB_LENGTH)
+DEFINES				:= 	
 
 
 ###############################################################################
@@ -76,7 +73,7 @@ $(BUILD_DIR):
 $(BUILD_DIR)/$(PROJECTNAME).elf: $(OFILES)
 	$(LD) -specs=gba_mb.specs $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -Wl,-Map,$(BUILD_DIR)/$(notdir $@).map -o $@
 
-$(OFILES): $(HEADERS) $(GB_BUILD_DIR)/$(PAYLOAD_GB_HEADER)
+$(OFILES): $(HEADERS) $(GB_MB_BUILD_DIR)/$(PAYLOAD_GB_HEADER)
 
 $(BUILD_DIR)/%.o: src/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINES) -c $< -o $@
@@ -84,5 +81,5 @@ $(BUILD_DIR)/%.o: src/%.c
 %_gba.h: %.gba
 	bin2c $< $(notdir $(basename $<)) > $(basename $@).h
 
-$(GB_BUILD_DIR)/$(GB_ROM): ../$(GB_PROJ:_mb=)/* ../$(GB_PROJ:_mb=)/*/*
-	@(cd .. && make $(GB_PROJ) OUTPUT=$(OUTPUT))
+$(GB_MB_BUILD_DIR)/$(GB_MB_ROM): ../$(GB_MB_PROJ:_mb=)/* ../$(GB_MB_PROJ:_mb=)/*/*
+	@(cd .. && make $(GB_MB_PROJ) OUTPUT=$(OUTPUT))

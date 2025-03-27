@@ -1,6 +1,7 @@
 
 // GBA hardware docs: https://problemkaputt.de/gbatek.htm
 #include <gba.h>
+#include <stdint.h>
 
 #define ALWAYS_INLINE                   __attribute__((always_inline)) static inline
 #define PACKED                          __attribute__((packed))
@@ -27,11 +28,6 @@
 
 #define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
 #include PAYLOAD_HEADER
-
-// #include "payload_gbc.h"
-// #define PAYLOAD payload
-// #define PAYLOAD_LENGTH payload_length
-
 
 typedef struct PACKED {
     int32_t bg_x;       // 24-bits integer + 8-bits decimal

@@ -18,8 +18,8 @@ const uint8_t cartridge_sram_table[] = {
 // First gen cartridge types
 const cartridge_mode_t cartridge_mbc_1_ram_data = {
     0x00,   // bank_enable_addr
-    0x0A,   // bank_enable_value      
-    0x00,   // bank_disable_value      
+    0x0A,   // bank_enable_value
+    0x00,   // bank_disable_value
     0x40,   // bank_selector_addr
     0xA0,   // bank_data_addr_start
     0xC0,   // bank_data_addr_end
@@ -32,8 +32,8 @@ const cartridge_mode_t cartridge_mbc_1_ram_data = {
 // Mostly the same as MBC_1 except no advanced mode, just set enable again
 const cartridge_mode_t cartridge_mbc_2_ram_data = {
     0x00,   // bank_enable_addr
-    0x0A,   // bank_enable_value      
-    0x00,   // bank_disable_value      
+    0x0A,   // bank_enable_value
+    0x00,   // bank_disable_value
     0x90,   // bank_selector_addr           <- write to dummy address
     0xA0,   // bank_data_addr_start
     0xA2,   // bank_data_addr_end
@@ -46,8 +46,8 @@ const cartridge_mode_t cartridge_mbc_2_ram_data = {
 // Mostly the same as MBC_1 except no advanced mode, just set enable again
 const cartridge_mode_t cartridge_mbc_3_and_5_ram_data = {
     0x00,   // bank_enable_addr
-    0x0A,   // bank_enable_value      
-    0x00,   // bank_disable_value      
+    0x0A,   // bank_enable_value
+    0x00,   // bank_disable_value
     0x40,   // bank_selector_addr
     0xA0,   // bank_data_addr_start
     0xC0,   // bank_data_addr_end
@@ -62,8 +62,8 @@ const cartridge_mode_t cartridge_mbc_3_and_5_ram_data = {
 // we need to multiply by 2, skipping this bit entirely.
 const cartridge_mode_t cartridge_mbc_5_rumble_ram_data = {
     0x00,   // bank_enable_addr
-    0x0A,   // bank_enable_value      
-    0x00,   // bank_disable_value      
+    0x0A,   // bank_enable_value
+    0x00,   // bank_disable_value
     0x40,   // bank_selector_addr
     0xA0,   // bank_data_addr_start
     0xC0,   // bank_data_addr_end
@@ -76,8 +76,8 @@ const cartridge_mode_t cartridge_mbc_5_rumble_ram_data = {
 // Mostly the same as MBC_1 except no advanced mode, just set enable again
 const cartridge_mode_t cartridge_mbc_gb_cam_ram_data = {
     0x00,   // bank_enable_addr
-    0x0A,   // bank_enable_value      
-    0x00,   // bank_disable_value      
+    0x0A,   // bank_enable_value
+    0x00,   // bank_disable_value
     0x40,   // bank_selector_addr
     0xA0,   // bank_data_addr_start
     0xC0,   // bank_data_addr_end
@@ -98,12 +98,15 @@ uint8_t get_mbc_type(uint8_t cartridge_mbc_value){
 }
 
 cartridge_mode_t* get_cartridge_mode_ptr (uint8_t mbc_type) {
-    return
+    const cartridge_mode_t* ram_data = (
         mbc_type == MBC_1?          &cartridge_mbc_1_ram_data :
         mbc_type == MBC_2?          &cartridge_mbc_2_ram_data :
         mbc_type == MBC_3?          &cartridge_mbc_3_and_5_ram_data :
         mbc_type == MBC_5?          &cartridge_mbc_3_and_5_ram_data :
         mbc_type == MBC_5_RUMBLE?   &cartridge_mbc_5_rumble_ram_data :
         mbc_type == MBC_GB_CAMERA?  &cartridge_mbc_gb_cam_ram_data :
-        (cartridge_mode_t*)0x0000; // null, should never happen
+        (cartridge_mode_t*)0x0000); // null, should never happen
+    // Since this rom lives in RAM it's ok to cast it to non-const
+    // (we are not const strict in this codebase anyways)
+    return ((cartridge_mode_t*)ram_data);
 }
