@@ -73,7 +73,7 @@ const cartridge_mode_t cartridge_mbc_5_rumble_ram_data = {
     0x00,   // base_size_override
 };
 
-// Mostly the same as MBC_1 except no advanced mode, just set enable again
+// Mostly the same as MBC_3 except with hardcoded 128kB SRAM size
 const cartridge_mode_t cartridge_mbc_gb_cam_ram_data = {
     0x00,   // bank_enable_addr
     0x0A,   // bank_enable_value
@@ -93,7 +93,7 @@ uint8_t get_mbc_type(uint8_t cartridge_mbc_value){
     if (0x0F <= cartridge_mbc_value && cartridge_mbc_value <= 0x13 ) return MBC_3;
     if (0x19 <= cartridge_mbc_value && cartridge_mbc_value <= 0x1B ) return MBC_5;
     if (0x1C <= cartridge_mbc_value && cartridge_mbc_value <= 0x1E ) return MBC_5_RUMBLE;
-    if (0xFC <= cartridge_mbc_value && cartridge_mbc_value <= 0xFC ) return MBC_GB_CAMERA; // Treat Gameboy camera as MBC3
+    if (0xFC <= cartridge_mbc_value && cartridge_mbc_value <= 0xFC ) return MBC_GB_CAMERA;
     return MBC_UNSUPPORTED;
 }
 
@@ -105,7 +105,8 @@ cartridge_mode_t* get_cartridge_mode_ptr (uint8_t mbc_type) {
         mbc_type == MBC_5?          &cartridge_mbc_3_and_5_ram_data :
         mbc_type == MBC_5_RUMBLE?   &cartridge_mbc_5_rumble_ram_data :
         mbc_type == MBC_GB_CAMERA?  &cartridge_mbc_gb_cam_ram_data :
-        (cartridge_mode_t*)0x0000); // null, should never happen
+        (cartridge_mode_t*)0x0000 // null, should never happen
+    );
     // Since this rom lives in RAM it's ok to cast it to non-const
     // (we are not const strict in this codebase anyways)
     return ((cartridge_mode_t*)ram_data);
