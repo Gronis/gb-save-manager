@@ -194,6 +194,7 @@ void main(void) {
                 
                 ram_fn_enable_cartridge_sram();
                 run_in_parallel_to_screen(ram_fn_perform_transfer);
+                ram_fn_disable_cartridge_sram();
 
                 clear_message_from_row(2);
                 if (*rTransferError) {
@@ -201,7 +202,6 @@ void main(void) {
                 } else {
                     render_message(message_transfer_done);
                 }
-                ram_fn_disable_cartridge_sram();
 
                 // Busy wait at the end. User has to turn off console here
                 while(1) {

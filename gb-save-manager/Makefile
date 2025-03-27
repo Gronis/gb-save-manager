@@ -53,7 +53,8 @@ ASSEMBLY		:=	$(wildcard src/*.asm)
 ###############################################################################
 TITLE			:=	GBSAVEMANAG
 MBC				:=  0x10	# MBC3 + RAM + BATTERY + TIMER
-RAM_SIZE		:=	3		# 32kB
+# RAM_SIZE		:=	3		# 32kB
+RAM_SIZE		:=	4		# 128kB Need this size for big saves (GB Camera)
 
 ###############################################################################
 #	Derived variables

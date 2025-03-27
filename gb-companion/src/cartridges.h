@@ -17,6 +17,7 @@ typedef struct {
 } cartridge_mode_t;
 
 #define RUMBLE          0x10
+#define MBC_GB_CAMERA   0x20
 
 #define MBC_UNSUPPORTED 0
 #define MBC_1           1

@@ -68,6 +68,7 @@ void ram_fn_transfer_header(void) {
 
 void ram_fn_enable_cartridge_sram (void) {
     uint8_t mbc_type                    = get_mbc_type(*rMBC_mode);
+    if (mbc_type == MBC_UNSUPPORTED) return;
     cartridge_mode_t* cartridge         = get_cartridge_mode_ptr(mbc_type);
     uint8_t* enable_addr                = as_addr(cartridge->bank_enable_addr);
     uint8_t enable_value                = cartridge->bank_enable_value;
@@ -81,6 +82,7 @@ void ram_fn_enable_cartridge_sram (void) {
 
 void ram_fn_disable_cartridge_sram (void) {
     uint8_t mbc_type                    = get_mbc_type(*rMBC_mode);
+    if (mbc_type == MBC_UNSUPPORTED) return;
     cartridge_mode_t* cartridge         = get_cartridge_mode_ptr(mbc_type);
     uint8_t* disable_addr               = as_addr(cartridge->bank_enable_addr);
     uint8_t disable_value               = cartridge->bank_disable_value;
