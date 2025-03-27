@@ -9,7 +9,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "44aaf824f3dbcc8a4ab8fd66964fed5200a632d5794775a2426e77e3833776a8"
 
 [[package]]
-name = "mkfont"
+name = "png2bin"
 version = "0.1.0"
 dependencies = [
  "minipng",
