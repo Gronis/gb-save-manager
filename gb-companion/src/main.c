@@ -23,7 +23,7 @@ extern const uint8_t ram_code[];
 
 void copy_ram_functions_to_ram(void) {
     // Copy the code from the original location in VRAM0 (0x8000-0x9000)
-    uint8_t* src = (uint8_t*)(&ram_code - CODE_LOC + (uint16_t)_VRAM);
+    uint8_t* src = (uint8_t*)((uint16_t)&ram_code - (uint16_t)CODE_LOC + (uint16_t)_VRAM);
     uint8_t* end = src + ram_code_length;
     uint8_t* dst = (uint8_t*)_RAM;
     bool success = true;
@@ -42,8 +42,8 @@ void copy_ram_functions_to_ram(void) {}
 bool send_detect_link_cable_packet(bool use_internal_clock) {
     uint8_t serial_data = *rSB;
     bool connected = false;
-    if ((serial_data == LINK_CABLE_MAGIC_BYTE_SYNC) || 
-        (serial_data == ~LINK_CABLE_MAGIC_BYTE_SYNC) ){
+    if ((serial_data == LINK_CABLE_MAGIC_BYTE_SYNC) ||
+        (serial_data == (uint8_t)~LINK_CABLE_MAGIC_BYTE_SYNC) ){
         connected = true;
     }
     if (use_internal_clock) {
@@ -53,7 +53,7 @@ bool send_detect_link_cable_packet(bool use_internal_clock) {
     return connected;
 }
 
-void main(void) {
+int main(void) {
     copy_tiles_to_vram();
     render_message_no_screen_flush(message_header);
     {
@@ -92,12 +92,12 @@ void main(void) {
                 message_list_t* message = is_leader? message_role_leader : message_role_worker;
                 render_message(message);
             }
-            
+
             if(cartridge_state != new_cartridge_state){
                 cartridge_state = new_cartridge_state;
                 state_changed = true;
-                message_list_t* message = cartridge_state? 
-                    message_cartridge_state_ok : 
+                message_list_t* message = cartridge_state?
+                    message_cartridge_state_ok :
                     message_cartridge_state_error;
                 render_message(message);
             }
@@ -105,12 +105,12 @@ void main(void) {
             if (cartridge_state) {
                 new_link_cable_state = send_detect_link_cable_packet(is_leader);
             }
-       
+
             if(link_cable_state != new_link_cable_state){
                 link_cable_state = new_link_cable_state;
                 state_changed = true;
-                message_list_t* message = link_cable_state? 
-                    message_link_cable_state_ok : 
+                message_list_t* message = link_cable_state?
+                    message_link_cable_state_ok :
                     message_link_cable_state_error;
                 render_message(message);
             }
@@ -160,8 +160,8 @@ void main(void) {
                 // The VRAM version should only be used on GBA hardware
 #ifdef VRAM_VERSION
                 *rDevice_mode = DEVICE_MODE_AGB;
-#else 
-                *rDevice_mode = (*rDeviceModeBootup & BOOTUP_A_CGB) != 0? 
+#else
+                *rDevice_mode = (*rDeviceModeBootup & BOOTUP_A_CGB) != 0?
                     DEVICE_MODE_CGB :
                     DEVICE_MODE_GB;
 #endif
@@ -191,7 +191,6 @@ void main(void) {
                 }
                 render_message(message_progress_bar);
 
-                
                 ram_fn_enable_cartridge_sram();
                 run_in_parallel_to_screen(ram_fn_perform_transfer);
                 ram_fn_disable_cartridge_sram();
@@ -210,6 +209,7 @@ void main(void) {
             }
         }
     }
+    return 0;
 }
 
 // Has to be last in order to be last in binary

@@ -33,8 +33,8 @@
 
 #define rTransferError                  ((uint8_t*) (_RAMBANK - 9))
 
-#define LINK_CABLE_ENABLE               0x80
-#define LINK_CABLE_MAGIC_BYTE_SYNC      0xAA
+#define LINK_CABLE_ENABLE               ((uint8_t)0x80)
+#define LINK_CABLE_MAGIC_BYTE_SYNC      ((uint8_t)0xAA)
 
 #define PACKET_SIZE                     64
 
@@ -47,4 +47,3 @@ void ram_fn_transfer_header(void);
 void ram_fn_perform_transfer(void);
 
 #endif // TRANSFER_H
-
