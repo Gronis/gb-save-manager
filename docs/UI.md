@@ -24,9 +24,9 @@ Help text will be specific on GBA since GBA will send Worker app with Multiboot:
 ┃   Link Cable Status:     ✖️     ┃
 ┃   Cartridge  Status:     ✔     ┃
 ┃                                ┃
-┃   Connect GBC Link Cable       ┃
-┃                                ┃
-┃                                ┃
+┃   Connect GBC Link Cable.      ┃
+┃   Then start the other GBA     ┃
+┃   WITHOUT a game cartridge     ┃
 ┃                                ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
