@@ -7,7 +7,7 @@ The user have to choose between GB and GBA mode:
 ```
 ┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
 ┃   Role: Leader                 ┃
-┃   Link Cable Status:     ✖️     ┃
+┃   Link Cable Status:     x     ┃
 ┃   Cartridge  Status:     ✔     ┃
 ┃                                ┃
 ┃   Press Button to use:         ┃
@@ -21,7 +21,7 @@ Help text will be specific on GBA since GBA will send Worker app with Multiboot:
 ```
 ┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
 ┃   Role: Leader                 ┃
-┃   Link Cable Status:     ✖️     ┃
+┃   Link Cable Status:     x     ┃
 ┃   Cartridge  Status:     ✔     ┃
 ┃                                ┃
 ┃   Connect GBC Link Cable.      ┃
@@ -38,7 +38,7 @@ Flash Cartridge still inserted. Help text will be specific for GB/GBC:
 ┃                                        ┃
 ┃                                        ┃
 ┃       Role: Leader                     ┃
-┃       Link Cable Status:     ✖️         ┃
+┃       Link Cable Status:     x         ┃
 ┃       Cartridge  Status:     ✔         ┃
 ┃                                        ┃
 ┃       Connect GBC Link Cable           ┃
@@ -58,8 +58,8 @@ Flash Cartridage removed or multiboot startup: (role switched: Leader -> Worker)
 ┏━━━━━━━━━━━━━━━━━GBC━━━━━━━━━━━━━━━━━━━━┓
 ┃                                        ┃┏━━━━━━━━━━GBA━ZOOMED━━━━━━━━━━━━┓
 ┃                                        ┃┃   Role: Worker                 ┃
-┃       Role: Worker                     ┃┃   Link Cable Status:     ✖️     ┃
-┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     ✖️     ┃
+┃       Role: Worker                     ┃┃   Link Cable Status:     x     ┃
+┃       Link Cable Status:     ✔         ┃┃   Cartridge  Status:     x     ┃
 ┃       Cartridge  Status:     ✔         ┃┃                                ┃
 ┃                                        ┃┃   Insert GB/GBC Cartridge      ┃
 ┃       Insert GB/GBC Cartridge          ┃┃                                ┃
