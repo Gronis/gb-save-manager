@@ -17,74 +17,75 @@ const uint8_t cartridge_sram_table[] = {
 
 // First gen cartridge types
 const cartridge_mode_t cartridge_mbc_1_ram_data = {
-    0x00,   // bank_enable_addr
-    0x0A,   // bank_enable_value
-    0x00,   // bank_disable_value
-    0x40,   // bank_selector_addr
-    0xA0,   // bank_data_addr_start
-    0xC0,   // bank_data_addr_end
-    0x60,   // bank_enable_advanced_addr
-    0x01,   // bank_enable_advanced_value
-    0xFF,   // bank_selector_bit_skip
-    0x00,   // base_size_override
+    .bank_enable_addr           = 0x00, // (address, 8 msb)
+    .bank_enable_value          = 0x0A,
+    .bank_disable_value         = 0x00,
+    .bank_selector_addr         = 0x40, // (address, 8 msb)
+    .bank_data_addr_start       = 0xA0, // (inclusive, address, 8 msb)
+    .bank_data_addr_end         = 0xC0, // (exclusive, address, 8 msb)
+    .bank_enable_advanced_addr  = 0x60,
+    .bank_enable_advanced_value = 0x01,
+    .bank_selector_bit_skip     = 0xFF,
+    .base_size_override         = 0x00,
+
 };
 
 // Mostly the same as MBC_1 except no advanced mode, just set enable again
 const cartridge_mode_t cartridge_mbc_2_ram_data = {
-    0x00,   // bank_enable_addr
-    0x0A,   // bank_enable_value
-    0x00,   // bank_disable_value
-    0x90,   // bank_selector_addr           <- write to dummy address
-    0xA0,   // bank_data_addr_start
-    0xA2,   // bank_data_addr_end
-    0x00,   // bank_enable_advanced_addr    <- same as enable RAM mode
-    0x0A,   // bank_enable_advanced_value
-    0xFF,   // bank_selector_bit_skip
-    0x03,   // base_size_override           <- 2^3 * PACKET_SIZE = 512 half bytes
+    .bank_enable_addr           = 0x00, // (address, 8 msb)
+    .bank_enable_value          = 0x0A,
+    .bank_disable_value         = 0x00,
+    .bank_selector_addr         = 0x90, // <- write to dummy address
+    .bank_data_addr_start       = 0xA0, // (inclusive, address, 8 msb)
+    .bank_data_addr_end         = 0xA2, // (exclusive, address, 8 msb)
+    .bank_enable_advanced_addr  = 0x00, // <- same as enable RAM mode
+    .bank_enable_advanced_value = 0x0A,
+    .bank_selector_bit_skip     = 0xFF,
+    .base_size_override         = 0x03,
 };
 
 // Mostly the same as MBC_1 except no advanced mode, just set enable again
 const cartridge_mode_t cartridge_mbc_3_and_5_ram_data = {
-    0x00,   // bank_enable_addr
-    0x0A,   // bank_enable_value
-    0x00,   // bank_disable_value
-    0x40,   // bank_selector_addr
-    0xA0,   // bank_data_addr_start
-    0xC0,   // bank_data_addr_end
-    0x00,   // bank_enable_advanced_addr    <- same as enable RAM mode
-    0x0A,   // bank_enable_advanced_value
-    0xFF,   // bank_selector_bit_skip
-    0x00,   // base_size_override
+    .bank_enable_addr           = 0x00, // (address, 8 msb)
+    .bank_enable_value          = 0x0A,
+    .bank_disable_value         = 0x00,
+    .bank_selector_addr         = 0x40, // (address, 8 msb)
+    .bank_data_addr_start       = 0xA0, // (inclusive, address, 8 msb)
+    .bank_data_addr_end         = 0xC0, // (exclusive, address, 8 msb)
+    .bank_enable_advanced_addr  = 0x00, // <- same as enable RAM mode
+    .bank_enable_advanced_value = 0x0A,
+    .bank_selector_bit_skip     = 0xFF,
+    .base_size_override         = 0x00,
 };
 
 // MBC_5 with rumble data uses bank selector register bit 3 (%0000_1000)
 // to enable or disable the rumble motor. If we reach this bank number,
 // we need to multiply by 2, skipping this bit entirely.
 const cartridge_mode_t cartridge_mbc_5_rumble_ram_data = {
-    0x00,   // bank_enable_addr
-    0x0A,   // bank_enable_value
-    0x00,   // bank_disable_value
-    0x40,   // bank_selector_addr
-    0xA0,   // bank_data_addr_start
-    0xC0,   // bank_data_addr_end
-    0x00,   // bank_enable_advanced_addr    <- same as enable RAM mode
-    0x0A,   // bank_enable_advanced_value
-    0x08,   // bank_selector_bit_skip       <- bit 3 (%0000_1000) controls motor
-    0x00,   // base_size_override
+    .bank_enable_addr           = 0x00, // (address, 8 msb)
+    .bank_enable_value          = 0x0A,
+    .bank_disable_value         = 0x00,
+    .bank_selector_addr         = 0x40, // (address, 8 msb)
+    .bank_data_addr_start       = 0xA0, // (inclusive, address, 8 msb)
+    .bank_data_addr_end         = 0xC0, // (exclusive, address, 8 msb)
+    .bank_enable_advanced_addr  = 0x00, // <- same as enable RAM mode
+    .bank_enable_advanced_value = 0x0A,
+    .bank_selector_bit_skip     = 0x08, // <- bit 3 (%0000_1000) controls motor
+    .base_size_override         = 0x00,
 };
 
 // Mostly the same as MBC_3 except with hardcoded 128kB SRAM size
 const cartridge_mode_t cartridge_mbc_gb_cam_ram_data = {
-    0x00,   // bank_enable_addr
-    0x0A,   // bank_enable_value
-    0x00,   // bank_disable_value
-    0x40,   // bank_selector_addr
-    0xA0,   // bank_data_addr_start
-    0xC0,   // bank_data_addr_end
-    0x00,   // bank_enable_advanced_addr    <- same as enable RAM mode
-    0x0A,   // bank_enable_advanced_value
-    0xFF,   // bank_selector_bit_skip
-    0x0B,   // base_size_override           <- 2^11 * PACKET_SIZE = 128kB
+    .bank_enable_addr           = 0x00, // (address, 8 msb)
+    .bank_enable_value          = 0x0A,
+    .bank_disable_value         = 0x00,
+    .bank_selector_addr         = 0x40, // (address, 8 msb)
+    .bank_data_addr_start       = 0xA0, // (inclusive, address, 8 msb)
+    .bank_data_addr_end         = 0xC0, // (exclusive, address, 8 msb)
+    .bank_enable_advanced_addr  = 0x00, // <- same as enable RAM mode
+    .bank_enable_advanced_value = 0x0A,
+    .bank_selector_bit_skip     = 0xFF,
+    .base_size_override         = 0x0B, // <- 2^11 * PACKET_SIZE = 128kB
 };
 
 uint8_t get_mbc_type(uint8_t cartridge_mbc_value){

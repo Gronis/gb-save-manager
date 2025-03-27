@@ -10,4 +10,4 @@ build/gb-companion_mb
 -I
 build/gb-companion_ram
 -DVRAM_VERSION
--DCODE_LOC=0x0000
+-DCODE_LOC=0
