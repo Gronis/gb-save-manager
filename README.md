@@ -1,7 +1,7 @@
 # Game Boy Save Manager (gb-save-manager.gb)
 A custom Gameboy ROM for backing up and restoring your SAVE files on your old school Gameboy game cartridges using a Link-Cable and two Gameboys!
 
-  _  |  _  
+  _  |  _
 :---:|:---:
 <img src="screenshots/connect_cable.png" alt="isolated" height="200"/> | <img src="screenshots/press_btn.png" alt="isolated" height="200"/>
 <img src="screenshots/restore-progress.gif" alt="isolated" height="200"/> | <img src="screenshots/done.png" alt="isolated" height="200"/>
@@ -15,7 +15,7 @@ There are certain hardware products you can buy to backup and restore SAVE files
 
 ## Required hardware
 What you need is:
-* 2x Gameboys, of any of these models: 
+* 2x Gameboys, of any of these models:
   * Gameboy (DMG)*
   * Gameboy Pocket (GBP)
   * Gameboy Color (GBC)
@@ -34,14 +34,23 @@ What you need is:
 Gameboy Cartridges has different chips which works slightly differently. Most if not all original Gameboy and Gameboy Color cartridges should be supported. Here is a list of supported Cartridge Mapper Types:
 
 * MBC1
-* MBC2** (From v1.1 and onwards)
+* MBC2** (From v1.1 or higher)
 * MBC3
 * MBC5
 * MBC5 with rumble pack **
+* Gameboy Camera (From v1.2 or higher) ***
 
 \*\* Only tested in emulator since I don't own any game of this kind.
 
-There are also a bunch of multi-rom cartridge and unofficial cartridges. These are most likely unsupported.
+\*\*\* Only 128kB supported Flash Cartridge will extract all images. Most newer flash cartridges should support this, but older Everdrive cartridges might only support up to 32kB.
+
+## Unsupported Cartridges:
+There are also a bunch of multi-rom cartridge and unofficial cartridges. These are most likely unsupported. This includes the official flash cartridge: Nintendo Power "GB Memory Cartridge".
+
+Also, these official games are currently unsupported because of their MBC mapper types:
+
+* **Net de Get: Mini-Game @ 100** (This game uses MBC6)
+* **Kirby Tilt 'n' Tumble** (This game uses MBC7)
 
 ## How to use it
 
@@ -57,7 +66,7 @@ If you choose `Backup`, the save data should be stored on your flash cartridge (
 
 If you choose `Restore`, the save data on the flash cartridge for `gb-save-manager` (typically named `gb-save-manager.X.sav`\*\*\* or similar) is now on the game cartridge.
 
-\*\*\* In the name `gb-save-manager.X.sav`, `X` is the version release, e.g `1.0` or `1.1`. The file ending might also be different. For example the EVERDRIVE uses `.srm` instead of the more common `.sav`. When restoring the a save, Double-check the naming of your other save files to make sure you use the correct naming. Otherwise the flash cart won't recognize the save file, and the restore process will fail.
+\*\*\* In the name `gb-save-manager.X.sav`, `X` is the version release, e.g `1.0` or `1.2` etc. The file ending might also be different. For example the EVERDRIVE uses `.srm` instead of the more common `.sav`. When restoring the a save, Double-check the naming of your other save files to make sure you use the correct naming. Otherwise the flash cart won't recognize the save file, and the restore process will fail.
 
 ## Tips and Tricks
 After a backup, it's good to always boot another game from the flash cartridge before working with the save file (`gb-save-manager.X.sav`). This is because most flash cartridges doesn't copy over the save until it's necessary. So booting another game will force the flash cartridge to move the save from internal SRAM to the SD-card.
