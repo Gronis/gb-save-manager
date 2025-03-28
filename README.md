@@ -78,7 +78,7 @@ When injecting a cartridge, a good technique is to nudge the cartridge from side
 
 The general idea is to avoid that all pins connect/disconnect at the same time. This can cause an in-rush of current to the cartridge from the Gameboy which is the reason the Gameboy resets.
 
-Some cartridges are better or worse than others. You typically want a cartridge with as low power consumption as possible. Through testing, I have found out that this issue is much less of a problem on the EVERDRIVE compared to the EZ-FLASH.
+Some cartridges and consoles are better or worse than others. You typically want as low low power consumption as possible. If you have a console with an original screen, that usually works much better than modded ones since the power consumption is way lower on original screens. I have also found out that this issue is much less of a problem on the EVERDRIVE flash cartridge compared to the EZ-FLASH.
 
 ## Troubleshooting
 
