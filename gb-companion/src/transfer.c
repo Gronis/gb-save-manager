@@ -66,6 +66,10 @@ void ram_fn_transfer_header(void) {
     send_recv_header(use_internal_clock);
 }
 
+/// Activate cartridge ram memory so that it's read and writeable.
+///
+/// Power disruptions while cartridge ram is active can potentally cause memory
+/// corruption.
 void ram_fn_enable_cartridge_sram (void) {
     uint8_t mbc_type                    = get_mbc_type(*rMBC_mode);
     if (mbc_type == MBC_UNSUPPORTED) return;
@@ -80,6 +84,10 @@ void ram_fn_enable_cartridge_sram (void) {
     *enable_advanced_addr               = enable_advanced_value;
 }
 
+/// Disables cartridge ram memory so that it's no longer read or writeable.
+///
+/// Make sure to do this when no longer working with cartridge ram in order
+/// to protect its content in case of a sudden power failure.
 void ram_fn_disable_cartridge_sram (void) {
     uint8_t mbc_type                    = get_mbc_type(*rMBC_mode);
     if (mbc_type == MBC_UNSUPPORTED) return;

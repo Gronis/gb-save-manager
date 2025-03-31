@@ -26,11 +26,11 @@
 //
 // This function does the following:
 //
-// Set the stack pointer to High RAM (0xFF80-0xFFFE)
-// Enables the screen
-// Calls the provided function pointer
-// Disables the screen
-// Reset the stack pointer to what it was before
+// * Set the stack pointer to High RAM (0xFF80-0xFFFE)
+// * Enables the screen
+// * Calls the provided function pointer
+// * Disables the screen
+// * Reset the stack pointer to what it was before
 volatile void run_in_parallel_to_screen(void (*function)(void));
 
 // This does the same as `run_in_parallel_to_screen` except it
