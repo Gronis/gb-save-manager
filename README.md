@@ -78,7 +78,7 @@ When injecting a cartridge, a good technique is to nudge the cartridge from side
 
 The general idea is to avoid that all pins connect/disconnect at the same time. This can cause an in-rush of current to the cartridge from the Gameboy which is the reason the Gameboy resets.
 
-Some cartridges and consoles are better or worse than others. You typically want as low low power consumption as possible. If you have a console with an original screen, that usually works much better than modded ones since the power consumption is way lower on original screens. I have also found out that this issue is much less of a problem on the EVERDRIVE flash cartridge compared to the EZ-FLASH.
+Some cartridges and consoles are better or worse than others. You typically want as low low power consumption as possible. I have also found out that this issue is much less of a problem on the EVERDRIVE flash cartridge compared to the EZ-FLASH. Unmodified consoles is preferred when hot-swapping game cartridges, especially if using a gameboy advance. Screen mods draw more power than original screens and for GBA, the screen mod can draw extra power when inserting a GB/GBC game cartridge because of a hardware switch that sits in the cartridge slot that swaps between GBA mode and GBC mode. The leader console (the one that never hot-swaps, and has the flash cartridge during the backup process) can be a modded console though without issues.
 
 ## Troubleshooting
 
@@ -106,3 +106,4 @@ You can use a standard build of mGBA to test it by using its built-in support fo
 ```bash
 make && ~/mgba/build/qt/mGBA.app/Contents/MacOS/mGBA build/gb-save-manager/gb-save-manager.fixed.gbc build/gb-companion/gb-companion.fixed.gbc
 ```
+
