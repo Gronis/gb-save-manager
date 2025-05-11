@@ -30,6 +30,8 @@ What you need is:
 
 \* Since DMG locks down the cartridge slot, maximum 1 of this device can be used unless you modify the power switch.
 
+⚠️ If you have a gba flash cart, don't try to use it with a gba emulator such as Goomba. That won't work. I'm planning to make a gba version that can be booted from a gba flashcart. You would need to wait for that version.
+
 ## Supported Cartridge Types
 Gameboy Cartridges has different chips which works slightly differently. Most if not all original Gameboy and Gameboy Color cartridges should be supported. Here is a list of supported Cartridge Mapper Types:
 
