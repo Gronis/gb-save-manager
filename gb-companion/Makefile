@@ -9,16 +9,18 @@
 # depending on the build. The reason for this setup is that The GBA version
 # can only pass data from GBA mode to GBC mode with data in 0x8000 to 0x9000.
 # This way, the same boot process happens for all 3 versions (GBC RAM,
-# GBC VRAM, GBA VRAM) so it's the least confusing way to to do it.
+# GBC VRAM, GBA VRAM) so it's the least confusing way to do it.
 #
 # For GBA, only VRAM version works, because RAM is inacessable while there
 # is no game cartridge inserted. For GB, VRAM version is unusable because
 # it turns the LCD on and off very fast in order to execute code on VRAM
-# while still show an image.
+# while still show an image. While this works for faster screens like GBC
+# and GBA, For GB, this results in an empty screen.
 #
 # At some point, when we know we have a cartridge inside, so some code will
 # be moved and run from RAM for all 3 versions. This is necessary to run code
 # while the screen is on. Therefor this is the case for the transfer code.
+# All compilation units that has "area_ram.h" header included ends up in RAM.
 #
 # Because of this separation, we need to build in two steps. Once for the
 # RAM specific code, where the code is linked to execute in RAM. The second
@@ -95,7 +97,7 @@ FXFLAGS			:=	-C -p 0 -v -m $(MBC) -O -r $(RAM_SIZE) 					\
 ###############################################################################
 BIN				:=	$(PROJECTNAME).gbc
 
-# c-files must be sorted in alphabetic order for correct memory locations 
+# c-files must be sorted in alphabetic order for correct memory locations
 # during link step
 SOURCES			:=	$(sort $(wildcard src/*.c))
 HEADERS			:=	$(wildcard src/*.h)
