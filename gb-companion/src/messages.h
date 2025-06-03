@@ -20,7 +20,12 @@
 #define message_progress_bar            ((message_list_t*)(&message_progress_bar_data))
 #define message_transfer_done           ((message_list_t*)(&message_transfer_done_data))
 #define message_transfer_error          ((message_list_t*)(&message_transfer_error_data))
-#define message_qr_8_kb                ((message_list_t*)(&message_qr_8_kb_data))
+#define message_resize_save             ((message_list_t*)(&message_resize_save_data))
+#define message_8                       ((message_list_t*)(&message_8_data))
+#define message_32                      ((message_list_t*)(&message_32_data))
+#define message_64                      ((message_list_t*)(&message_64_data))
+#define message_128                     ((message_list_t*)(&message_128_data))
+#define message_qr_8_kb                 ((message_list_t*)(&message_qr_8_kb_data))
 
 extern const uint8_t                    message_header_data[];
 extern const uint8_t                    message_role_worker_data[];
@@ -39,6 +44,11 @@ extern const uint8_t                    message_backing_up_save_data[];
 extern const uint8_t                    message_progress_bar_data[];
 extern const uint8_t                    message_transfer_done_data[];
 extern const uint8_t                    message_transfer_error_data[];
+extern const uint8_t                    message_resize_save_data[];
+extern const uint8_t                    message_8_data[];
+extern const uint8_t                    message_32_data[];
+extern const uint8_t                    message_64_data[];
+extern const uint8_t                    message_128_data[];
 extern const uint8_t                    message_qr_8_kb_data[];
 
 #endif // MESSAGES_H

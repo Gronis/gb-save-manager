@@ -12,11 +12,13 @@
 #include "text_fast_bin.h"
 #include "text_ing_bin.h"
 #include "text_insert_gbc_bin.h"
+#include "text_kb_file_bin.h"
 #include "text_leader_bin.h"
 #include "text_link_cable_bin.h"
 #include "text_mode_bin.h"
 #include "text_or_remove_the_bin.h"
 #include "text_press_button_to_bin.h"
+#include "text_resize_bin.h"
 #include "text_restore_bin.h"
 #include "text_role_bin.h"
 #include "text_rom_bin.h"
@@ -41,6 +43,11 @@
 #include "tile_pb_7_bin.h"
 #include "tile_pb_8_bin.h"
 
+#include "text_12_bin.h"
+#include "text_32_bin.h"
+#include "text_64_bin.h"
+#include "text_8_bin.h"
+
 #include "qr_08_x1y1_bin.h"
 #include "qr_08_x1y2_bin.h"
 #include "qr_08_x1y3_bin.h"
@@ -58,12 +65,14 @@
 #define text_fast_offset                ((text_false_offset)                + (text_false_length)           / 8)
 #define text_ing_offset                 ((text_fast_offset)                 + (text_fast_length)            / 8)
 #define text_insert_gbc_offset          ((text_ing_offset)                  + (text_ing_length)             / 8)
-#define text_leader_offset              ((text_insert_gbc_offset)           + (text_insert_gbc_length)      / 8)
+#define text_kb_file_offset             ((text_insert_gbc_offset)           + (text_insert_gbc_length)      / 8)
+#define text_leader_offset              ((text_kb_file_offset)              + (text_kb_file_length)         / 8)
 #define text_link_cable_offset          ((text_leader_offset)               + (text_leader_length)          / 8)
 #define text_mode_offset                ((text_link_cable_offset)           + (text_link_cable_length)      / 8)
 #define text_or_remove_the_offset       ((text_mode_offset)                 + (text_mode_length)            / 8)
 #define text_press_button_to_offset     ((text_or_remove_the_offset)        + (text_or_remove_the_length)   / 8)
-#define text_restore_offset             ((text_press_button_to_offset)      + (text_press_button_to_length) / 8)
+#define text_resize_offset              ((text_press_button_to_offset)      + (text_press_button_to_length) / 8)
+#define text_restore_offset             ((text_resize_offset)               + (text_resize_length)          / 8)
 #define text_role_offset                ((text_restore_offset)              + (text_restore_length)         / 8)
 #define text_rom_offset                 ((text_role_offset)                 + (text_role_length)            / 8)
 #define text_save_offset                ((text_rom_offset)                  + (text_rom_length)             / 8)
@@ -86,7 +95,11 @@
 #define pb_6_offset                     ((pb_5_offset)                      + (tile_pb_5_length)            / 8)
 #define pb_7_offset                     ((pb_6_offset)                      + (tile_pb_6_length)            / 8)
 #define pb_8_offset                     ((pb_7_offset)                      + (tile_pb_7_length)            / 8)
-#define qr_08_x1y1_offset               ((pb_8_offset)                      + (tile_pb_8_length)            / 8)
+#define text_12_offset                  ((pb_8_offset)                      + (tile_pb_8_length)            / 8)
+#define text_32_offset                  ((text_12_offset)                   + (text_12_length)              / 8)
+#define text_64_offset                  ((text_32_offset)                   + (text_32_length)              / 8)
+#define text_8_offset                   ((text_64_offset)                   + (text_64_length)              / 8)
+#define qr_08_x1y1_offset               ((text_8_offset)                    + (text_8_length)               / 8)
 #define qr_08_x1y2_offset               ((qr_08_x1y1_offset)                + (qr_08_x1y1_length)           / 8)
 #define qr_08_x1y3_offset               ((qr_08_x1y2_offset)                + (qr_08_x1y2_length)           / 8)
 #define qr_08_x1y4_offset               ((qr_08_x1y3_offset)                + (qr_08_x1y3_length)           / 8)
@@ -103,12 +116,14 @@
 #define text_fast_tile_index            ((text_false_tile_index)            + 1)
 #define text_ing_tile_index             ((text_fast_tile_index)             + 1)
 #define text_insert_gbc_tile_index      ((text_ing_tile_index)              + 1)
-#define text_leader_tile_index          ((text_insert_gbc_tile_index)       + 1)
+#define text_kb_file_tile_index         ((text_insert_gbc_tile_index)       + 1)
+#define text_leader_tile_index          ((text_kb_file_tile_index)          + 1)
 #define text_link_cable_tile_index      ((text_leader_tile_index)           + 1)
 #define text_mode_tile_index            ((text_link_cable_tile_index)       + 1)
 #define text_or_remove_the_tile_index   ((text_mode_tile_index)             + 1)
 #define text_press_button_to_tile_index ((text_or_remove_the_tile_index)    + 1)
-#define text_restore_tile_index         ((text_press_button_to_tile_index)  + 1)
+#define text_resize_tile_index          ((text_press_button_to_tile_index)  + 1)
+#define text_restore_tile_index         ((text_resize_tile_index)           + 1)
 #define text_role_tile_index            ((text_restore_tile_index)          + 1)
 #define text_rom_tile_index             ((text_role_tile_index)             + 1)
 #define text_save_tile_index            ((text_rom_tile_index)              + 1)
@@ -131,7 +146,11 @@
 #define pb_6_tile_index                 ((pb_5_tile_index)                  + 1)
 #define pb_7_tile_index                 ((pb_6_tile_index)                  + 1)
 #define pb_8_tile_index                 ((pb_7_tile_index)                  + 1)
-#define qr_08_x1y1_index                ((pb_8_tile_index)                  + 1)
+#define text_12_tile_index              ((pb_8_tile_index)                  + 1)
+#define text_32_tile_index              ((text_12_tile_index)               + 1)
+#define text_64_tile_index              ((text_32_tile_index)               + 1)
+#define text_8_tile_index               ((text_64_tile_index)               + 1)
+#define qr_08_x1y1_index                ((text_8_tile_index)                + 1)
 #define qr_08_x1y2_index                ((qr_08_x1y1_index)                 + 1)
 #define qr_08_x1y3_index                ((qr_08_x1y2_index)                 + 1)
 #define qr_08_x1y4_index                ((qr_08_x1y3_index)                 + 1)

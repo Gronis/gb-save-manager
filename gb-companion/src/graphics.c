@@ -61,12 +61,18 @@ void render_message(message_list_t* messages) {
 }
 
 void clear_tile_from_row_for_area(uint8_t row, const uint8_t *area, uint16_t area_start, uint8_t n_lines) {
+    #ifdef RAM_VERSION
+    disable_screen();
+    #endif // RAM_VERSION
     for (uint8_t r = row; r < (n_lines << 1); r+= 2){
         for (uint8_t s = area[r], e = area[r + 1]; s != e; ++s) {
             *as_u8_ptr(s + area_start) = 0;
         }
-        flush_screen();
+        // flush_screen();
     }
+    #ifdef RAM_VERSION
+    enable_screen();
+    #endif // RAM_VERSION
 }
 
 #define CLEAR_HEADER_TILE_INDEX get_tile_position(2, 0)

@@ -4,8 +4,6 @@
 #define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
 #include "tiles.h"
 
-const uint8_t                    garbage[702] = {};
-
 const uint8_t tiles[] = {
     empty_offset,
     text_a_offset,
@@ -17,11 +15,13 @@ const uint8_t tiles[] = {
     text_fast_offset,
     text_ing_offset,
     text_insert_gbc_offset,
+    text_kb_file_offset,
     text_leader_offset,
     text_link_cable_offset,
     text_mode_offset,
     text_or_remove_the_offset,
     text_press_button_to_offset,
+    text_resize_offset,
     text_restore_offset,
     text_role_offset,
     text_rom_offset,
@@ -44,6 +44,10 @@ const uint8_t tiles[] = {
     pb_6_offset,
     pb_7_offset,
     pb_8_offset,
+    text_12_offset,
+    text_32_offset,
+    text_64_offset,
+    text_8_offset,
     qr_08_x1y1_offset,
     qr_08_x1y2_offset,
     qr_08_x1y3_offset,
@@ -51,3 +55,5 @@ const uint8_t tiles[] = {
     qr_08_x1y5_offset,
     n_tiles_total,
 };
+
+const uint8_t                    garbage[402] = {};

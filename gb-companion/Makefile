@@ -68,6 +68,8 @@ MBC				:=  0x13	# MBC3 + RAM + BATTERY
 # MBC				:=  0xFC	# Gameboy Camera
 RAM_SIZE		:=	2		# 8kB
 # RAM_SIZE		:=	3		# 32kB
+# RAM_SIZE		:=	5		# 64kB
+# RAM_SIZE		:=	4		# 128kB
 
 ###############################################################################
 #	Options/flags for tools

@@ -182,15 +182,35 @@ int main(void) {
                 render_message_no_screen_flush(message_progress_bar);
 
                 uint16_t sram_size = ram_fn_get_number_of_pkts_sram(is_leader);
-                switch (sram_size){
-                    case 7:     // 8kB      (2^7 * 64)
-                    break;
-                    case 9:     // 32kB     (2^9 * 64)
-                    break;
-                    case 10:    // 64kB     (2^10 * 64)
-                    break;
-                    case 11:    // 128kB    (2^11 * 64)
-                    break;
+                {
+                    message_list_t* sram_size_message;
+                    switch (sram_size){
+                        case 128: {
+                            // 8kB      (128 packets each 64 bytes)
+                            sram_size_message = message_8;
+                            goto render_sram_size_message;
+                        }
+                        break;
+                        case 512: {
+                            // 32kB     (512 packets each 64 bytes)
+                            sram_size_message = message_32;
+                            goto render_sram_size_message;
+                        }
+                        break;
+                        case 1024: {
+                            // 64kB     (1024 packets each 64 bytes)
+                            sram_size_message = message_64;
+                            goto render_sram_size_message;
+                        }
+                        break;
+                        case 2048: {
+                            // 128kB    (2048 packets each 64 bytes)
+                            sram_size_message = message_128;
+                            render_sram_size_message:
+                            render_message_no_screen_flush(sram_size_message);
+                        }
+                        break;
+                    }
                 }
 
                 ram_fn_enable_cartridge_sram();
@@ -200,13 +220,15 @@ int main(void) {
                 clear_message_from_row(2);
                 if (*rTransferError) {
                     render_message_no_screen_flush(message_transfer_error);
-                } else {
-                    render_message_no_screen_flush(message_transfer_done);
+                    goto buzy_wait_forever;
                 }
+                render_message_no_screen_flush(message_transfer_done);
 
                 clear_message_header();
+                render_message_no_screen_flush(message_resize_save);
                 render_message_no_screen_flush(message_qr_8_kb);
 
+                buzy_wait_forever:
                 // Busy wait at the end. User has to turn off console here
                 while(1) {
                     flush_screen();

@@ -128,6 +128,37 @@ const uint8_t message_transfer_error_data[] = {
     pos(12, 4), text_false_tile_index,
 };
 
+const uint8_t message_resize_save_data[] = {
+    3,
+    pos(4,  0),  text_resize_tile_index,
+    pos(8,  0),  text_save_tile_index,
+};
+
+const uint8_t message_8_data[] = {
+    2,
+    pos(6,  8),  text_8_tile_index,
+    pos(7,  8),  text_kb_file_tile_index,
+};
+
+const uint8_t message_32_data[] = {
+    2,
+    pos(5,  8),  text_32_tile_index,
+    pos(7,  8),  text_kb_file_tile_index,
+};
+
+const uint8_t message_64_data[] = {
+    2,
+    pos(5,  8),  text_64_tile_index,
+    pos(7,  8),  text_kb_file_tile_index,
+};
+
+const uint8_t message_128_data[] = {
+    3,
+    pos(5,  8),  text_12_tile_index,
+    pos(6,  8),  text_8_tile_index,
+    pos(7,  8),  text_kb_file_tile_index,
+};
+
 const uint8_t message_qr_8_kb_data[] = {
     5,
     pos(5,  1),  qr_08_x1y1_index,
