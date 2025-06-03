@@ -120,6 +120,7 @@
 #define pb_6_tile_index                 ((pb_5_tile_index)                  + 1)
 #define pb_7_tile_index                 ((pb_6_tile_index)                  + 1)
 #define pb_8_tile_index                 ((pb_7_tile_index)                  + 1)
+// #define dummy_tile_index                ((pb_8_tile_index)                  + 1)
 
 extern const uint8_t                    tiles[];
 
@@ -159,5 +160,9 @@ extern const uint8_t                    tile_pb_5[];
 extern const uint8_t                    tile_pb_6[];
 extern const uint8_t                    tile_pb_7[];
 extern const uint8_t                    tile_pb_8[];
+
+// TODO: Remove
+// Dummy data for testing
+extern const uint8_t tile_dummy[];
 
 #endif // TILES_H

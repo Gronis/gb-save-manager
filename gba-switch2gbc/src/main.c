@@ -7,9 +7,10 @@
 #define PACKED                          __attribute__((packed))
 
 #define VRAM_SIZE_GBC_MODE              0x1000
-#define VRAM_CODE_SIZE                  0x7000
-#define VRAM_CODE_ADDR                  ((void*)        0x06000000)
-#define IWRAM_8                         ((uint32_t*)    0x03000000)
+#define VRAM_CODE_SIZE                  0x4000
+#define VRAM_CODE_ADDR                  ((void*)                 0x06000000)
+#define IWRAM_8                         ((volatile uint32_t*)    0x03000000)
+#define EWRAM_8                         ((volatile uint16_t*)    0x02000000)
 
 #define DC_ENABLE_CGB_MODE              0x8
 #define DC_ENABLE_BG0                   0x100
@@ -27,7 +28,15 @@
 #define SWI_CPUSET_FILL                 0x1000000
 
 #define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
-#include PAYLOAD_HEADER
+
+// Include VRAM and WRAM payload.
+#ifdef      VRAM_PAYLOAD
+#include    VRAM_PAYLOAD_HEADER
+#endif //   VRAM_PAYLOAD
+
+#ifdef      WRAM_PAYLOAD
+#include    WRAM_PAYLOAD_HEADER
+#endif //   WRAM_PAYLOAD
 
 typedef struct PACKED {
     int32_t bg_x;       // 24-bits integer + 8-bits decimal
@@ -86,7 +95,7 @@ ALWAYS_INLINE void prepare_hardware_registers(void)
 {
     bg_affine_src_t affine_src;
     bg_affine_dst_t affine_dst;
-    
+
     {   // Set affine registers
         affine_src.bg_x = 160 / 2 << 8;
         affine_src.bg_y = 144 / 2 << 8;
@@ -103,7 +112,7 @@ ALWAYS_INLINE void prepare_hardware_registers(void)
         // affine_src.scale_y = 1 << 8;
 
         affine_src.angle = 0 << 8;
-        
+
         // Compute the affine registers and put in affine_dst
         SWI_BgAffineSet(&affine_src, &affine_dst, 1);
     }
@@ -113,15 +122,15 @@ ALWAYS_INLINE void prepare_hardware_registers(void)
         REG_BG1CNT = 0;
         REG_BG3CNT = 0;
 
-        REG_WIN0H = 0; 
-        REG_WIN0V = 0; 
-        REG_WIN1H = 0; 
+        REG_WIN0H = 0;
+        REG_WIN0V = 0;
+        REG_WIN1H = 0;
         REG_WIN1V = 0;
 
-        REG_WININ = 0; 
+        REG_WININ = 0;
         REG_WINOUT = 0;
 
-        REG_MOSAIC = 0; 
+        REG_MOSAIC = 0;
         REG_BLDCNT = 0;
         REG_BLDALPHA = 0;
         REG_BLDY = 0;
@@ -160,25 +169,43 @@ ALWAYS_INLINE void execute_in_VRAM(const void *function)
     );
 }
 
-IWRAM_CODE void enter_gbc_mode(void)
+void enter_gbc_mode(void)
 {
     // Clear out IWRAM before putting any code there.
     *IWRAM_8 = 0;
     SWI_CpuSet(IWRAM_8, IWRAM_8, VRAM_SIZE_GBC_MODE | SWI_CPUSET_FILL);
+    // Write gameboy color code to IWRAM. This will later turn into VRAM after
+    // switch to CGB mode.
+    // https://discord.com/channels/768759024270704641/768759024760913922/1375902465568018452
+    for (int i = 0; i < VRAM_PAYLOAD_LENGTH; i++){
+        IWRAM_8[i] = VRAM_PAYLOAD[i];
+    }
 
-    // Write gameboy color code to IWRAM. This will later turn into VRAM
-    // after switch to CGB mode.
-    for (int i = 0; i < PAYLOAD_LENGTH; i++){
-        IWRAM_8[i] = PAYLOAD[i];
+    // Need to put code on the stack (end of IWRAM) because we will write over
+    // EWRAM where static variables and constants are located in multiboot mode
+    uint8_t gbc_ram_code[VRAM_PAYLOAD_LENGTH];
+    for (int i = 0; i < VRAM_PAYLOAD_LENGTH; i++){
+        gbc_ram_code[i] = ram_code[i];
+    }
+    // Clear out EWRAM before putting any code there.
+    *EWRAM_8 = 0;
+    SWI_CpuSet(EWRAM_8, EWRAM_8, VRAM_SIZE_GBC_MODE | SWI_CPUSET_FILL);
+
+    // Write gameboy color WRAM code to EWRAM. This will turn into WRAM in gbc
+    // mode:
+    // https://discord.com/channels/768759024270704641/768759024760913922/1375901871360839750
+    for (int i = 0; i < VRAM_PAYLOAD_LENGTH; i++){
+        // IWRAM_8[i] = ibuf[i];
+        EWRAM_8[i] = (uint16_t) gbc_ram_code[i];
     }
 
     // Requres modification from inside BIOS to write CGB bit
     uint16_t disp_cnt = DC_ENABLE_BG2 | DC_ENABLE_CGB_MODE;
     SWI_CpuSet(&disp_cnt, rDISP_CNT, 1);
-    
+
     rINTER_MEM_CNT = IMC_WRAM_WAIT(13) | IMC_ENABLE_256k_WRAM | IMC_DISABLE_CGB_BOOT_ROM;
 
-    // This will halt the arm cpu, and if everything worked, 
+    // This will halt the arm cpu, and if everything worked,
     // boot into CGB mode with our code code running.
     SWI_Halt();
 }

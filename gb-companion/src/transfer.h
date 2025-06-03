@@ -46,4 +46,6 @@ void ram_fn_disable_cartridge_sram (void);
 void ram_fn_transfer_header(void);
 void ram_fn_perform_transfer(void);
 
+bool send_detect_link_cable_packet(bool use_internal_clock);
+
 #endif // TRANSFER_H

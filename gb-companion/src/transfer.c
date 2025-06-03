@@ -254,3 +254,17 @@ void ram_fn_perform_transfer(void) {
         }
     }
 }
+
+bool send_detect_link_cable_packet(bool use_internal_clock) {
+    uint8_t serial_data = *rSB;
+    bool connected = false;
+    if ((serial_data == LINK_CABLE_MAGIC_BYTE_SYNC) ||
+        (serial_data == (uint8_t)~LINK_CABLE_MAGIC_BYTE_SYNC) ){
+        connected = true;
+    }
+    if (use_internal_clock) {
+        *rSB = LINK_CABLE_MAGIC_BYTE_SYNC;
+    }
+    *rSC = LINK_CABLE_ENABLE | use_internal_clock;
+    return connected;
+}

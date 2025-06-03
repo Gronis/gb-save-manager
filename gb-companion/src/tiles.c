@@ -44,3 +44,5 @@ const uint8_t tiles[] = {
     pb_8_offset,
     n_tiles_total,
 };
+
+const uint8_t tile_dummy[1024] = {};

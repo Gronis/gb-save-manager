@@ -31,7 +31,7 @@ start_from_vram:                    ; Start of code execution when code has been
     xor a
     ld  (rLCDC), a                  ; Turn off screen so that we can interact with VRAM properly
     ld  sp, #_STACK_PTR-1           ; Off by one, we don't want to overwrite first code instruction
-    
+
     ; We want to jump to start after mem_copy so push it to the stack.
     ld  hl, #start
     push hl
@@ -39,7 +39,7 @@ start_from_vram:                    ; Start of code execution when code has been
     ; Copy VRAM (0x8000) to CODE_LOC
     ld  de, #_VRAM                  ; src
     ld  hl, #CODE_LOC               ; dst
-    ld  bc, #0x1000                 ; len
+    ld  bc, #0x1800                 ; len
 
 mem_copy:
     ld  a, (de)
@@ -59,7 +59,7 @@ start_from_rom:                     ; Start of code execution when executing dir
     ; Copy ROM (0x0000) to VRAM (0x8000)
     ld  de, #0                      ; src
     ld  hl, #_VRAM                  ; dst
-    ld  bc, #0x1000                 ; len
+    ld  bc, #0x1800                 ; len
     push hl                         ; VRAM is where we want to start execution so push it to the stack.
     jr  mem_copy
 
@@ -75,30 +75,30 @@ start:
 init_tile_palette:                  ; load gbc palette colors (0: black, 1: white, 2: black, 3: white)
     ld a, #0xCC                     ; DMG palette (%11001100 => 3: opaque 2: transparent, 1: opaque, 0: transparent)
     ld (rBGP), a
-    
+
     ld  a, #0x80                    ; enable auto increment when loading gbc palette
     ld  (rBCPS),a
 
     ld  a, #0xFF
-    ld  (rBGPD),a                   ; color 0 p1: white 
+    ld  (rBGPD),a                   ; color 0 p1: white
     ld  a, #0x7F
-    ld  (rBGPD),a                   ; color 0 p2: white 
+    ld  (rBGPD),a                   ; color 0 p2: white
 
     xor a
-    ld  (rBGPD),a                   ; color 1 p1: black 
+    ld  (rBGPD),a                   ; color 1 p1: black
     ld  (rBGPD),a                   ; color 1 p2: black
-   
+
     ld  a, #0xFF
-    ld  (rBGPD),a                   ; color 2 p1: white 
+    ld  (rBGPD),a                   ; color 2 p1: white
     ld  a, #0x7F
-    ld  (rBGPD),a                   ; color 2 p2: white 
+    ld  (rBGPD),a                   ; color 2 p2: white
 
     xor a
-    ld  (rBGPD),a                   ; color 3 p1: black 
+    ld  (rBGPD),a                   ; color 3 p1: black
     ld  (rBGPD),a                   ; color 3 p2: black
 
 init_screen_coordinates:
-    ld  a, #0 -160 + 4              ; Move window x-axis to the far right     
+    ld  a, #0 -160 + 4              ; Move window x-axis to the far right
     ld  (rSCX), a
     ld  a, #0 -144 - 4              ; Move window y-axis to bottom but compensate for affine reg zoom
     ld  (rSCY), a
@@ -188,7 +188,7 @@ hram_reset_sp:
     ret
 
 ;##########################################################################
-; This is where we start execution when loading the ROM in a gb/gbc, 
+; This is where we start execution when loading the ROM in a gb/gbc,
 ; has to be 4 bytes
 ;##########################################################################
 

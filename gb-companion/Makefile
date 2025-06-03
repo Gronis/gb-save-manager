@@ -56,6 +56,8 @@ RAM_LOC			:=  $(RAM0)
 C_CODE_OFFSET	:=	0x0150
 STACK_PTR		:=  0x8FFF
 OUTPUT			:=	.
+# This is 0x1800 or 6k bytes
+ROM_MAX_SIZE	:=	6144
 
 ###############################################################################
 #	Cartridge Header data
@@ -126,7 +128,7 @@ $(BUILD_DIR):
 # main build target
 $(BUILD_DIR)/$(PROJECTNAME).gbc: $(BUILD_DIR)/$(PROJECTNAME).ihx
 	$(BN) -Z -o $(CODE_LOC) -s 0xFFFF $< $@
-	@dd if=$@ of=$@.cut bs=4k count=1 2> /dev/null
+	@dd if=$@ of=$@.cut bs=$(ROM_MAX_SIZE) count=1 2> /dev/null
 	@mv $@.cut $@
 
 $(BUILD_DIR)/$(PROJECTNAME).ihx: $(OBJS) $(BUILD_DIR)/main.rel

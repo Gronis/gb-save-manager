@@ -21,17 +21,20 @@ const uint8_t CORPORATE_LOGO[] = {
 extern const uint8_t ram_code[];
 #include "ram_code_gbc.h"
 
+// Copy code that is supposed to be in WRAM but is still in VRAM This won't work
+// when started from a gba rom and then switched into gbc mode, because WRAM is
+// only accissible when a GBC cart is inserted into a GBA. However, the GBA rom
+// will copy the ram code before switching into gbc mode, so this won't be an
+// issue, and the code can just run without anything happening.
 void copy_ram_functions_to_ram(void) {
-    // Copy the code from the original location in VRAM0 (0x8000-0x9000)
-    uint8_t* src = (uint8_t*)((uint16_t)&ram_code - (uint16_t)CODE_LOC + (uint16_t)_VRAM);
+    // Copy the code from the original location in ROM to WRAM (0xC000)
+    uint8_t* src = (uint8_t*)((uint16_t)&ram_code - (uint16_t)CODE_LOC);
+    // uint8_t* src = (uint8_t*)((uint16_t)&ram_code - (uint16_t)CODE_LOC + (uint16_t)_VRAM);
     uint8_t* end = src + ram_code_length;
     uint8_t* dst = (uint8_t*)_RAM;
-    bool success = true;
     // If RAM becomes inaccessable during copy process, stall
-    for (; src != end; dst+=success, src+=success){
-        uint8_t val = *src;
-        *dst = val;
-        success = *dst == val;
+    for (; src != end; dst+=1, src+=1){
+        *dst = *src;
     }
 }
 #else
@@ -39,22 +42,9 @@ void copy_ram_functions_to_ram(void) {
 void copy_ram_functions_to_ram(void) {}
 #endif // VRAM_VERSION
 
-bool send_detect_link_cable_packet(bool use_internal_clock) {
-    uint8_t serial_data = *rSB;
-    bool connected = false;
-    if ((serial_data == LINK_CABLE_MAGIC_BYTE_SYNC) ||
-        (serial_data == (uint8_t)~LINK_CABLE_MAGIC_BYTE_SYNC) ){
-        connected = true;
-    }
-    if (use_internal_clock) {
-        *rSB = LINK_CABLE_MAGIC_BYTE_SYNC;
-    }
-    *rSC = LINK_CABLE_ENABLE | use_internal_clock;
-    return connected;
-}
-
 int main(void) {
     copy_tiles_to_vram();
+    copy_ram_functions_to_ram();
     render_message_no_screen_flush(message_header);
     {
         bool did_write_to_ram = false;
@@ -134,7 +124,7 @@ int main(void) {
 
                 // Has cartridge, safe to write to ram at this point
                 if(!did_write_to_ram){
-                    copy_ram_functions_to_ram();
+                    // copy_ram_functions_to_ram();
                     did_write_to_ram = true;
                 }
 

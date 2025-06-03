@@ -32,7 +32,7 @@ gb-companion:
 	@(cd gb-companion && make OUTPUT=${OUTPUT})
 
 gb-companion_mb:
-	@(cd gba-switch2gbc && make GBC_ROM=gb-companion.gbc OUTPUT=${OUTPUT})
+	@(cd gba-switch2gbc && make VRAM_ROM=gb-companion.gbc WRAM_ROM=ram_code.gbc OUTPUT=${OUTPUT})
 
 gb-save-manager:
 	@(cd gb-save-manager && make OUTPUT=${OUTPUT})
