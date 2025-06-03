@@ -175,11 +175,23 @@ int main(void) {
 
                 clear_message();
                 if(backup_save){
-                    render_message(message_backing_up_save);
+                    render_message_no_screen_flush(message_backing_up_save);
                 } else if(restore_save){
-                    render_message(message_restoring_save);
+                    render_message_no_screen_flush(message_restoring_save);
                 }
-                render_message(message_progress_bar);
+                render_message_no_screen_flush(message_progress_bar);
+
+                uint16_t sram_size = ram_fn_get_number_of_pkts_sram(is_leader);
+                switch (sram_size){
+                    case 7:     // 8kB      (2^7 * 64)
+                    break;
+                    case 9:     // 32kB     (2^9 * 64)
+                    break;
+                    case 10:    // 64kB     (2^10 * 64)
+                    break;
+                    case 11:    // 128kB    (2^11 * 64)
+                    break;
+                }
 
                 ram_fn_enable_cartridge_sram();
                 run_in_parallel_to_screen(ram_fn_perform_transfer);
@@ -187,10 +199,13 @@ int main(void) {
 
                 clear_message_from_row(2);
                 if (*rTransferError) {
-                    render_message(message_transfer_error);
+                    render_message_no_screen_flush(message_transfer_error);
                 } else {
-                    render_message(message_transfer_done);
+                    render_message_no_screen_flush(message_transfer_done);
                 }
+
+                clear_message_header();
+                render_message_no_screen_flush(message_qr_8_kb);
 
                 // Busy wait at the end. User has to turn off console here
                 while(1) {

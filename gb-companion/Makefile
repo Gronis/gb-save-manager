@@ -66,7 +66,8 @@ ROM_MAX_SIZE	:=	6144
 TITLE			:=	GBSMCOMPANI
 MBC				:=  0x13	# MBC3 + RAM + BATTERY
 # MBC				:=  0xFC	# Gameboy Camera
-RAM_SIZE		:=	3		# 32kB
+RAM_SIZE		:=	2		# 8kB
+# RAM_SIZE		:=	3		# 32kB
 
 ###############################################################################
 #	Options/flags for tools

@@ -20,6 +20,7 @@
 #define message_progress_bar            ((message_list_t*)(&message_progress_bar_data))
 #define message_transfer_done           ((message_list_t*)(&message_transfer_done_data))
 #define message_transfer_error          ((message_list_t*)(&message_transfer_error_data))
+#define message_qr_8_kb                ((message_list_t*)(&message_qr_8_kb_data))
 
 extern const uint8_t                    message_header_data[];
 extern const uint8_t                    message_role_worker_data[];
@@ -38,5 +39,6 @@ extern const uint8_t                    message_backing_up_save_data[];
 extern const uint8_t                    message_progress_bar_data[];
 extern const uint8_t                    message_transfer_done_data[];
 extern const uint8_t                    message_transfer_error_data[];
+extern const uint8_t                    message_qr_8_kb_data[];
 
 #endif // MESSAGES_H

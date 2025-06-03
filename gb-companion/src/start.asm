@@ -51,6 +51,18 @@ mem_copy:
     jr  nz, mem_copy
     ret
 
+.globl _enable_screen
+_enable_screen:
+    ld a, #LCDCF_ON | #LCDCF_BG8000 | #LCDCF_BG9C00 | #LCDCF_OBJ8 | #LCDCF_OBJOFF | #LCDCF_WINOFF | #LCDCF_BGON
+    ld (rLCDC), a
+    ret
+
+.globl _disable_screen
+_disable_screen:
+    xor a
+    ld (rLCDC), a
+    ret
+
 start_from_rom:                     ; Start of code execution when executing directly from ROM
     xor a
     ld  (rLCDC), a                  ; Initialize LCD control register
@@ -180,7 +192,7 @@ hram_flush_screen_wait_for_screen_to_finish:            ; Could inline these fun
     call hram_wait_for_VRAM_accessible-hram_code+_HRAM
 hram_disable_screen:
     xor a                                               ; Disable screen only if CODE_LOC is at VRAM
-    ld (CODE_LOC-_VRAM9000+rLCDC), a                       ; else, if CODE_LOC is in RAM, will write to ROM addr (< 0x4000)
+    ld (CODE_LOC-_VRAM9000+rLCDC), a                    ; else, if CODE_LOC is in RAM, will write to ROM addr (< 0x4000)
 hram_reset_sp:
     ld sp, #rAppSP
     pop hl

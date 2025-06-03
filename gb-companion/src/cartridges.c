@@ -41,7 +41,7 @@ const cartridge_mode_t cartridge_mbc_2_ram_data = {
     .bank_enable_advanced_addr  = 0x00, // <- same as enable RAM mode
     .bank_enable_advanced_value = 0x0A,
     .bank_selector_bit_skip     = 0xFF,
-    .base_size_override         = 0x03,
+    .base_size_override         = 0x03, // <- 2^3 * PACKET_SIZE = 512 bytes
 };
 
 // Mostly the same as MBC_1 except no advanced mode, just set enable again

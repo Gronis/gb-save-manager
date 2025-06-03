@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "version.h"
 #include "messages.h"
 #include "tiles.h"
 #include "hardware.h"
@@ -46,15 +47,47 @@ void render_message_impl(message_list_t* messages, bool do_flush_screen) {
 }
 
 void render_message_no_screen_flush(message_list_t* messages) {
+    #ifdef RAM_VERSION
+    disable_screen();
+    #endif // RAM_VERSION
     render_message_impl(messages, false);
+    #ifdef RAM_VERSION
+    enable_screen();
+    #endif // RAM_VERSION
 }
 
 void render_message(message_list_t* messages) {
     render_message_impl(messages, true);
 }
 
+void clear_tile_from_row_for_area(uint8_t row, const uint8_t *area, uint16_t area_start, uint8_t n_lines) {
+    for (uint8_t r = row; r < (n_lines << 1); r+= 2){
+        for (uint8_t s = area[r], e = area[r + 1]; s != e; ++s) {
+            *as_u8_ptr(s + area_start) = 0;
+        }
+        flush_screen();
+    }
+}
+
+#define CLEAR_HEADER_TILE_INDEX get_tile_position(2, 0)
+const uint8_t clear_msg_header_area[] = {
+    (uint8_t)(get_tile_position(2,  0) - CLEAR_HEADER_TILE_INDEX),
+    (uint8_t)(get_tile_position(13, 0) - CLEAR_HEADER_TILE_INDEX),
+    (uint8_t)(get_tile_position(2,  1) - CLEAR_HEADER_TILE_INDEX),
+    (uint8_t)(get_tile_position(13, 1) - CLEAR_HEADER_TILE_INDEX),
+    (uint8_t)(get_tile_position(2,  2) - CLEAR_HEADER_TILE_INDEX),
+    (uint8_t)(get_tile_position(13, 2) - CLEAR_HEADER_TILE_INDEX),
+    (uint8_t)(get_tile_position(2,  3) - CLEAR_HEADER_TILE_INDEX),
+    (uint8_t)(get_tile_position(13, 3) - CLEAR_HEADER_TILE_INDEX),
+    (uint8_t)(get_tile_position(2,  4) - CLEAR_HEADER_TILE_INDEX),
+    (uint8_t)(get_tile_position(13, 4) - CLEAR_HEADER_TILE_INDEX),
+};
+void clear_message_header() {
+    clear_tile_from_row_for_area(0, clear_msg_header_area, (uint16_t)CLEAR_HEADER_TILE_INDEX, 5);
+}
+
 #define CLEAR_MESSAGE_TILE_INDEX get_tile_position(1, 4)
-const uint8_t clear_arr[] = {
+const uint8_t clear_msg_area[] = {
     (uint8_t)(get_tile_position(1,  4) - CLEAR_MESSAGE_TILE_INDEX),
     (uint8_t)(get_tile_position(15, 4) - CLEAR_MESSAGE_TILE_INDEX),
     (uint8_t)(get_tile_position(1,  5) - CLEAR_MESSAGE_TILE_INDEX),
@@ -64,16 +97,10 @@ const uint8_t clear_arr[] = {
     (uint8_t)(get_tile_position(1,  7) - CLEAR_MESSAGE_TILE_INDEX),
     (uint8_t)(get_tile_position(15, 7) - CLEAR_MESSAGE_TILE_INDEX),
 };
+void clear_message_from_row(uint8_t row) {
+    clear_tile_from_row_for_area(row, clear_msg_area, (uint16_t)CLEAR_MESSAGE_TILE_INDEX, 4);
+}
 
 void clear_message() {
     clear_message_from_row(0);
-}
-
-void clear_message_from_row(uint8_t row) {
-    for (uint8_t r = row; r < LINES_PER_TILE; r+= 2){
-        for (uint8_t s = clear_arr[r], e = clear_arr[r + 1]; s != e; ++s) {
-            *as_u8_ptr(s + CLEAR_MESSAGE_TILE_INDEX) = 0;
-        }
-        flush_screen();
-    }
 }

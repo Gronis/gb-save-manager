@@ -4,6 +4,9 @@
 #include "types.h"
 #include "version.h"
 
+volatile void enable_screen();
+volatile void disable_screen();
+
 // Use this function to call some other function while the screen
 // is running in parallel. Typically use this to call code in RAM
 //

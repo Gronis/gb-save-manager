@@ -42,6 +42,7 @@
 
 void ram_fn_enable_cartridge_sram (void);
 void ram_fn_disable_cartridge_sram (void);
+uint16_t ram_fn_get_number_of_pkts_sram (bool is_leader);
 
 void ram_fn_transfer_header(void);
 void ram_fn_perform_transfer(void);

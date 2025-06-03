@@ -98,6 +98,34 @@ void ram_fn_disable_cartridge_sram (void) {
     *disable_addr                       = disable_value;
 }
 
+uint16_t ram_fn_get_number_of_pkts_sram (bool is_leader) {
+    uint8_t worker_sram_size;
+    uint8_t worker_mbc_mode;
+    if (is_leader){
+        worker_sram_size                = *rSRAM_size_remote;
+        worker_mbc_mode                 = *rMBC_mode_remote;
+    } else {
+        worker_sram_size                = *rSRAM_size;
+        worker_mbc_mode                 = *rMBC_mode;
+    }
+
+    // This means game does not have SRAM
+    if (worker_sram_size < 2) return 0;
+
+    uint8_t worker_mbc_type             = get_mbc_type(worker_mbc_mode);
+    if (worker_mbc_type == MBC_UNSUPPORTED) return 0;
+
+    uint8_t sram_size_base              = cartridge_sram_table[worker_sram_size - 2];
+    uint16_t max_num_of_pkts            = 64 << sram_size_base;
+
+    // Some MBC types override the bank size found in the cartridge header
+    cartridge_mode_t* worker_cartridge  = get_cartridge_mode_ptr(worker_mbc_type);
+    if (worker_cartridge->base_size_override != 0){
+        max_num_of_pkts = 1 << worker_cartridge->base_size_override;
+    }
+    return max_num_of_pkts;
+}
+
 void ram_fn_perform_transfer(void) {
 
     *rTransferError = false;
@@ -111,31 +139,7 @@ void ram_fn_perform_transfer(void) {
         (is_leader  && backup_save) ||
         (!is_leader && restore_save);
 
-    uint8_t worker_sram_size;
-    uint8_t worker_mbc_mode;
-    if (is_leader){
-        worker_sram_size                = *rSRAM_size_remote;
-        worker_mbc_mode                 = *rMBC_mode_remote;
-    } else {
-        worker_sram_size                = *rSRAM_size;
-        worker_mbc_mode                 = *rMBC_mode;
-    }
-
-    // This means game does not have SRAM
-    if (worker_sram_size < 2) return;
-
-    uint8_t worker_mbc_type             = get_mbc_type(worker_mbc_mode);
-    if (worker_mbc_type == MBC_UNSUPPORTED) return;
-
-    uint8_t sram_size_base              = cartridge_sram_table[worker_sram_size - 2];
-    uint16_t max_num_of_pkts            = 64 << sram_size_base;
-
-    // Some MBC types override the bank size found in the cartridge header
-    cartridge_mode_t* worker_cartridge  = get_cartridge_mode_ptr(worker_mbc_type);
-    if (worker_cartridge->base_size_override != 0){
-        max_num_of_pkts                 = 1 << worker_cartridge->base_size_override;
-    }
-
+    uint16_t max_num_of_pkts            = ram_fn_get_number_of_pkts_sram(is_leader);
     uint16_t progress_bytes_per_inc     = max_num_of_pkts;
     uint16_t progress_bytes_counter     = 0;
     uint8_t progress_ui                 = 0;

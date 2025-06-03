@@ -1,6 +1,7 @@
 
 #ifndef TILES_H
 #define TILES_H
+#include "types.h"
 
 #include "text_a_bin.h"
 #include "text_b_bin.h"
@@ -28,6 +29,7 @@
 #include "text_up_bin.h"
 #include "text_waiting_for_bin.h"
 #include "text_worker_bin.h"
+
 #include "tile_pb_end_bin.h"
 #include "tile_pb_0_bin.h"
 #include "tile_pb_1_bin.h"
@@ -39,7 +41,11 @@
 #include "tile_pb_7_bin.h"
 #include "tile_pb_8_bin.h"
 
-#include "types.h"
+#include "qr_08_x1y1_bin.h"
+#include "qr_08_x1y2_bin.h"
+#include "qr_08_x1y3_bin.h"
+#include "qr_08_x1y4_bin.h"
+#include "qr_08_x1y5_bin.h"
 
 #define empty_length                    (8)
 #define empty_offset                    (0)
@@ -80,7 +86,12 @@
 #define pb_6_offset                     ((pb_5_offset)                      + (tile_pb_5_length)            / 8)
 #define pb_7_offset                     ((pb_6_offset)                      + (tile_pb_6_length)            / 8)
 #define pb_8_offset                     ((pb_7_offset)                      + (tile_pb_7_length)            / 8)
-#define n_tiles_total                   ((pb_8_offset)                      + (tile_pb_8_length)            / 8)
+#define qr_08_x1y1_offset               ((pb_8_offset)                      + (tile_pb_8_length)            / 8)
+#define qr_08_x1y2_offset               ((qr_08_x1y1_offset)                + (qr_08_x1y1_length)           / 8)
+#define qr_08_x1y3_offset               ((qr_08_x1y2_offset)                + (qr_08_x1y2_length)           / 8)
+#define qr_08_x1y4_offset               ((qr_08_x1y3_offset)                + (qr_08_x1y3_length)           / 8)
+#define qr_08_x1y5_offset               ((qr_08_x1y4_offset)                + (qr_08_x1y4_length)           / 8)
+#define n_tiles_total                   ((qr_08_x1y5_offset)                + (qr_08_x1y5_length)           / 8)
 
 #define empty_tile_index                (0)
 #define text_a_tile_index               ((empty_tile_index)                 + 1)
@@ -120,49 +131,14 @@
 #define pb_6_tile_index                 ((pb_5_tile_index)                  + 1)
 #define pb_7_tile_index                 ((pb_6_tile_index)                  + 1)
 #define pb_8_tile_index                 ((pb_7_tile_index)                  + 1)
-// #define dummy_tile_index                ((pb_8_tile_index)                  + 1)
+#define qr_08_x1y1_index                ((pb_8_tile_index)                  + 1)
+#define qr_08_x1y2_index                ((qr_08_x1y1_index)                 + 1)
+#define qr_08_x1y3_index                ((qr_08_x1y2_index)                 + 1)
+#define qr_08_x1y4_index                ((qr_08_x1y3_index)                 + 1)
+#define qr_08_x1y5_index                ((qr_08_x1y4_index)                 + 1)
 
 extern const uint8_t                    tiles[];
 
-extern const uint8_t                    text_a[];
-extern const uint8_t                    text_b[];
-extern const uint8_t                    text_back[];
-extern const uint8_t                    text_cartridge[];
-extern const uint8_t                    text_connect_gbc[];
-extern const uint8_t                    text_false[];
-extern const uint8_t                    text_fast[];
-extern const uint8_t                    text_ing[];
-extern const uint8_t                    text_insert_gbc[];
-extern const uint8_t                    text_leader[];
-extern const uint8_t                    text_link_cable[];
-extern const uint8_t                    text_mode[];
-extern const uint8_t                    text_or_remove_the[];
-extern const uint8_t                    text_press_button_to[];
-extern const uint8_t                    text_restore[];
-extern const uint8_t                    text_role[];
-extern const uint8_t                    text_rom[];
-extern const uint8_t                    text_save[];
-extern const uint8_t                    text_slow[];
-extern const uint8_t                    text_start_plus[];
-extern const uint8_t                    text_state[];
-extern const uint8_t                    text_to_change_role[];
-extern const uint8_t                    text_true[];
-extern const uint8_t                    text_up[];
-extern const uint8_t                    text_waiting_for[];
-extern const uint8_t                    text_worker[];
-extern const uint8_t                    tile_pb_end[];
-extern const uint8_t                    tile_pb_0[];
-extern const uint8_t                    tile_pb_1[];
-extern const uint8_t                    tile_pb_2[];
-extern const uint8_t                    tile_pb_3[];
-extern const uint8_t                    tile_pb_4[];
-extern const uint8_t                    tile_pb_5[];
-extern const uint8_t                    tile_pb_6[];
-extern const uint8_t                    tile_pb_7[];
-extern const uint8_t                    tile_pb_8[];
-
-// TODO: Remove
-// Dummy data for testing
-extern const uint8_t tile_dummy[];
+extern const uint8_t                    garbage[];
 
 #endif // TILES_H

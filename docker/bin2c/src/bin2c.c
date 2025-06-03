@@ -58,6 +58,7 @@ int main(int argc, char **argv) {
 		// fprintf(stderr, "Using name: %s.\n", var_name);
 
 		printf("#define %s_length %u\n",var_name,size);
+		printf("extern const uint8_t %s[%s_length];\n",var_name, var_name);
 		printf("#ifdef INCLUDE_BIN_DATA_DONT_USE_IN_HEADER\n");
 		printf("const uint8_t %s[%s_length] = {\n    ",var_name, var_name);
 

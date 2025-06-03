@@ -49,7 +49,13 @@ void render_message_no_screen_flush(message_list_t* messages);
 // Note: messages should be placed consecutivly in memory
 void render_message(message_list_t* messages);
 
+// Clear of the message header (the top part)
+void clear_message_header(void);
+
+// Clear the bottom message information.
 void clear_message(void);
+
+// Clear the bottom  message information, but only from row and down.
 void clear_message_from_row(uint8_t row);
 
 #endif // (GRAPHICS_text_worker_tile_index) + 1H

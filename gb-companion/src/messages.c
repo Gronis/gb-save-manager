@@ -5,11 +5,15 @@
 #include "tiles.h"
 #include "graphics.h"
 
+// // TODO: This is a test. remove
+// // This will ensure code is put inside RAM
+// #include "area_ram.h"
+
 #define pos(x, y)                                       \
     ((uint8_t)(get_tile_position((x),  (y)))),          \
     ((uint8_t)(get_tile_position((x),  (y)) >> 8))
 
-const uint8_t message_header_data[] = { 
+const uint8_t message_header_data[] = {
     8,
     pos(2,  0), text_role_tile_index,
     pos(2,  1), text_cartridge_tile_index,  pos(8, 1), text_state_tile_index,
@@ -19,67 +23,67 @@ const uint8_t message_header_data[] = {
     pos(12, 2), text_false_tile_index,
 };
 
-const uint8_t message_role_worker_data[] = { 
+const uint8_t message_role_worker_data[] = {
     1,
     pos(5,  0), text_worker_tile_index,
 };
 
-const uint8_t message_role_leader_data[] = { 
+const uint8_t message_role_leader_data[] = {
     1,
     pos(5,  0), text_leader_tile_index,
 };
 
-const uint8_t message_cartridge_state_ok_data[] = { 
+const uint8_t message_cartridge_state_ok_data[] = {
     1,
     pos(12, 1), text_true_tile_index,
 };
 
-const uint8_t message_cartridge_state_error_data[] = { 
+const uint8_t message_cartridge_state_error_data[] = {
     1,
     pos(12, 1), text_false_tile_index,
 };
 
-const uint8_t message_link_cable_state_ok_data[] = { 
+const uint8_t message_link_cable_state_ok_data[] = {
     1,
     pos(12, 2), text_true_tile_index,
 };
 
-const uint8_t message_link_cable_state_error_data[] = { 
+const uint8_t message_link_cable_state_error_data[] = {
     1,
     pos(12, 2), text_false_tile_index,
 };
 
-const uint8_t message_idle_role_change_info_data[] = { 
+const uint8_t message_idle_role_change_info_data[] = {
     5,
     pos(1,  5), text_connect_gbc_tile_index,    pos(8,  5),  text_link_cable_tile_index,
     pos(1,  6), text_or_remove_the_tile_index,  pos(9,  6),  text_cartridge_tile_index,
     pos(1,  7), text_to_change_role_tile_index,
 };
 
-const uint8_t message_insert_gbc_cartridge_data[] = { 
+const uint8_t message_insert_gbc_cartridge_data[] = {
     2,
     pos(1,  5),  text_insert_gbc_tile_index,    pos(9,  5),  text_cartridge_tile_index,
 };
 
-const uint8_t message_insert_gbc_link_cable_data[] = { 
+const uint8_t message_insert_gbc_link_cable_data[] = {
     2,
     pos(1,  5),  text_connect_gbc_tile_index,   pos(8,  5),  text_link_cable_tile_index,
 };
 
-const uint8_t message_waiting_for_leader_data[] = { 
+const uint8_t message_waiting_for_leader_data[] = {
     2,
     pos(2,  5),  text_waiting_for_tile_index,   pos(8,  5),  text_leader_tile_index,
 };
 
-const uint8_t message_choose_action_data[] = { 
+const uint8_t message_choose_action_data[] = {
     9,
     pos(2,  4),  text_press_button_to_tile_index,
-    
+
     pos(4,  6),  text_a_tile_index,
     pos(5,  6),  text_back_tile_index,
     pos(8,  6),  text_up_tile_index,
     pos(10, 6),  text_save_tile_index,
-    
+
     pos(1,  7),  text_start_plus_tile_index,
     pos(4,  7),  text_a_tile_index,
     pos(5,  7),  text_restore_tile_index,
@@ -122,4 +126,13 @@ const uint8_t message_transfer_done_data[] = {
 const uint8_t message_transfer_error_data[] = {
     1,
     pos(12, 4), text_false_tile_index,
+};
+
+const uint8_t message_qr_8_kb_data[] = {
+    5,
+    pos(5,  1),  qr_08_x1y1_index,
+    pos(5,  2),  qr_08_x1y2_index,
+    pos(5,  3),  qr_08_x1y3_index,
+    pos(5,  4),  qr_08_x1y4_index,
+    pos(5,  5),  qr_08_x1y5_index,
 };
