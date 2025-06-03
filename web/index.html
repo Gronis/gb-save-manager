@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>gb-save-manager.gb: Resize</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2em;
+      background: #f9f9f9;
+    }
+    h1 {
+      margin-bottom: 0.2em;
+      font-size: 4em;
+    }
+    p {
+      margin-top: 0;
+    }
+    .upload-btn {
+      display: inline-block;
+      padding: 1em 2em;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin-top: 2em;
+    }
+    .upload-btn:hover {
+      background-color: #0056b3;
+    }
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>gb-save-manager.gb</h1>
+  <h2>SAVE File Resizer</h2>
+  <p>Converts to: <strong><span id="target-size">?</span> KB</strong> — Supported: <code>.sav</code>, <code>.srm</code></p>
+
+  <label class="upload-btn" for="file-input">Upload File</label>
+  <input type="file" id="file-input" accept=".sav,.srm" />
+
+  <script>
+    function getTargetSizeFromUrl() {
+      const hash = window.location.hash.slice(1);
+      const sizeKB = parseInt(hash, 10);
+      const validSizes = [8, 16, 32, 64];
+      return validSizes.includes(sizeKB) ? sizeKB : null;
+    }
+
+    function resizeFile(file, targetSizeKB, callback) {
+      const targetSize = targetSizeKB * 1024;
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const originalData = new Uint8Array(e.target.result);
+        const resizedData = new Uint8Array(targetSize);
+
+        // Copy as much as will fit
+        resizedData.set(originalData.subarray(0, targetSize));
+
+        callback(resizedData);
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    function downloadFile(data, originalName, sizeKB) {
+      const blob = new Blob([data], { type: 'application/octet-stream' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = originalName.replace(/\.(sav|srm)$/i, '') + `_${sizeKB}KB.sav`;
+      link.click();
+    }
+
+    document.getElementById('file-input').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const sizeKB = getTargetSizeFromUrl();
+      if (!sizeKB) {
+        alert("Invalid size in URL. Use #8, #16, #32, or #64.");
+        return;
+      }
+
+      const isValid = /\.(sav|srm)$/i.test(file.name);
+      if (!isValid) {
+        alert("Only .sav or .srm files are supported.");
+        return;
+      }
+
+      resizeFile(file, sizeKB, function(resizedData) {
+        downloadFile(resizedData, file.name, sizeKB);
+      });
+    });
+
+    // Show target size on page
+    const sz = getTargetSizeFromUrl();
+    document.getElementById('target-size').textContent = sz ? sz : '?';
+  </script>
+</body>
+</html>
