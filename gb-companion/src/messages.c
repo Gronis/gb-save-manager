@@ -167,3 +167,33 @@ const uint8_t message_qr_8_kb_data[] = {
     pos(5,  4),  qr_08_x1y4_index,
     pos(5,  5),  qr_08_x1y5_index,
 };
+
+const uint8_t message_qr_32_kb_data[] = {
+    10,
+    pos(5,  1),  qr_08_x1y1_index,
+    pos(5,  2),  qr_08_x1y2_index,
+    pos(5,  3),  qr_08_x1y3_index,
+    pos(5,  4),  qr_08_x1y4_index,
+    pos(5,  5),  qr_08_x1y5_index,
+
+    pos(6,  1),  qr_32_x1y1_index,
+    pos(5,  2),  qr_32_x1y2_index,
+    pos(5,  3),  qr_32_x1y3_index,
+    pos(5,  4),  qr_32_x1y4_index,
+    pos(6,  5),  qr_32_x1y5_index,
+};
+
+const uint8_t message_qr_64_kb_data[] = {
+    10,
+    pos(5,  1),  qr_08_x1y1_index,
+    pos(5,  2),  qr_08_x1y2_index,
+    pos(5,  3),  qr_08_x1y3_index,
+    pos(5,  4),  qr_08_x1y4_index,
+    pos(5,  5),  qr_08_x1y5_index,
+
+    pos(6,  1),  qr_64_x1y1_index,
+    pos(5,  2),  qr_64_x1y2_index,
+    pos(5,  3),  qr_64_x1y3_index,
+    pos(5,  4),  qr_64_x1y4_index,
+    pos(6,  5),  qr_64_x1y5_index,
+};

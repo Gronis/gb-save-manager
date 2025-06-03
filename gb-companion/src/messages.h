@@ -26,6 +26,8 @@
 #define message_64                      ((message_list_t*)(&message_64_data))
 #define message_128                     ((message_list_t*)(&message_128_data))
 #define message_qr_8_kb                 ((message_list_t*)(&message_qr_8_kb_data))
+#define message_qr_32_kb                ((message_list_t*)(&message_qr_32_kb_data))
+#define message_qr_64_kb                ((message_list_t*)(&message_qr_64_kb_data))
 
 extern const uint8_t                    message_header_data[];
 extern const uint8_t                    message_role_worker_data[];
@@ -50,5 +52,7 @@ extern const uint8_t                    message_32_data[];
 extern const uint8_t                    message_64_data[];
 extern const uint8_t                    message_128_data[];
 extern const uint8_t                    message_qr_8_kb_data[];
+extern const uint8_t                    message_qr_32_kb_data[];
+extern const uint8_t                    message_qr_64_kb_data[];
 
 #endif // MESSAGES_H

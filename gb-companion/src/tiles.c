@@ -53,7 +53,17 @@ const uint8_t tiles[] = {
     qr_08_x1y3_offset,
     qr_08_x1y4_offset,
     qr_08_x1y5_offset,
+    qr_32_x1y1_offset,
+    qr_32_x1y2_offset,
+    qr_32_x1y3_offset,
+    qr_32_x1y4_offset,
+    qr_32_x1y5_offset,
+    qr_64_x1y1_offset,
+    qr_64_x1y2_offset,
+    qr_64_x1y3_offset,
+    qr_64_x1y4_offset,
+    qr_64_x1y5_offset,
     n_tiles_total,
 };
 
-const uint8_t                    garbage[402] = {};
+const uint8_t                    garbage[102] = {};
