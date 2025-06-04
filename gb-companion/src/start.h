@@ -4,8 +4,9 @@
 #include "types.h"
 #include "version.h"
 
-#define rDeviceModeBootup ((uint8_t*) 0xFFFC)
-// #define IS_DEVICE_AGB ((*rDeviceModeBootup & (BOOTUP_B_AGB << 1)) != 0)
+extern const uint8_t rDeviceModeBootup;
+#define IS_DEVICE_AGB ((rDeviceModeBootup & (BOOTUP_B_AGB << 1)) != 0)
+#define IS_DEVICE_CGB ((rDeviceModeBootup & BOOTUP_A_CGB) != 0)
 
 volatile void enable_screen();
 volatile void disable_screen();

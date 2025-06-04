@@ -18,20 +18,19 @@ const uint8_t CORPORATE_LOGO[] = {
 };
 
 #ifdef VRAM_VERSION
-extern const uint8_t ram_code[];
 #include "ram_code_gbc.h"
 
 // Copy code that is supposed to be in WRAM but is still in VRAM This won't work
 // when started from a gba rom and then switched into gbc mode, because WRAM is
-// only accissible when a GBC cart is inserted into a GBA. However, the GBA rom
+// only accissible when a GBC cart is inserted into a GBA. However, the host rom
 // will copy the ram code before switching into gbc mode, so this won't be an
-// issue, and the code can just run without anything happening.
+// issue, and the code can just return. The only reason this is here is to
+// be able to run gb-companion directly when testing
 void copy_ram_functions_to_ram(void) {
-    return;
-    // if (IS_DEVICE_AGB) return;  // We really only want to copy ram when debugging.
-    //                             // (booting gb-companion from rom in emu,
-    //                             // and we dont really do that in agb mode.
-    //                             // Otherwise we have already copied ram.
+    if (IS_DEVICE_AGB) return;  // We really only want to copy ram when debugging.
+                                // (booting gb-companion from rom in emu),
+                                // and we dont really do that in agb mode.
+                                // Otherwise we have already copied ram.
     // Copy the code from the original location in ROM to WRAM (0xC000)
     uint8_t* src = (uint8_t*)((uint16_t)&ram_code - (uint16_t)CODE_LOC);
     // uint8_t* src = (uint8_t*)((uint16_t)&ram_code - (uint16_t)CODE_LOC + (uint16_t)_VRAM);
@@ -153,13 +152,10 @@ int main(void) {
                     render_message(message_waiting_for_leader);
                 }
 
-                // The VRAM version should only be used on GBA hardware
-#ifdef VRAM_VERSION
+#ifdef VRAM_VERSION // The VRAM version should only be used on GBA hardware
                 *rDevice_mode = DEVICE_MODE_AGB;
 #else
-                *rDevice_mode = (*rDeviceModeBootup & BOOTUP_A_CGB) != 0?
-                    DEVICE_MODE_CGB :
-                    DEVICE_MODE_GB;
+                *rDevice_mode = IS_DEVICE_CGB? DEVICE_MODE_CGB : DEVICE_MODE_GB;
 #endif
                 *rRole = is_leader? ROLE_LEADER : ROLE_WORKER;
                 *rTransfer_mode = TRANSFER_MODE_NO_ACTION;

@@ -6,8 +6,8 @@
 rAppSP              .equ 0xFFFD     ; This is where we save the main app stack pointer
                                     ; while executing HRAM code
 
-.globl              rDeviceModeBootup
-rDeviceModeBootup   .equ 0xFFFC     ; This register holds if we are in AGB, CGB, GB, etc mode
+.globl              _rDeviceModeBootup
+_rDeviceModeBootup   .equ 0xFFFC     ; This register holds if we are in AGB, CGB, GB, etc mode
 
 _HRAM_STACK_PTR     .equ 0xFFFB     ; This is the start of HRAM stack pointer used
                                     ; each time the app moves control flow to HRAM
@@ -67,7 +67,7 @@ start_from_rom:                     ; Start of code execution when executing dir
     and #0xFD                       ; reg a hold GB/CGB/GB Pocket. Reset bit 2 for AGB mode.
     rlc b                           ; reg b hold if we are in AGB mode, move it to bit 2.
     or  b                           ; and join with reg a which holds if we are in GB/CGB mode
-    ld  hl, #rDeviceModeBootup
+    ld  hl, #_rDeviceModeBootup
     ld  (hl), a
 
     xor a
