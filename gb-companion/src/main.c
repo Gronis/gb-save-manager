@@ -27,6 +27,11 @@ extern const uint8_t ram_code[];
 // will copy the ram code before switching into gbc mode, so this won't be an
 // issue, and the code can just run without anything happening.
 void copy_ram_functions_to_ram(void) {
+    return;
+    // if (IS_DEVICE_AGB) return;  // We really only want to copy ram when debugging.
+    //                             // (booting gb-companion from rom in emu,
+    //                             // and we dont really do that in agb mode.
+    //                             // Otherwise we have already copied ram.
     // Copy the code from the original location in ROM to WRAM (0xC000)
     uint8_t* src = (uint8_t*)((uint16_t)&ram_code - (uint16_t)CODE_LOC);
     // uint8_t* src = (uint8_t*)((uint16_t)&ram_code - (uint16_t)CODE_LOC + (uint16_t)_VRAM);
@@ -37,14 +42,15 @@ void copy_ram_functions_to_ram(void) {
         *dst = *src;
     }
 }
+
 #else
 // This is the RAM version, so no copy is necessary
 void copy_ram_functions_to_ram(void) {}
 #endif // VRAM_VERSION
 
 int main(void) {
-    copy_tiles_to_vram();
     copy_ram_functions_to_ram();
+    copy_tiles_to_vram();
     render_message_no_screen_flush(message_header);
     {
         bool did_write_to_ram = false;

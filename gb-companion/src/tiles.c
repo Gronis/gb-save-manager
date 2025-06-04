@@ -66,4 +66,4 @@ const uint8_t tiles[] = {
     n_tiles_total,
 };
 
-const uint8_t                    garbage[102] = {};
+const uint8_t                    garbage[1] = {};

@@ -4,6 +4,9 @@
 #include "types.h"
 #include "version.h"
 
+#define rDeviceModeBootup ((uint8_t*) 0xFFFC)
+// #define IS_DEVICE_AGB ((*rDeviceModeBootup & (BOOTUP_B_AGB << 1)) != 0)
+
 volatile void enable_screen();
 volatile void disable_screen();
 
@@ -53,7 +56,5 @@ volatile void wait_n_cycles(uint16_t cycles);
 // #ifdef RAM_VERSION
 // #define copy_ram_functions_to_ram()
 // #endif
-
-#define rDeviceModeBootup ((uint8_t*) 0xFFFC)
 
 #endif // START_H

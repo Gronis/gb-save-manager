@@ -64,6 +64,12 @@ _disable_screen:
     ret
 
 start_from_rom:                     ; Start of code execution when executing directly from ROM
+    and #0xFD                       ; reg a hold GB/CGB/GB Pocket. Reset bit 2 for AGB mode.
+    rlc b                           ; reg b hold if we are in AGB mode, move it to bit 2.
+    or  b                           ; and join with reg a which holds if we are in GB/CGB mode
+    ld  hl, #rDeviceModeBootup
+    ld  (hl), a
+
     xor a
     ld  (rLCDC), a                  ; Initialize LCD control register
     ld  sp, #_HRAM_STACK_PTR        ; Use HRAM stack pointer because we mess alot with VRAM here

@@ -4,6 +4,7 @@
 
 #define INCLUDE_BIN_DATA_DONT_USE_IN_HEADER
 #include "gb-companion_gbc.h"
+#include "ram_code_gbc.h"
 #include "gb-companion_ram_gbc.h"
 
 extern const uint8_t rDeviceModeBootup;
@@ -21,10 +22,17 @@ void mem_copy_with_validation(uint8_t* src, uint8_t* end, uint8_t* dst){
 }
 
 void copy_vram_code(void) {
-    uint8_t* src = (uint8_t*)gb_companion;
-    uint8_t* end = src + gb_companion_length;
-    uint8_t* dst = _VRAM;
-    mem_copy_with_validation(src, end, dst);
+    {
+        uint8_t* src = (uint8_t*)gb_companion;
+        uint8_t* end = src + gb_companion_length;
+        uint8_t* dst = _VRAM;
+        mem_copy_with_validation(src, end, dst);
+    } {
+        uint8_t* src = (uint8_t*)ram_code;
+        uint8_t* end = src + ram_code_length;
+        uint8_t* dst = _RAM;
+        mem_copy_with_validation(src, end, dst);
+    }
 }
 
 void copy_ram_code(void) {
@@ -40,6 +48,7 @@ int main(void) {
 
     bool is_device_agb = (rDeviceModeBootup & (BOOTUP_B_AGB << 1)) != 0;
     // bool is_device_agb = false; // For debugging
+    // bool is_device_agb = true; // For debugging
 
     // Use vram version for AGB device because it cannot interact with WRAM
     // without a game cartridge
