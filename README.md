@@ -34,6 +34,11 @@ What you need is:
 
 ⚠️ If you have a gba flash cart, don't try to use it with a gba emulator such as Goomba. That won't work. I'm planning to make a gba version that can be booted from a gba flashcart. You would need to wait for that version.
 
+## Save file size
+⚠️ Since version 1.2, the default save size has been changed from 32kB to 128kB. This was to support the Gameboy Camera. However, this makes some tools and emulators not work with the save file because it is too big.
+
+So, from version 1.3, I've added a QR code with a link to a simple web tool that can be used for resizing the save file. This is not required, since most emulators and flash cards will just resize the save file to the correct size. But in the rare case you need to resize it for some 3rd party tool and your preferred emulator or flash card doesn't do it for you, this should make it easy.
+
 ## Supported Cartridge Types
 Gameboy Cartridges has different chips which works slightly differently. Most if not all original Gameboy and Gameboy Color cartridges should be supported. Here is a list of supported Cartridge Mapper Types:
 
@@ -110,4 +115,3 @@ You can use a standard build of mGBA to test it by using its built-in support fo
 ```bash
 make && ~/mgba/build/qt/mGBA.app/Contents/MacOS/mGBA build/gb-save-manager/gb-save-manager.fixed.gbc build/gb-companion/gb-companion.fixed.gbc
 ```
-

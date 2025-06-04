@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>gb-save-manager.gb: Resize</title>
   <style>
     body {
@@ -12,7 +13,7 @@
     }
     h1 {
       margin-bottom: 0.2em;
-      font-size: 4em;
+      font-size: 3em;
     }
     p {
       margin-top: 0;
@@ -27,6 +28,8 @@
       font-size: 1.2em;
       cursor: pointer;
       margin-top: 2em;
+      margin-bottom: 3em;
+      transition: background-color 0.2s;
     }
     .upload-btn:hover {
       background-color: #0056b3;
@@ -34,15 +37,24 @@
     input[type="file"] {
       display: none;
     }
+    .info-box {
+        color: grey;
+    }
   </style>
 </head>
 <body>
   <h1>gb-save-manager.gb</h1>
   <h2>SAVE File Resizer</h2>
-  <p>Converts to: <strong><span id="target-size">?</span> KB</strong> — Supported: <code>.sav</code>, <code>.srm</code></p>
+  <p>Resizes to: <strong><span id="target-size">?</span> KB</strong> — Supported: <code>.sav</code>, <code>.srm</code></p>
 
-  <label class="upload-btn" for="file-input">Upload File</label>
+  <label class="upload-btn" for="file-input"><h2>Resize SAVE</h2></label>
   <input type="file" id="file-input" accept=".sav,.srm" />
+
+  <div class="info-box">
+    <p>Remember to boot another game before extracting the <b>SAVE</b> file from the SD card</p>
+    <p>Resizing the <b>SAVE</b> isn't always necessary. It might be needed for some tools to recognise the <b>SAVE</b></p>
+    <p>No file is uploaded to a server or anything. This tool works entirely in the users browser.</p>
+  </div>
 
   <script>
     function getTargetSizeFromUrl() {
