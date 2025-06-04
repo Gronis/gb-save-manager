@@ -48,23 +48,23 @@
 #include "text_64_bin.h"
 #include "text_8_bin.h"
 
-#include "qr_08_x1y1_bin.h"
-#include "qr_08_x1y2_bin.h"
-#include "qr_08_x1y3_bin.h"
-#include "qr_08_x1y4_bin.h"
-#include "qr_08_x1y5_bin.h"
+#include "qr_08_r1_bin.h"
+#include "qr_08_r2_bin.h"
+#include "qr_08_r3_bin.h"
+#include "qr_08_r4_bin.h"
+#include "qr_08_r5_bin.h"
 
-#include "qr_32_x1y1_bin.h"
-#include "qr_32_x1y2_bin.h"
-#include "qr_32_x1y3_bin.h"
-#include "qr_32_x1y4_bin.h"
-#include "qr_32_x1y5_bin.h"
+#include "qr_32_r1_bin.h"
+#include "qr_32_r2_bin.h"
+#include "qr_32_r3_bin.h"
+#include "qr_32_r4_bin.h"
+#include "qr_32_r5_bin.h"
 
-#include "qr_64_x1y1_bin.h"
-#include "qr_64_x1y2_bin.h"
-#include "qr_64_x1y3_bin.h"
-#include "qr_64_x1y4_bin.h"
-#include "qr_64_x1y5_bin.h"
+#include "qr_64_r1_bin.h"
+#include "qr_64_r2_bin.h"
+#include "qr_64_r3_bin.h"
+#include "qr_64_r4_bin.h"
+#include "qr_64_r5_bin.h"
 
 #define empty_length                    (8)
 #define empty_offset                    (0)
@@ -111,22 +111,22 @@
 #define text_32_offset                  ((text_12_offset)                   + (text_12_length)              / 8)
 #define text_64_offset                  ((text_32_offset)                   + (text_32_length)              / 8)
 #define text_8_offset                   ((text_64_offset)                   + (text_64_length)              / 8)
-#define qr_08_x1y1_offset               ((text_8_offset)                    + (text_8_length)               / 8)
-#define qr_08_x1y2_offset               ((qr_08_x1y1_offset)                + (qr_08_x1y1_length)           / 8)
-#define qr_08_x1y3_offset               ((qr_08_x1y2_offset)                + (qr_08_x1y2_length)           / 8)
-#define qr_08_x1y4_offset               ((qr_08_x1y3_offset)                + (qr_08_x1y3_length)           / 8)
-#define qr_08_x1y5_offset               ((qr_08_x1y4_offset)                + (qr_08_x1y4_length)           / 8)
-#define qr_32_x1y1_offset               ((qr_08_x1y5_offset)                + (qr_08_x1y5_length)           / 8)
-#define qr_32_x1y2_offset               ((qr_32_x1y1_offset)                + (qr_32_x1y1_length)           / 8)
-#define qr_32_x1y3_offset               ((qr_32_x1y2_offset)                + (qr_32_x1y2_length)           / 8)
-#define qr_32_x1y4_offset               ((qr_32_x1y3_offset)                + (qr_32_x1y3_length)           / 8)
-#define qr_32_x1y5_offset               ((qr_32_x1y4_offset)                + (qr_32_x1y4_length)           / 8)
-#define qr_64_x1y1_offset               ((qr_32_x1y5_offset)                + (qr_32_x1y5_length)           / 8)
-#define qr_64_x1y2_offset               ((qr_64_x1y1_offset)                + (qr_64_x1y1_length)           / 8)
-#define qr_64_x1y3_offset               ((qr_64_x1y2_offset)                + (qr_64_x1y2_length)           / 8)
-#define qr_64_x1y4_offset               ((qr_64_x1y3_offset)                + (qr_64_x1y3_length)           / 8)
-#define qr_64_x1y5_offset               ((qr_64_x1y4_offset)                + (qr_64_x1y4_length)           / 8)
-#define n_tiles_total                   ((qr_64_x1y5_offset)                + (qr_64_x1y5_length)           / 8)
+#define qr_08_r1_offset               ((text_8_offset)                      + (text_8_length)               / 8)
+#define qr_08_r2_offset               ((qr_08_r1_offset)                    + (qr_08_r1_length)             / 8)
+#define qr_08_r3_offset               ((qr_08_r2_offset)                    + (qr_08_r2_length)             / 8)
+#define qr_08_r4_offset               ((qr_08_r3_offset)                    + (qr_08_r3_length)             / 8)
+#define qr_08_r5_offset               ((qr_08_r4_offset)                    + (qr_08_r4_length)             / 8)
+#define qr_32_r1_offset               ((qr_08_r5_offset)                    + (qr_08_r5_length)             / 8)
+#define qr_32_r2_offset               ((qr_32_r1_offset)                    + (qr_32_r1_length)             / 8)
+#define qr_32_r3_offset               ((qr_32_r2_offset)                    + (qr_32_r2_length)             / 8)
+#define qr_32_r4_offset               ((qr_32_r3_offset)                    + (qr_32_r3_length)             / 8)
+#define qr_32_r5_offset               ((qr_32_r4_offset)                    + (qr_32_r4_length)             / 8)
+#define qr_64_r1_offset               ((qr_32_r5_offset)                    + (qr_32_r5_length)             / 8)
+#define qr_64_r2_offset               ((qr_64_r1_offset)                    + (qr_64_r1_length)             / 8)
+#define qr_64_r3_offset               ((qr_64_r2_offset)                    + (qr_64_r2_length)             / 8)
+#define qr_64_r4_offset               ((qr_64_r3_offset)                    + (qr_64_r3_length)             / 8)
+#define qr_64_r5_offset               ((qr_64_r4_offset)                    + (qr_64_r4_length)             / 8)
+#define n_tiles_total                   ((qr_64_r5_offset)                  + (qr_64_r5_length)             / 8)
 
 #define empty_tile_index                (0)
 #define text_a_tile_index               ((empty_tile_index)                 + 1)
@@ -172,21 +172,21 @@
 #define text_32_tile_index              ((text_12_tile_index)               + 1)
 #define text_64_tile_index              ((text_32_tile_index)               + 1)
 #define text_8_tile_index               ((text_64_tile_index)               + 1)
-#define qr_08_x1y1_index                ((text_8_tile_index)                + 1)
-#define qr_08_x1y2_index                ((qr_08_x1y1_index)                 + 1)
-#define qr_08_x1y3_index                ((qr_08_x1y2_index)                 + 1)
-#define qr_08_x1y4_index                ((qr_08_x1y3_index)                 + 1)
-#define qr_08_x1y5_index                ((qr_08_x1y4_index)                 + 1)
-#define qr_32_x1y1_index                ((qr_08_x1y5_index)                + 1)
-#define qr_32_x1y2_index                ((qr_32_x1y1_index)                 + 1)
-#define qr_32_x1y3_index                ((qr_32_x1y2_index)                 + 1)
-#define qr_32_x1y4_index                ((qr_32_x1y3_index)                 + 1)
-#define qr_32_x1y5_index                ((qr_32_x1y4_index)                 + 1)
-#define qr_64_x1y1_index                ((qr_32_x1y5_index)                + 1)
-#define qr_64_x1y2_index                ((qr_64_x1y1_index)                 + 1)
-#define qr_64_x1y3_index                ((qr_64_x1y2_index)                 + 1)
-#define qr_64_x1y4_index                ((qr_64_x1y3_index)                 + 1)
-#define qr_64_x1y5_index                ((qr_64_x1y4_index)                 + 1)
+#define qr_08_r1_index                  ((text_8_tile_index)                + 1)
+#define qr_08_r2_index                  ((qr_08_r1_index)                   + 1)
+#define qr_08_r3_index                  ((qr_08_r2_index)                   + 1)
+#define qr_08_r4_index                  ((qr_08_r3_index)                   + 1)
+#define qr_08_r5_index                  ((qr_08_r4_index)                   + 1)
+#define qr_32_r1_index                  ((qr_08_r5_index)                   + 1)
+#define qr_32_r2_index                  ((qr_32_r1_index)                   + 1)
+#define qr_32_r3_index                  ((qr_32_r2_index)                   + 1)
+#define qr_32_r4_index                  ((qr_32_r3_index)                   + 1)
+#define qr_32_r5_index                  ((qr_32_r4_index)                   + 1)
+#define qr_64_r1_index                  ((qr_32_r5_index)                   + 1)
+#define qr_64_r2_index                  ((qr_64_r1_index)                   + 1)
+#define qr_64_r3_index                  ((qr_64_r2_index)                   + 1)
+#define qr_64_r4_index                  ((qr_64_r3_index)                   + 1)
+#define qr_64_r5_index                  ((qr_64_r4_index)                   + 1)
 
 extern const uint8_t                    tiles[];
 

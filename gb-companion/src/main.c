@@ -228,14 +228,15 @@ int main(void) {
                 }
                 render_message_no_screen_flush(message_transfer_done);
 
+                // Show qr code to resize tool to change save file size
                 if (qr_code != 0) {
                     clear_message_header();
                     render_message_no_screen_flush(message_resize_save);
                     render_message_no_screen_flush(qr_code);
                 }
 
+                // User has to turn off console here
                 buzy_wait_forever:
-                // Busy wait at the end. User has to turn off console here
                 while(1) {
                     flush_screen();
                 }
