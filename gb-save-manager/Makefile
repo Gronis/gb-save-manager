@@ -41,7 +41,7 @@ BIN				:=	$(PROJECTNAME).gbc
 VRAM_PROJ		:=	$(basename $(VRAM_ROM))
 WRAM_PROJ		:=	$(basename $(WRAM_ROM))
 
-# c-files must be sorted in alphabetic order for correct memory locations 
+# c-files must be sorted in alphabetic order for correct memory locations
 # during link step
 SOURCES			:=	$(sort $(wildcard src/*.c))
 HEADERS			:=	$(wildcard src/*.h)
@@ -52,7 +52,8 @@ ASSEMBLY		:=	$(wildcard src/*.asm)
 #	https://gbdev.io/pandocs/The_Cartridge_Header.html#0147--cartridge-type
 ###############################################################################
 TITLE			:=	GBSAVEMANAG
-MBC				:=  0x10	# MBC3 + RAM + BATTERY + TIMER
+# MBC				:=  0x10	# MBC3 + RAM + BATTERY + TIMER
+MBC				:=  0x1B	# MBC5 + RAM + BATTERY
 # RAM_SIZE		:=	3		# 32kB
 RAM_SIZE		:=	4		# 128kB Need this size for big saves (GB Camera)
 

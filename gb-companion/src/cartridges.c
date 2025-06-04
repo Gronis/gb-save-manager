@@ -84,7 +84,7 @@ const cartridge_mode_t cartridge_mbc_gb_cam_ram_data = {
     .bank_data_addr_end         = 0xC0, // (exclusive, address, 8 msb)
     .bank_enable_advanced_addr  = 0x00, // <- same as enable RAM mode
     .bank_enable_advanced_value = 0x0A,
-    .bank_selector_bit_skip     = 0xFF,
+    .bank_selector_bit_skip     = 0x00,
     .base_size_override         = 0x0B, // <- 2^11 * PACKET_SIZE = 128kB
 };
 

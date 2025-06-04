@@ -64,6 +64,7 @@ ROM_MAX_SIZE	:=	6144
 #	https://gbdev.io/pandocs/The_Cartridge_Header.html#0147--cartridge-type
 ###############################################################################
 TITLE			:=	GBSMCOMPANI
+# MBC				:=  0xFC	# GB Camera
 MBC				:=  0x13	# MBC3 + RAM + BATTERY
 # MBC				:=  0xFC	# Gameboy Camera
 RAM_SIZE		:=	2		# 8kB
