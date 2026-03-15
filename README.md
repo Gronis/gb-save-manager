@@ -3,6 +3,8 @@ A custom Gameboy ROM for backing up and restoring your SAVE files on your old sc
 
 [Download Page](https://github.com/Gronis/gb-save-manager/releases)
 
+[How to use Video](https://www.youtube.com/watch?v=GsQbhRf-aRk)
+
 <img src="screenshots/animation.gif" alt="isolated" width="100%"/>
 
   _  |  _
