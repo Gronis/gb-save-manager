@@ -99,6 +99,10 @@ int main(void) {
 
             if (cartridge_state) {
                 new_link_cable_state = send_detect_link_cable_packet(is_leader);
+                // It seems like if gb-companion_gbc.h is uneven, then addresses are misaligned.
+                // I just added two flush_screen() calls to fix it. But this should be fixed for real
+                flush_screen();
+                // flush_screen();
             }
 
             if(link_cable_state != new_link_cable_state){
@@ -149,6 +153,7 @@ int main(void) {
                         continue;
                     }
                 } else {
+                    run_in_parallel_to_screen(ram_fn_load_nibble_cache_from_mbc2_sram);
                     render_message(message_waiting_for_leader);
                 }
 
@@ -216,6 +221,8 @@ int main(void) {
                             render_message_no_screen_flush(sram_size_message);
                         }
                         break;
+                        default:
+                        break;
                     }
                 }
 
@@ -227,6 +234,11 @@ int main(void) {
                 if (*rTransferError) {
                     render_message_no_screen_flush(message_transfer_error);
                     goto buzy_wait_forever;
+                }
+
+                // If we are the worker and restoring a save, write out the save to cartridge SRAM
+                if (!is_leader && restore_save) {
+                    run_in_parallel_to_screen(ram_fn_store_nibble_cache_from_mbc2_sram);
                 }
                 render_message_no_screen_flush(message_transfer_done);
 

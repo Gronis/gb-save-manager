@@ -8,6 +8,79 @@
 // This will ensure code is put inside RAM
 #include "area_ram.h"
 
+// For MBC2, we have 512 4-bit values directly in the MBC2 controller This is a
+// hassle to work with directly, so we pack it as 8-bit bytes before and after
+// interacting with the SRAM
+extern const uint8_t nibble_as_bytes_cache[256];
+
+void ram_fn_load_nibble_cache_from_mbc2_sram() {
+    uint8_t mbc_mode                = get_mbc_type(*rMBC_mode);
+    cartridge_mode_t* cartridge     = get_cartridge_mode_ptr(mbc_mode);
+    uint8_t* sram_ptr_end           = as_addr(cartridge->bank_data_addr_end);
+    volatile uint8_t* sram_ptr      = sram_ptr_end;
+    uint8_t next_bank_number        = 0;
+
+    if (mbc_mode != MBC_2) return;
+    ram_fn_enable_cartridge_sram();
+
+    uint8_t* cache_ptr              = (uint8_t*)&nibble_as_bytes_cache;
+    uint8_t* cache_ptr_end          = cache_ptr + sizeof(nibble_as_bytes_cache);
+
+    for (; cache_ptr < cache_ptr_end; cache_ptr++) {
+        // Progress ROM/RAM Bank if necessary
+        if (sram_ptr >= sram_ptr_end) {
+            sram_ptr = as_addr(cartridge->bank_data_addr_start);
+            uint8_t* bank_selector = as_addr(cartridge->bank_selector_addr);
+            *bank_selector = next_bank_number;
+            *bank_selector = next_bank_number;
+            next_bank_number++;
+        }
+
+        // Load SRAM cache with data from cartridge SRAM
+        uint8_t data = (*sram_ptr) & 0x0F;
+        sram_ptr++;
+        data |= (*sram_ptr) << 4;
+        sram_ptr++;
+        *cache_ptr = data;
+    }
+
+    ram_fn_disable_cartridge_sram();
+}
+
+void ram_fn_store_nibble_cache_from_mbc2_sram() {
+    uint8_t mbc_mode                = get_mbc_type(*rMBC_mode);
+    cartridge_mode_t* cartridge     = get_cartridge_mode_ptr(mbc_mode);
+    uint8_t* sram_ptr_end           = as_addr(cartridge->bank_data_addr_end);
+    volatile uint8_t* sram_ptr      = sram_ptr_end;
+    uint8_t next_bank_number        = 0;
+
+    if (mbc_mode != MBC_2) return;
+    ram_fn_enable_cartridge_sram();
+
+    uint8_t* cache_ptr              = (uint8_t*)&nibble_as_bytes_cache;
+    uint8_t* cache_ptr_end          = cache_ptr + sizeof(nibble_as_bytes_cache);
+
+    for (; cache_ptr < cache_ptr_end; cache_ptr++) {
+        // Progress ROM/RAM Bank if necessary
+        if (sram_ptr >= sram_ptr_end) {
+            sram_ptr = as_addr(cartridge->bank_data_addr_start);
+            uint8_t* bank_selector = as_addr(cartridge->bank_selector_addr);
+            *bank_selector = next_bank_number;
+            *bank_selector = next_bank_number;
+            next_bank_number++;
+        }
+
+        // Write out SRAM cache to cartridge SRAM
+        uint8_t data = (*cache_ptr);
+        *sram_ptr = data & 0x0F;
+        sram_ptr++;
+        *sram_ptr = data >> 4;
+        sram_ptr++;
+    }
+
+    ram_fn_disable_cartridge_sram();
+}
+
 void try_update_progress_bar(uint8_t progress){
     uint8_t* dst = (uint8_t*)(get_tile_position(4, 6) + progress / 8);
     uint8_t tile = pb_start_offset + (progress & 7);
@@ -108,22 +181,24 @@ uint16_t ram_fn_get_number_of_pkts_sram (bool is_leader) {
         worker_sram_size                = *rSRAM_size;
         worker_mbc_mode                 = *rMBC_mode;
     }
-
-    // This means game does not have SRAM
-    if (worker_sram_size < 2) return 0;
-
     uint8_t worker_mbc_type             = get_mbc_type(worker_mbc_mode);
     if (worker_mbc_type == MBC_UNSUPPORTED) return 0;
 
-    uint8_t sram_size_base              = cartridge_sram_table[worker_sram_size - 2];
-    uint16_t max_num_of_pkts            = 64 << sram_size_base;
-
     // Some MBC types override the bank size found in the cartridge header
     cartridge_mode_t* worker_cartridge  = get_cartridge_mode_ptr(worker_mbc_type);
+
+    // Use MBC size override (only used for MBC2 and Gamboy Camera right now)
     if (worker_cartridge->base_size_override != 0){
-        max_num_of_pkts = 1 << worker_cartridge->base_size_override;
+        return 1 << worker_cartridge->base_size_override;
     }
-    return max_num_of_pkts;
+
+    // Read sram size from cartridge
+    if (worker_sram_size >= 2) {
+        return 64 << cartridge_sram_table[worker_sram_size - 2];
+    }
+
+    // This means game does not have SRAM
+    return 0;
 }
 
 void ram_fn_perform_transfer(void) {
@@ -135,21 +210,28 @@ void ram_fn_perform_transfer(void) {
 
     bool is_leader = *rRole == ROLE_LEADER;
     bool use_internal_clock = is_leader;
-    bool is_receiving_data =
-        (is_leader  && backup_save) ||
-        (!is_leader && restore_save);
+    bool is_receiving_data = (is_leader  && backup_save) || (!is_leader && restore_save);
 
     uint16_t max_num_of_pkts            = ram_fn_get_number_of_pkts_sram(is_leader);
-    uint16_t progress_bytes_per_inc     = max_num_of_pkts;
     uint16_t progress_bytes_counter     = 0;
     uint8_t progress_ui                 = 0;
     uint8_t next_bank_number            = 0;
     uint8_t visual_tile_row_index       = 0;
 
     cartridge_mode_t* cartridge         = get_cartridge_mode_ptr(get_mbc_type(*rMBC_mode));
-    uint8_t* data_ptr                   = as_addr(cartridge->bank_data_addr_end);
-    uint8_t* data_ptr_end               = data_ptr;
+    uint8_t* data_ptr_end               = as_addr(cartridge->bank_data_addr_end);
+    volatile uint8_t* data_ptr          = data_ptr_end;
     bool inc_data_ptr                   = true;
+
+    if (is_nibble_mode(max_num_of_pkts)) {
+        // Nibble mode packs 2 nibbles (4 bits) per byte, so half the packets are used
+        max_num_of_pkts = max_num_of_pkts >> 1;
+        // If we are the worker, we use the nibble cache (converted to bytes) as an intermediate
+        if (!is_leader) {
+            data_ptr        = (volatile uint8_t*)&nibble_as_bytes_cache;
+            data_ptr_end    = (uint8_t*)&nibble_as_bytes_cache + sizeof(nibble_as_bytes_cache);
+        }
+    }
 
     // If we control the message flow, Wait some time before starting actual transfer
     // So that we know that the other end is ready for us when transfer starts.
@@ -157,23 +239,11 @@ void ram_fn_perform_transfer(void) {
         wait_n_cycles(0x4000);
     }
 
+    uint16_t progress_bytes_per_inc = max_num_of_pkts;
     uint8_t timeout = 0x80;
     // 64 packets fits 8kB of space (1 RAM bank).
     for (uint16_t pkt_num = 0; pkt_num < max_num_of_pkts && !(*rTransferError); ++pkt_num) {
         uint8_t checksum = 0;
-
-        // Send packet number
-        {
-            send_byte(pkt_num, use_internal_clock);
-            uint16_t received_pkt_num = recv_byte(timeout);
-            send_byte(pkt_num >> 8, use_internal_clock);
-            received_pkt_num |= recv_byte(timeout) << 8;
-
-            // Remote wants to resend previous packet
-            if (is_receiving_data && pkt_num != received_pkt_num){
-                *rTransferError = true;
-            }
-        }
 
         for (uint8_t i = 0; i < PACKET_SIZE && !(*rTransferError); ++i, data_ptr+=inc_data_ptr){
 
@@ -192,27 +262,10 @@ void ram_fn_perform_transfer(void) {
             // Send byte and update UI progress bar
             uint8_t msg_byte;
             if(!is_receiving_data){
-                if (is_nibble_mode(max_num_of_pkts)){
-                    if (backup_save) {
-                        // Join two nibbles into one byte
-                        msg_byte = *data_ptr & 0x0F;
-                        data_ptr++;
-                        msg_byte |= *data_ptr << 4;
-                    } else {
-                        // Send a nibble, swapping between upper and lower bits
-                        inc_data_ptr = !inc_data_ptr;
-                        if (inc_data_ptr) {
-                            msg_byte = *data_ptr >> 4;
-                        } else {
-                            goto write_msg_byte;
-                        }
-                    }
-                } else {
-                    write_msg_byte:
-                    msg_byte = *data_ptr;
-                }
-                checksum = checksum ^ msg_byte;
+                msg_byte = *data_ptr;
+                msg_byte = *data_ptr;
                 send_byte(msg_byte, use_internal_clock);
+                checksum = checksum ^ msg_byte;
             } else {
                 send_last_byte(use_internal_clock);
             }
@@ -272,3 +325,5 @@ bool send_detect_link_cable_packet(bool use_internal_clock) {
     *rSC = LINK_CABLE_ENABLE | use_internal_clock;
     return connected;
 }
+
+const uint8_t nibble_as_bytes_cache[256] = { 0 };

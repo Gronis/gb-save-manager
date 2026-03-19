@@ -40,6 +40,9 @@
 
 #define as_addr(addr) ((uint8_t*)(((uint16_t)(addr)) << 8))
 
+void ram_fn_load_nibble_cache_from_mbc2_sram(void);
+void ram_fn_store_nibble_cache_from_mbc2_sram(void);
+
 void ram_fn_enable_cartridge_sram (void);
 void ram_fn_disable_cartridge_sram (void);
 uint16_t ram_fn_get_number_of_pkts_sram (bool is_leader);
