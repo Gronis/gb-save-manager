@@ -50,13 +50,13 @@ So, from version 1.3, I've added a QR code with a link to a simple web tool that
 Gameboy Cartridges has different chips which works slightly differently. Most if not all original Gameboy and Gameboy Color cartridges should be supported. Here is a list of supported Cartridge Mapper Types:
 
 * MBC1
-* MBC2** (From v1.1 or higher)
+* MBC2** (From v1.3.2 or higher)
 * MBC3
 * MBC5
 * MBC5 with rumble pack **
 * Gameboy Camera (From v1.2 or higher) ***
 
-\*\* Only tested in emulator since I don't own any game of this kind.
+\*\* The orignal implementation didn't work on real hardware. This version fixes that. There is a note on MBC2 games further down regarding support and compatibility
 
 \*\*\* Only 128kB supported Flash Cartridge will extract all images. Most newer flash cartridges should support this, but older Everdrive cartridges might only support up to 32kB.
 
@@ -95,6 +95,19 @@ When injecting a cartridge, a good technique is to nudge the cartridge from side
 The general idea is to avoid that all pins connect/disconnect at the same time. This can cause an in-rush of current to the cartridge from the Gameboy which is the reason the Gameboy resets.
 
 Some cartridges and consoles are better or worse than others. You typically want as low low power consumption as possible. I have also found out that this issue is much less of a problem on the EVERDRIVE flash cartridge compared to the EZ-FLASH. Unmodified consoles is preferred when hot-swapping game cartridges, especially if using a gameboy advance. Screen mods draw more power than original screens and for GBA, the screen mod can draw extra power when inserting a GB/GBC game cartridge because of a hardware switch that sits in the cartridge slot that swaps between GBA mode and GBC mode. The leader console (the one that never hot-swaps, and has the flash cartridge during the backup process) can be a modded console though without issues.
+
+## Games to watch out for - MBC2 cartridges
+A note on these games. First of all, MBC2 save data is tiny, just 256 bytes. But its stored in a way on the cartridge as half bytes. Why is this important? Because different emulators store these saves differently. The common approach is to store them as half bytes, so I decided to go with this approach. If you want to play your save in emulators that uses a different format, like the common mGBA emulator, you need to convert the format. Fortunatly this is possible to do from within mGBA under `File -> Save Games -> Convert save game`.
+
+These are the games affected by this:
+* F-1 Race
+* Golf
+* Kirby's Pinball Land
+* Top Rank Tennis
+
+This is how you would convert the save from within mGBA:
+
+<img src="screenshots/mgba_mbc2_convert.png" alt="isolated"/>
 
 ## Troubleshooting
 
