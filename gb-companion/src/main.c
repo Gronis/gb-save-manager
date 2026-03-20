@@ -153,7 +153,6 @@ int main(void) {
                         continue;
                     }
                 } else {
-                    run_in_parallel_to_screen(ram_fn_load_nibble_cache_from_mbc2_sram);
                     render_message(message_waiting_for_leader);
                 }
 
@@ -236,10 +235,6 @@ int main(void) {
                     goto buzy_wait_forever;
                 }
 
-                // If we are the worker and restoring a save, write out the save to cartridge SRAM
-                if (!is_leader && restore_save) {
-                    run_in_parallel_to_screen(ram_fn_store_nibble_cache_from_mbc2_sram);
-                }
                 render_message_no_screen_flush(message_transfer_done);
 
                 // Show qr code to resize tool to change save file size
