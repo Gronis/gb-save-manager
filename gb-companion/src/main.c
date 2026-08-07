@@ -99,10 +99,6 @@ int main(void) {
 
             if (cartridge_state) {
                 new_link_cable_state = send_detect_link_cable_packet(is_leader);
-                // It seems like if gb-companion_gbc.h is uneven, then addresses are misaligned.
-                // I just added two flush_screen() calls to fix it. But this should be fixed for real
-                flush_screen();
-                // flush_screen();
             }
 
             if(link_cable_state != new_link_cable_state){
@@ -252,6 +248,11 @@ int main(void) {
             }
         }
     }
+    // It seems like if gb-companion_gbc.h is uneven, then addresses are misaligned.
+    // Just add some dummy data to align the addresses. TODO Fix this for real
+    __asm
+        nop
+    __endasm;
     return 0;
 }
 

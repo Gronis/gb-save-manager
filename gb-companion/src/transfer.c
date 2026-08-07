@@ -162,6 +162,19 @@ void ram_fn_perform_transfer(void) {
     for (uint16_t pkt_num = 0; pkt_num < max_num_of_pkts && !(*rTransferError); ++pkt_num) {
         uint8_t checksum = 0;
 
+        // Send packet number
+        {
+            send_byte(pkt_num, use_internal_clock);
+            uint16_t received_pkt_num = recv_byte(timeout);
+            send_byte(pkt_num >> 8, use_internal_clock);
+            received_pkt_num |= recv_byte(timeout) << 8;
+
+            // Remote wants to resend previous packet
+            if (is_receiving_data && pkt_num != received_pkt_num){
+                *rTransferError = true;
+            }
+        }
+
         for (uint8_t i = 0; i < PACKET_SIZE && !(*rTransferError); ++i, data_ptr+=inc_data_ptr){
 
             // Progress ROM/RAM Bank if necessary
